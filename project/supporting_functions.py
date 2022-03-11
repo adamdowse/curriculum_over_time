@@ -22,12 +22,12 @@ def data_init(n,class_num,feature_num,stddev,random_state=1):
 
     return df
 
-def collect_data(df,n,batch_size,e=1,max_e=1,type='none'):
+def collect_data(df,n,batch_size,e=1,max_e=1,type='normal'):
     '''
     Takes the dataframe and produces a tf.dataset and an updated df
     rank = neive ranking sorting df by last loss values and taking a percentage based on the pacing function
     '''
-    if type == 'none':
+    if type == 'normal':
         mod_df = df.copy()
 
     elif type == 'rank':
@@ -52,6 +52,8 @@ def collect_data(df,n,batch_size,e=1,max_e=1,type='none'):
 
             mod_df = pd.concat([df_x1,df_x2])
             '''
+    else:
+        print("ERROR: Incorrect scoring function")
 
     #form dataset from datafram
     train_x = tf.convert_to_tensor(mod_df[['x1','x2']],dtype='float32')
@@ -70,7 +72,7 @@ def accuracy(y_pred,y_true):
     correct_prediction = tf.equal(tf.argmax(y_pred,1), tf.cast(y_true, tf.int64))
     return tf.cast(correct_prediction, tf.float32)
 
-def save_img(mod_df,name,model,e):
+def save_img_old(mod_df,name,model,e):
     #TODO change model into w and b
     #print(model.trainable_variables)
     w = model.trainable_variables[0].numpy()
@@ -79,8 +81,8 @@ def save_img(mod_df,name,model,e):
     print(w)
     print(b)
 
-    w1,w2 = w.T
-    c = -b[0]/w2
+    w1,w2 = w
+    c = -b/w2
     m = -w1/w2
 
     xmin, xmax = -20, 10
@@ -101,6 +103,41 @@ def save_img(mod_df,name,model,e):
     plt.savefig(name + str(e) +'.jpg')
     plt.close()
 
+def save_img(mod_df,name,model,e,min,max):
+    #https://www.kaggle.com/arthurtok/decision-boundaries-visualised-via-python-plotly
+    res = 500
+    #take the 2 features
+    #TODO add generalisability
+    #print(mod_df.head())
+
+    dx = np.linspace(min[0]-1,max[0]+1,res)
+    dy = np.linspace(min[1]-1,max[1]+1,res)
+    xx,yy = np.meshgrid(dx,dy)
+
+    Z1 = model.predict(np.c_[xx.ravel(),yy.ravel()])[:,:1]
+    Z1 = Z1.reshape(xx.shape)
+
+    Z2 = model.predict(np.c_[xx.ravel(),yy.ravel()])[:,1:2]
+    Z2 = Z2.reshape(xx.shape)
+
+    fig, (ax1,ax2) = plt.subplots(1,2)
+
+    #plot each heatmap
+    ax1.pcolormesh(xx[0], dy,Z1)
+    ax1.scatter(mod_df[mod_df['class'] == 0]['x1'],mod_df[mod_df['class'] == 0]['x2'])
+    ax1.scatter(mod_df[mod_df['class'] == 1]['x1'],mod_df[mod_df['class'] == 1]['x2'])
+
+    ax2.pcolormesh(xx[0], dy,Z2)
+    ax2.scatter(mod_df[mod_df['class'] == 0]['x1'],mod_df[mod_df['class'] == 0]['x2'])
+    ax2.scatter(mod_df[mod_df['class'] == 1]['x1'],mod_df[mod_df['class'] == 1]['x2'])
+
+    plt.savefig(name + str(e)+'.jpg')
+    plt.close()
+
+    
+
+
+
 def run_optimization(x,y,loss_func,optimizer,w,b,e):
     with tf.GradientTape() as tape:
         pred = logistic_regression(x,w,b)
@@ -112,16 +149,13 @@ def run_optimization(x,y,loss_func,optimizer,w,b,e):
         optimizer.apply_gradients(zip(grads, [w,b]))
     return full_loss
 
+@tf.function
 def run_optimization_model(x,y,model,loss_func,optimizer):
     with tf.GradientTape() as tape:
         pred = model(x,training=True)
-        print(pred)
-        print(y)
         full_loss = loss_func(y,pred)
-        print(full_loss)
         loss = tf.reduce_mean(full_loss)
     grads = tape.gradient(loss, model.trainable_variables)
-    print('grads='+ str(grads))
     optimizer[0].apply_gradients(zip(grads, model.trainable_variables))
 
     return full_loss,loss

@@ -11,12 +11,12 @@ import supporting_functions as sf
 num_classes = 2
 num_features = 2
 learning_rate = 0.01
-batch_size = 8
-n = 1000
-test_n = 100
-max_epoch = 100
-data_stddev = 4
-data_random_state = 1
+batch_size = 16
+n = 500
+test_n = 50
+max_epoch = 51
+data_stddev = 2
+data_random_state = 2
 scoring_func = 'normal'
 run_name = 'Data/normal/normal'
 
@@ -25,8 +25,11 @@ df = sf.data_init(n,num_classes,num_features,stddev=data_stddev,random_state=dat
 test_df = sf.data_init(n,num_classes,num_features,stddev=data_stddev,random_state=data_random_state)
 test_ds, test_df = sf.collect_data(test_df,test_n,batch_size=1)
 
+max_x = [df.iloc[:,x].max() for x in range(num_features)]
+min_x = [df.iloc[:,x].min() for x in range(num_features)]
+
 #init loss func and optimizer
-optimizer = keras.optimizers.Adam(learning_rate=learning_rate),
+optimizer = keras.optimizers.SGD(learning_rate=learning_rate),
 loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
 model = sf.build_model()
 
@@ -57,12 +60,14 @@ for e in range(max_epoch):
         #train the model and return the losses of the batch
         full_loss,_ = sf.run_optimization_model(batch_x,batch_y,model,loss_func,optimizer)
         df = sf.update_loss_info(df,full_loss,index,e)
-
-    sf.save_img(mod_df,run_name,model,e)
+    if e % 5 ==0:
+        sf.save_img(mod_df,run_name,model,e,min_x,max_x)
     print('data used = '+str(c))
 
     correct = 0
     total = 0
+    #TODO 
+    #add batching to speed up
     #loop through test data in batches of 1
     for step ,(batch_x,batch_y,index) in enumerate(test_ds):
         pred = model.predict(batch_x)
