@@ -9,5 +9,9 @@ RUN pip install tensorflow_probability
 RUN pip install pyyaml h5py
 
 
+RUN useradd -s /bin/bash -m vscode \
+ && groupadd docker \
+ && usermod -aG docker vscode
 
+USER vscode
 
