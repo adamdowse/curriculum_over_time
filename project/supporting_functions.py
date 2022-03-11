@@ -112,15 +112,20 @@ def run_optimization(x,y,loss_func,optimizer,w,b,e):
         optimizer.apply_gradients(zip(grads, [w,b]))
     return full_loss
 
-def run_optimization_model(x,y,loss_func,optimizer,model,e):
+def run_optimization_model(x,y,model,loss_func,optimizer):
     with tf.GradientTape() as tape:
         pred = model(x,training=True)
+        print(pred)
+        print(y)
         full_loss = loss_func(y,pred)
+        print(full_loss)
         loss = tf.reduce_mean(full_loss)
-    var_list_fn = lambda: model.trainable_weights
-    optimizer.minimize(loss_func, var_list_fn)
+    grads = tape.gradient(loss, model.trainable_variables)
+    print('grads='+ str(grads))
+    optimizer[0].apply_gradients(zip(grads, model.trainable_variables))
 
     return full_loss,loss
+
 
 def update_loss_info(df,loss,index,epoch):
     for l, i in zip(loss.numpy(), index.numpy()):
