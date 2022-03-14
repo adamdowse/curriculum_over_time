@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow import keras
 from keras import layers
 from matplotlib import pyplot as plt
+import math
 
 #interesting websites
 #https://towardsdatascience.com/multiclass-logistic-regression-from-scratch-9cc0007da372#:~:text=Multiclass%20logistic%20regression%20is%20also,really%20know%20how%20it%20works.
@@ -22,36 +23,68 @@ def data_init(n,class_num,feature_num,stddev,random_state=1):
 
     return df
 
-def collect_data(df,n,batch_size,e=1,max_e=1,type='normal'):
+def collect_data(df,info,test=False):
     '''
     Takes the dataframe and produces a tf.dataset and an updated df
     rank = neive ranking sorting df by last loss values and taking a percentage based on the pacing function
     '''
-    if type == 'normal':
+    if test == True:
+        batch_size = 1
+    else:
+        batch_size = info.batch_size
+
+
+    if info.scoring_func == 'normal' or test ==True:
         mod_df = df.copy()
 
-    elif type == 'rank':
+    elif info.scoring_func == 'rank':
         mod_df = df.copy()
-        if e>0:
-            epoch_percent = (e+1)/(max_e-10)
-            print('epoch percent = ',epoch_percent)
-
-            mod_df = mod_df.sort_values(str(e-1))
-            mod_df = mod_df.head(int(epoch_percent*len(df.index)))
-
-            '''
-            df_x1 = df.where(df['class']==0).copy()
-            df_x2 = df.where(df['class']==1).copy()
+        if info.current_epoch>0:
+            a = 0.8
+            b = 0.2
+            #exp
+            data_count = info.max_data*b + (info.max_data*(1-b)*(math.exp((10*info.current_epoch)/(a*info.max_epoch))-1))/(math.exp(10) - 1)
+            if data_count > info.max_data:
+                data_count = info.max_data
+            print('Data Count = ',data_count)
+            
+            df_x1 = mod_df.where(mod_df['class']==0).copy()
+            df_x2 = mod_df.where(mod_df['class']==1).copy()
 
             #take the easiest points
-            df_x1 = df_x1.sort_values('x1')
-            df_x2 = df_x2.sort_values('x2')
+            df_x1 = df_x1.sort_values(str(info.current_epoch-1))
+            df_x2 = df_x2.sort_values(str(info.current_epoch-1))
 
-            df_x1 = df_x1.head(int(epoch_percent*100))
-            df_x2 = df_x2.head(int(epoch_percent*100))
+            df_x1 = df_x1.head(int(data_count/2))
+            df_x2 = df_x2.head(int(data_count/2))
 
             mod_df = pd.concat([df_x1,df_x2])
-            '''
+            mod_df = mod_df.sample(frac=1).reset_index(drop=True)
+    
+    elif info.scoring_func == 'meanlossgradient':
+        #This loks at the average gradient direction of the loss and if the gradient is:
+        # + then increase the images given
+        # - then decrease the images given
+        # 0 then keep it consistant
+        # Also want the overall amount of images to increase to max (maybe TODO)
+        mod_df = df.copy()
+        sigmoid = lambda x: 1 / (1 + math.exp(-x))
+        #ensure there is enough loss info for calcs
+        if info.current_epoch > 2:
+            #calc average gradient 
+            avgLoss1 = mod_df.loc[:,str(info.current_epoch-1)].mean()
+            avgLoss2 = mod_df.loc[:,str(info.current_epoch-2)].mean()
+            avgLoss3 = mod_df.loc[:,str(info.current_epoch-3)].mean()
+
+            avgGrad = ((avgLoss1 - avgLoss2) + (avgLoss2- avgLoss3))/2
+            #TODO fix equations below
+            if info.dataused[-1] < info.max_epoch:
+                if avgGrad > 0:
+                    data_count = info.dataused[-1] + sigmoid(avgGrad) * info.alpha
+
+            #run grad through sigmoid funciton to limit from 0 to 1 (could stretch a little)
+
+
     else:
         print("ERROR: Incorrect scoring function")
 
@@ -62,7 +95,7 @@ def collect_data(df,n,batch_size,e=1,max_e=1,type='normal'):
     index = tf.convert_to_tensor(mod_df.index,dtype='int32')
 
     train_data = tf.data.Dataset.from_tensor_slices((train_x,train_y,index))
-    train_data = train_data.shuffle(n).batch(batch_size)
+    train_data = train_data.shuffle(info.max_data).batch(batch_size)
     return train_data, mod_df
 
 def logistic_regression(x,w,b):
