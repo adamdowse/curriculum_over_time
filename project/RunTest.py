@@ -12,9 +12,9 @@ num_classes = 2
 num_features = 2
 learning_rate = 0.01
 batch_size = 16
-n = 500
-test_n = 50
-max_epoch = 51
+n = 100
+test_n = 10
+max_epoch = 300
 data_stddev = 2
 data_random_state = 2
 scoring_func = 'normal'
@@ -81,8 +81,6 @@ for e in range(max_epoch):
     else:
         acc.append(0)
 
-    if e == 50:
-        sf.save_img(test_df,run_name+'_test_50',model,e)
 
 df.to_csv(run_name+'_df')
 

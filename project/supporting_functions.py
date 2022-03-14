@@ -123,13 +123,22 @@ def save_img(mod_df,name,model,e,min,max):
     fig, (ax1,ax2) = plt.subplots(1,2)
 
     #plot each heatmap
-    ax1.pcolormesh(xx[0], dy,Z1)
+    ax1.pcolormesh(xx[0], dy,Z1,cmap='PRGn',alpha=0.7)
     ax1.scatter(mod_df[mod_df['class'] == 0]['x1'],mod_df[mod_df['class'] == 0]['x2'])
     ax1.scatter(mod_df[mod_df['class'] == 1]['x1'],mod_df[mod_df['class'] == 1]['x2'])
+    ax1.set_xlabel('x1')
+    ax1.set_ylabel('x2')
+    ax1.set_title('Class 1')
+ 
 
-    ax2.pcolormesh(xx[0], dy,Z2)
+    im2 = ax2.pcolormesh(xx[0], dy,Z2,cmap='PRGn',alpha=0.7)
     ax2.scatter(mod_df[mod_df['class'] == 0]['x1'],mod_df[mod_df['class'] == 0]['x2'])
     ax2.scatter(mod_df[mod_df['class'] == 1]['x1'],mod_df[mod_df['class'] == 1]['x2'])
+    fig.colorbar(im2,ax=ax2)
+    ax2.set_xlabel('x1')
+    ax2.set_ylabel('x2')
+    ax2.set_title('Class 2')
+    fig.tight_layout()
 
     plt.savefig(name + str(e)+'.jpg')
     plt.close()
@@ -168,6 +177,6 @@ def update_loss_info(df,loss,index,epoch):
 
 def build_model():
     model = tf.keras.Sequential([
-        layers.Dense(2, activation= 'sigmoid')
+        layers.Dense(2, activation= 'softmax')
     ])
     return model
