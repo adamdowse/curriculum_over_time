@@ -1,14 +1,15 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
-root_dir = '/com.docker.devenvironments.code/project/Data/rank/'
+#fix nameing this i broke thios!!!!!!!!!!!!!!
+name = 'meanlossgradient'
+root_dir = '/com.docker.devenvironments.code/project/Data/'+name+'/OutputLayers/'
 
 #Collect all the run infomation
-df_dataused = pd.read_csv(root_dir+'rank_dataused',header=None)
+df_dataused = pd.read_csv(root_dir+name+'_dataused',header=None)
 df_dataused.columns = ['data_used']
-df_loss = pd.read_csv(root_dir+'rank_df',index_col="Unnamed: 0")
-df_testacc = pd.read_csv(root_dir+'rank_test_acc',header=None)
+df_loss = pd.read_csv(root_dir+name+'_df',index_col="Unnamed: 0")
+df_testacc = pd.read_csv(root_dir+name+'_test_acc',header=None)
 df_testacc.columns = ['test_acc']
 
 #print(df_dataused.head())

@@ -17,13 +17,13 @@ class Info:
     max_epoch = 200
     data_stddev = 2
     data_random_state = 2
-    scoring_func = 'rank'
-    run_name = 'Data/rank/OutputLayers/rank'
+    scoring_func = 'meanlossgradient'
+    run_name = 'Data/' + scoring_func + '/OutputLayers/' + scoring_func
     acc = []
     dataused = []
     train_losses = []
     current_epoch = 0
-    alpha = max_data/4 #(could vary a lot)
+    alpha = 10 #(could vary a lot)
     
 
 info = Info()
@@ -42,9 +42,7 @@ loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.
 model = sf.build_model()
 
 #run experiment
-
-
-for e in [0,180]:#range(info.max_epoch):
+for e in range(info.max_epoch):
     print('epoch = '+str(e))
     info.current_epoch = e
     #collect the training data and df based on the scoring and pacing funciton
@@ -54,22 +52,19 @@ for e in [0,180]:#range(info.max_epoch):
 
     #if the first epoch set new data col as nan otherwise take data from previous col
     if e > 0:
-        #TODO change this to use concat
-        df[str(e)] = df[str(e-1)].copy()
+        df = pd.concat([df,df[str(e-1)]],axis=1)
+        df.columns.values[-1] = str(e)
     else:
         df[str(e)] = np.nan
-    
+
     #training loop
-    c = 0
     for step, (batch_x,batch_y,index) in enumerate(train_data):
-        #increment the amount of data used
-        c+=len(index)
         #train the model and return the losses of the batch
         full_loss,_ = sf.run_optimization_model(batch_x,batch_y,model,loss_func,optimizer)
         df = sf.update_loss_info(df,full_loss,index,e)
-    if e % 5 ==0:
+    if e % 5 == 0:
         sf.save_img(mod_df,info.run_name,model,e,min_x,max_x)
-    print('data used = '+str(c))
+    print('data used = '+str(info.dataused[-1]))
 
     correct = 0
     total = 0

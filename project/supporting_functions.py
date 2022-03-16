@@ -68,22 +68,64 @@ def collect_data(df,info,test=False):
         # 0 then keep it consistant
         # Also want the overall amount of images to increase to max (maybe TODO)
         mod_df = df.copy()
-        sigmoid = lambda x: 1 / (1 + math.exp(-x))
+        
         #ensure there is enough loss info for calcs
         if info.current_epoch > 2:
+            
+            #calculate the pos and neg 95th percentiles of the gradients (TODO make more advanced here maybe function?)
+            diff = lambda x: ((x[2]-x[1]) + (x[1]-x[0]))/2
+            q95 = mod_df.iloc[:,3:].mean(axis=0).rolling(3).apply(diff,raw=True).quantile(q=0.95)
+            q05 = mod_df.iloc[:,3:].mean(axis=0).rolling(3).apply(diff,raw=True).quantile(q=0.05)
+            m = mod_df.iloc[:,3:].mean(axis=0).rolling(3).apply(diff,raw=True).ewm(com=0.5).mean().iloc[-1]
+            med = mod_df.iloc[:,3:].mean(axis=0).rolling(3).apply(diff,raw=True).median()
+            #move the sigma function to sit between the quantiles 
+            #sigmoid = lambda x: (2 / (1 + math.exp(-x))) - 1
+            #x is the loss
+            #b increases gradient
+            #f shifts in x
+            f = m#(q95 + q05)/2
+            b = 10#(math.log((0.95+1)) - math.log(1-0.95)) / (q95 - f)
+            z = info.current_epoch/info.max_epoch
+            sigmoid = lambda x: (2 / (1 + math.exp(-b*(x-f)))) - 1 + z
+
             #calc average gradient 
             avgLoss1 = mod_df.loc[:,str(info.current_epoch-1)].mean()
             avgLoss2 = mod_df.loc[:,str(info.current_epoch-2)].mean()
             avgLoss3 = mod_df.loc[:,str(info.current_epoch-3)].mean()
 
-            avgGrad = ((avgLoss1 - avgLoss2) + (avgLoss2- avgLoss3))/2
-            #TODO fix equations below
-            if info.dataused[-1] < info.max_epoch:
-                if avgGrad > 0:
-                    data_count = info.dataused[-1] + sigmoid(avgGrad) * info.alpha
+            avgGrad = diff([avgLoss3,avgLoss2,avgLoss1])
+            
+            print('0.05%, mean, 0.95%, med = ',q05,m,q95,med)
+            print('avgGrad , sigmoid = ',avgGrad,sigmoid(avgGrad))
+            print('vars (f,b) = ',f,b)
 
+            #increase or decrease images seen
             #run grad through sigmoid funciton to limit from 0 to 1 (could stretch a little)
+            if info.current_epoch == 3:
+                prev_data_used = 10
+            else:
+                prev_data_used = info.dataused[-1]
+            data_count = prev_data_used + (sigmoid(avgGrad) * info.alpha)
+            print('Data change = ',(sigmoid(avgGrad) * info.alpha))
+            #ensure data does not reach 0 or over max data avalible
+            if data_count > info.max_data:
+                data_count = info.max_data
+            if data_count < (0.1*info.max_data):
+                data_count = int(0.1*info.max_data)
+            
+            df_x1 = mod_df.where(mod_df['class']==0).copy()
+            df_x2 = mod_df.where(mod_df['class']==1).copy()
 
+            #take the easiest points
+            df_x1 = df_x1.sort_values(str(info.current_epoch-1))
+            df_x2 = df_x2.sort_values(str(info.current_epoch-1))
+
+            df_x1 = df_x1.head(int(data_count/2))
+            df_x2 = df_x2.head(int(data_count/2))
+
+            mod_df = pd.concat([df_x1,df_x2])
+            mod_df = mod_df.sample(frac=1).reset_index(drop=True)
+                
 
     else:
         print("ERROR: Incorrect scoring function")
@@ -95,7 +137,7 @@ def collect_data(df,info,test=False):
     index = tf.convert_to_tensor(mod_df.index,dtype='int32')
 
     train_data = tf.data.Dataset.from_tensor_slices((train_x,train_y,index))
-    train_data = train_data.shuffle(info.max_data).batch(batch_size)
+    train_data = train_data.shuffle(len(mod_df.index)).batch(batch_size)
     return train_data, mod_df
 
 def logistic_regression(x,w,b):
