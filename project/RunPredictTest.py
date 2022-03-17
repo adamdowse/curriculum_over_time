@@ -6,10 +6,16 @@ import tensorflow as tf
 from tensorflow import keras
 import supporting_functions as sf
 
+#Run the logistic regression model on more high dim data (more features)
+#train on a curriculum 
+#predict next loss based on infomation availible ie curriculum
+#record all of the losses but dont train on all
+#compare the predicted to the true losses
+
 class Info:
     #build a simple logistic regression model
-    num_classes = 2
-    num_features = 2
+    num_classes = 3
+    num_features = 3
     learning_rate = 0.01
     batch_size = 16
     max_data = 100
@@ -24,13 +30,22 @@ class Info:
     train_losses = []
     current_epoch = 0
     alpha = 10 #(could vary a lot)
+    lookback = 3
     
 
 info = Info()
 
 #collect data
-df = sf.data_init(info.max_data,info.num_classes,info.num_features,stddev=info.data_stddev,random_state=info.data_random_state)
-test_df = sf.data_init(info.max_data,info.num_classes,info.num_features,stddev=info.data_stddev,random_state=info.data_random_state)
+#this is the dataframe to train with and record the losses of trained on data
+df = sf.data_init(info)
+#this is the datasframe to record all losses and not to be trained on
+df_hidden = df.copy()
+a = info.scoring_func
+info.scoring_func = 'normal'
+hidden_ds,_ = sf.collect_data(df_hidden,info)
+info.scoring_func = a
+#test data
+test_df = sf.data_init(info)
 test_ds, test_df = sf.collect_data(test_df,info,test=True)
 
 max_x = [df.iloc[:,x].max() for x in range(info.num_features)]
@@ -39,7 +54,7 @@ min_x = [df.iloc[:,x].min() for x in range(info.num_features)]
 #init loss func and optimizer
 optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
 loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
-model = sf.build_model()
+model = sf.build_model(info.num_classes)
 
 #run experiment
 for e in range(info.max_epoch):
@@ -57,13 +72,24 @@ for e in range(info.max_epoch):
     else:
         df[str(e)] = np.nan
 
-    #training loop
+    #fake training loop to save the true losses
+    for step, (batch_x,batch_y,index) in enumerate(hidden_ds):
+        l = sf.run_optimization_model_noupdate(batch_x,batch_y,model,loss_func)
+        df_hidden = sf.update_loss_info(df_hidden,l,index,e)
+
+    #predict next loss
+    if e == info.lookback:
+        #create the prediction df
+        pred_df = pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])
+    elif e > info.lookback:
+        pred_df = pd.concat([pred_df,pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])],axis=1)
+
+
+    #real training loop
     for step, (batch_x,batch_y,index) in enumerate(train_data):
         #train the model and return the losses of the batch
         full_loss,_ = sf.run_optimization_model(batch_x,batch_y,model,loss_func,optimizer)
         df = sf.update_loss_info(df,full_loss,index,e)
-    if e % 5 == 0:
-        sf.save_img(mod_df,info.run_name,model,e,min_x,max_x)
     print('data used = '+str(info.dataused[-1]))
 
     correct = 0
@@ -83,7 +109,8 @@ for e in range(info.max_epoch):
     else:
         info.acc.append(0)
 
-
+pred_df.to_csv(info.run_name+'_preddf')
+df_hidden.to_csv(info.run_name+'_fulldf')
 df.to_csv(info.run_name+'_df')
 
 acc_df = pd.DataFrame(data=info.acc)

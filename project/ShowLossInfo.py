@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-#fix nameing this i broke thios!!!!!!!!!!!!!!
-name = 'meanlossgradient'
+name = 'rank'
 root_dir = '/com.docker.devenvironments.code/project/Data/'+name+'/OutputLayers/'
 
 #Collect all the run infomation

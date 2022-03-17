@@ -10,15 +10,16 @@ import math
 #interesting websites
 #https://towardsdatascience.com/multiclass-logistic-regression-from-scratch-9cc0007da372#:~:text=Multiclass%20logistic%20regression%20is%20also,really%20know%20how%20it%20works.
 
-def data_init(n,class_num,feature_num,stddev,random_state=1):
+def data_init(info):
     '''
     Returns a dataframe of blobs with [x1, x2, ..., class_num]
     '''
     #create a simple 2d classification dataset with n points in 3 classes
-    x, y = make_blobs(n_samples=n, centers=class_num, n_features=feature_num, random_state=random_state, cluster_std=stddev)
+    x, y = make_blobs(n_samples=info.max_data, centers=info.num_classes, n_features=info.num_features, random_state=info.data_random_state, cluster_std=info.data_stddev)
 
     #save to dataframe
-    df = pd.DataFrame(x, columns=['x1','x2'])
+    c = ['x'+str(i) for i in range(info.num_features)]
+    df = pd.DataFrame(x, columns=c)
     df['class'] = pd.DataFrame(y, columns=['class'])
 
     return df
@@ -36,6 +37,8 @@ def collect_data(df,info,test=False):
 
     if info.scoring_func == 'normal' or test ==True:
         mod_df = df.copy()
+        mod_df = mod_df.sample(frac=1)
+
 
     elif info.scoring_func == 'rank':
         mod_df = df.copy()
@@ -48,18 +51,23 @@ def collect_data(df,info,test=False):
                 data_count = info.max_data
             print('Data Count = ',data_count)
             
-            df_x1 = mod_df.where(mod_df['class']==0).copy()
-            df_x2 = mod_df.where(mod_df['class']==1).copy()
+            d = {}
+            for i in range(info.num_features):
+                d['df_x'+str(i)] = mod_df.where(mod_df['class']==0).sort_values(str(info.current_epoch-1)).head(int(data_count/info.num_features)).copy()
+            #df_x1 = mod_df.where(mod_df['class']==0).copy()
+            #df_x2 = mod_df.where(mod_df['class']==1).copy()
 
             #take the easiest points
-            df_x1 = df_x1.sort_values(str(info.current_epoch-1))
-            df_x2 = df_x2.sort_values(str(info.current_epoch-1))
+            #df_x1 = df_x1.sort_values(str(info.current_epoch-1)).copy()
+            #df_x2 = df_x2.sort_values(str(info.current_epoch-1)).copy()
 
-            df_x1 = df_x1.head(int(data_count/2))
-            df_x2 = df_x2.head(int(data_count/2))
+            #df_x1 = df_x1.head(int(data_count/2)).copy()
+            #df_x2 = df_x2.head(int(data_count/2)).copy()
 
-            mod_df = pd.concat([df_x1,df_x2])
-            mod_df = mod_df.sample(frac=1).reset_index(drop=True)
+            mod_df = pd.concat(d.values(),axis=0)
+
+        mod_df = mod_df.sample(frac=1)
+
     
     elif info.scoring_func == 'meanlossgradient':
         #This loks at the average gradient direction of the loss and if the gradient is:
@@ -113,27 +121,22 @@ def collect_data(df,info,test=False):
             if data_count < (0.1*info.max_data):
                 data_count = int(0.1*info.max_data)
             
-            df_x1 = mod_df.where(mod_df['class']==0).copy()
-            df_x2 = mod_df.where(mod_df['class']==1).copy()
+            d = {}
+            for i in range(info.num_features):
+                d['df_x'+str(i)] = mod_df.where(mod_df['class']==0).sort_values(str(info.current_epoch-1)).head(int(data_count/info.num_features)).copy()
 
-            #take the easiest points
-            df_x1 = df_x1.sort_values(str(info.current_epoch-1))
-            df_x2 = df_x2.sort_values(str(info.current_epoch-1))
-
-            df_x1 = df_x1.head(int(data_count/2))
-            df_x2 = df_x2.head(int(data_count/2))
-
-            mod_df = pd.concat([df_x1,df_x2])
-            mod_df = mod_df.sample(frac=1).reset_index(drop=True)
+            mod_df = pd.concat(d.values(),axis=0)
+        mod_df = mod_df.sample(frac=1)
                 
 
     else:
         print("ERROR: Incorrect scoring function")
 
-    #form dataset from datafram
-    train_x = tf.convert_to_tensor(mod_df[['x1','x2']],dtype='float32')
+    #form dataset from dataframe
+    c = ['x'+str(i) for i in range(info.num_features)]
+    train_x = tf.convert_to_tensor(mod_df[c],dtype='float32')
     train_y = tf.convert_to_tensor(mod_df['class'],dtype='int32')
-    train_y = tf.one_hot(train_y,2)
+    train_y = tf.one_hot(train_y,info.num_classes)
     index = tf.convert_to_tensor(mod_df.index,dtype='int32')
 
     train_data = tf.data.Dataset.from_tensor_slices((train_x,train_y,index))
@@ -184,6 +187,7 @@ def save_img(mod_df,name,model,e,min,max):
     #take the 2 features
     #TODO add generalisability
     #print(mod_df.head())
+    #THIS CURRENTLY DOESNT WORK FOR >2 FEATURES
 
     dx = np.linspace(min[0]-1,max[0]+1,res)
     dy = np.linspace(min[1]-1,max[1]+1,res)
@@ -218,10 +222,6 @@ def save_img(mod_df,name,model,e,min,max):
     plt.savefig(name + str(e)+'.jpg')
     plt.close()
 
-    
-
-
-
 def run_optimization(x,y,loss_func,optimizer,w,b,e):
     with tf.GradientTape() as tape:
         pred = logistic_regression(x,w,b)
@@ -244,14 +244,46 @@ def run_optimization_model(x,y,model,loss_func,optimizer):
 
     return full_loss,loss
 
+@tf.function
+def run_optimization_model_noupdate(x,y,model,loss_func):
+    with tf.GradientTape() as tape:
+        pred = model(x,training=True)
+        full_loss = loss_func(y,pred)
+    return full_loss
 
 def update_loss_info(df,loss,index,epoch):
     for l, i in zip(loss.numpy(), index.numpy()):
         df.at[i,str(epoch)] = l
     return df
 
-def build_model():
+def build_model(classes):
     model = tf.keras.Sequential([
-        layers.Dense(2, activation= 'softmax')
+        layers.Dense(classes, activation= 'softmax')
     ])
     return model
+
+def nmeanpred(data):
+    #rows of data up to prediction point
+    #n is the number of lookbacks
+    roll_df = data.mean(axis=1)
+    return roll_df
+
+def regressionpred(n,data):
+    #data is the dat up to prediction time -1 
+    preds = []
+    for i,row in data.iterrows():
+        x = np.array(range(n)).reshape((-1,1))
+        y = row[-n:].to_numpy()
+        model = linear_model.LinearRegression().fit(x,y)
+        preds.append(model.predict(np.array(n+1).reshape(-1,1)))
+    return pd.Series(data=preds)
+
+def ransacpred(n,data):
+    #ransac attempts to be robust to outliers 
+    preds = []
+    for i,row in data.iterrows():
+        x = np.array(range(n)).reshape((-1,1))
+        y = row[-n:].to_numpy()
+        model = linear_model.RANSACRegressor(min_samples=x.shape[1] + 1).fit(x,y)
+        preds.append(model.predict(np.array(n+1).reshape(-1,1)))
+    return pd.Series(data=preds)
