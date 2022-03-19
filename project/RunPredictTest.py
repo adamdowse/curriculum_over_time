@@ -16,15 +16,17 @@ class Info:
     #build a simple logistic regression model
     num_classes = 3
     num_features = 3
+    model_layers = 20
+    model_layers_size = 8
     learning_rate = 0.01
     batch_size = 16
     max_data = 100
-    max_test_data = 10
+    max_test_data = 100
     max_epoch = 100
     data_stddev = 2
     data_random_state = 2
-    scoring_func = 'rank'
-    run_name = 'Data/' + scoring_func + '/OutputLayers/' + scoring_func
+    scoring_func = 'normal'
+    run_name = 'Data/modeldepth/20l8s_3f3c'
     acc = []
     dataused = []
     train_losses = []
@@ -39,11 +41,11 @@ info = Info()
 #this is the dataframe to train with and record the losses of trained on data
 df = sf.data_init(info)
 #this is the datasframe to record all losses and not to be trained on
-df_hidden = df.copy()
-a = info.scoring_func
-info.scoring_func = 'normal'
-hidden_ds,_ = sf.collect_data(df_hidden,info)
-info.scoring_func = a
+#df_hidden = df.copy()
+#a = info.scoring_func
+#info.scoring_func = 'normal'
+#hidden_ds,_ = sf.collect_data(df_hidden,info)
+#info.scoring_func = a
 #test data
 test_df = sf.data_init(info)
 test_ds, test_df = sf.collect_data(test_df,info,test=True)
@@ -54,7 +56,7 @@ min_x = [df.iloc[:,x].min() for x in range(info.num_features)]
 #init loss func and optimizer
 optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
 loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
-model = sf.build_model(info.num_classes)
+model = sf.build_model(info)
 
 #run experiment
 for e in range(info.max_epoch):
@@ -73,16 +75,16 @@ for e in range(info.max_epoch):
         df[str(e)] = np.nan
 
     #fake training loop to save the true losses
-    for step, (batch_x,batch_y,index) in enumerate(hidden_ds):
-        l = sf.run_optimization_model_noupdate(batch_x,batch_y,model,loss_func)
-        df_hidden = sf.update_loss_info(df_hidden,l,index,e)
+    #for step, (batch_x,batch_y,index) in enumerate(hidden_ds):
+    #    l = sf.run_optimization_model_noupdate(batch_x,batch_y,model,loss_func)
+    #    df_hidden = sf.update_loss_info(df_hidden,l,index,e)
 
     #predict next loss
-    if e == info.lookback:
-        #create the prediction df
-        pred_df = pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])
-    elif e > info.lookback:
-        pred_df = pd.concat([pred_df,pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])],axis=1)
+    #if e == info.lookback:
+    #    #create the prediction df
+    #    pred_df = pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])
+    #elif e > info.lookback:
+    #    pred_df = pd.concat([pred_df,pd.DataFrame(data=sf.nmeanpred(df.iloc[:,-info.lookback:]),columns=[str(e+1)])],axis=1)
 
 
     #real training loop
@@ -109,8 +111,8 @@ for e in range(info.max_epoch):
     else:
         info.acc.append(0)
 
-pred_df.to_csv(info.run_name+'_preddf')
-df_hidden.to_csv(info.run_name+'_fulldf')
+#pred_df.to_csv(info.run_name+'_preddf')
+#df_hidden.to_csv(info.run_name+'_fulldf')
 df.to_csv(info.run_name+'_df')
 
 acc_df = pd.DataFrame(data=info.acc)

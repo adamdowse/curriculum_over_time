@@ -256,10 +256,13 @@ def update_loss_info(df,loss,index,epoch):
         df.at[i,str(epoch)] = l
     return df
 
-def build_model(classes):
-    model = tf.keras.Sequential([
-        layers.Dense(classes, activation= 'softmax')
-    ])
+def build_model(info):
+    if info.model_layers > 1:
+        l = [layers.Dense(info.model_layers_size, activation= 'relu')] * (info.model_layers -1)
+        l.append(layers.Dense(info.num_classes, activation= 'softmax'))
+        model = tf.keras.Sequential(l)
+    else:
+        model = tf.keras.Sequential([layers.Dense(info.num_classes, activation= 'softmax')])
     return model
 
 def nmeanpred(data):
