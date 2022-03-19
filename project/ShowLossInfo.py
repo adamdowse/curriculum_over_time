@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-name = 'rank'
+name = 'meanlossgradient'
 root_dir = '/com.docker.devenvironments.code/project/Data/'+name+'/OutputLayers/'
 
 #Collect all the run infomation
@@ -29,7 +29,7 @@ plt.plot(range(max_epochs),df_loss.iloc[:,3:].mean(axis=0),label='Mean')
 plt.plot(range(max_epochs),df_loss.iloc[:,3:].max(axis=0),label='Max')
 plt.plot(range(max_epochs),df_loss.iloc[:,3:].min(axis=0),label='Min')
 plt.plot(range(max_epochs),df_loss.iloc[3,3:],label='Point 1')
-plt.plot(range(max_epochs),df_loss.iloc[10,3:],label='Point 2')
+#plt.plot(range(max_epochs),df_loss.iloc[10,3:],label='Point 2')
 plt.xlabel('Epoch')
 plt.ylabel('Loss')
 plt.yscale('log')
@@ -43,10 +43,10 @@ plt.plot(range(max_epochs),df_loss.iloc[:,3:].rolling(3,axis=1).var().mean(axis=
 plt.plot(range(max_epochs),df_loss.iloc[:,3:].rolling(3,axis=1).var().max(axis=0),label='Max')
 plt.plot(range(max_epochs),df_loss.iloc[:,3:].rolling(3,axis=1).var().min(axis=0),label='Min')
 plt.plot(range(max_epochs),df_loss.iloc[3,3:].rolling(3).var(),label='Point 1')
-plt.plot(range(max_epochs),df_loss.iloc[10,3:].rolling(3).var(),label='Point 2')
+#plt.plot(range(max_epochs),df_loss.iloc[10,3:].rolling(3).var(),label='Point 2')
 plt.xlabel('Epoch')
 plt.ylabel('Rolling Loss Variance')
-#plt.yscale('log')
+plt.yscale('log')
 plt.legend()
 plt.savefig(root_dir+'Loss_rolling_var.jpg')
 plt.close()
