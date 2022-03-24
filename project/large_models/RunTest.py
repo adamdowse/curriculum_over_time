@@ -16,22 +16,23 @@ class Info_class :
 
     #if datset name is a path use that path
     dataset_name = 'mnist'
-    data_path = ''#TODO
-    save_model_path = ''#TODO
+    data_path = '/'#TODO
+    save_model_path = '/'#TODO
     log_path =  ''#TODO
 
-
+    img_shape = 0
     dataused = [] 
-    class_names = ['Airplane','Automobile','Bird','Cat','Deer','Dog','Frog','Horse','Ship','Truck']
+    class_names = []
+
+    
 
 info = Info_class()
 
 # initilise the dataframe to train on and the test dataframe
-df = sf
-#turn this data into a datasets
+train_ds, test_ds,df_train_losses,info = sf.init_data(info)
 
 #build and load model, optimizer and loss functions
-
+#TODO start here
 #setup metrics to record: [train loss, test loss, train acc, test acc, dataused]
 
 #for epochs
