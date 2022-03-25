@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-import matplotlib.pylot as plt
+import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
 import os
 import csv
@@ -13,7 +13,7 @@ def init_data(info,bypass=False):
     '''
     Take a named dataset and if it already exists use the pre svaed data otherwise download it.
     '''
-    if os.path.isdir(info.data_path + info.dataset_name) and bypass=False:
+    if os.path.isdir(info.data_path + info.dataset_name) and bypass==False:
         print('INIT: Using found ',info.dataset_name, ' data')
         #if the data exists import the csv and change data into a tf dataset
         # need to take the csvs and fix the image data dimentions and turn into a tfdataset
@@ -38,10 +38,13 @@ def init_data(info,bypass=False):
 
         #Take the dataset and form a csv with the infomation in it
         i = 0
-        for image, label in ds:
+        for t in ds.take(1):
+            print(t)
+            print(i==0)
             if i == 0:
                 info.img_shape = image.shape()
-            if random.random() > 0.8: test = True else test = False
+            if random.random() > 0.8: test = True 
+            else: test = False
             df = pd.concat([df,[np.ravel(image.to_numpy()),label,i,test]],axis=0)
             df_losses = pd.concat([df_losses,[label,i,test]],axis=0)
             i += 1
@@ -56,14 +59,6 @@ def init_data(info,bypass=False):
             writer.writerow(info.class_names)
             writer.writerow(info.img_shape)
 
-    #convert from a vector image to 3d representation again and build dataset form dataframe
-    def img_dim_shift(x):
-        #x is a vector
-        new_x = []
-        for img in x:
-            new_x.append(img.reshape(img_shape))
-        return new_x
-
     train_df = df.where(df['test']==False)
     train_ds = tf.data.Dataset.from_tensor_slices((img_dim_shift(train_df['image'].values),train_df['label'].values,train_df['i'].values))
     print('INIT: Finished creating train dataset')
@@ -74,3 +69,39 @@ def init_data(info,bypass=False):
     df_train_losses = df_losses.where(df_losses['test']==False)
     return train_ds,test_ds,df_train_losses,info
 
+#convert from a vector image to 3d representation again and build dataset form dataframe
+def img_dim_shift(x):
+    #x is a vector
+    new_x = []
+    for img in x:
+        new_x.append(img.reshape(info.img_shape))
+    return new_x
+
+def collect_train_data(train_df,info):
+    #take the training dataframe and apply the scoring functions to it
+    #the output is a tf dataset with an ordered crric 
+
+    if info.scoring_function == 'normal':
+            train_ds = tf.data.Dataset.from_tensor_slices((
+                img_dim_shift(train_df['image'].values),
+                train_df['label'].values,
+                train_df['i'].values
+            ))
+    #add more here if needed
+    else:
+        print('COLLECT TRAIN DATA: ERROR no valid scoring function')
+
+
+    return train_ds
+
+def update_col(batch_loss, col, batch):
+    #take the batch_losses and update column 
+    for i, b in enumerate(batch):
+        #add the index and loss to the column
+        col = pd.concat([col,[b[2],batch_loss[i]]],axis=0)
+    return col
+
+def update_df(col,train_df):
+    #add the column to the large dataframe
+    train_df = train_df.merge(col,left_on='i',right_on='i')
+    return train_df
