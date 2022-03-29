@@ -83,7 +83,6 @@ for info.current_epoch in range(info.max_epochs): #this may not work.
     #collect train dataset from the dataset via a scoring function
     #train_ds = sf.collect_train_data(df_train_losses,info)
     
-
     #create the column for losses
     col = pd.DataFrame(columns=['i',str(info.current_epoch)])
 
