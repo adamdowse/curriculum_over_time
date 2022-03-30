@@ -8,3 +8,4 @@ pyyaml
 h5py
 sklearn
 opencv-python
+wandb
