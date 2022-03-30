@@ -3,11 +3,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
+from sklearn import linear_model
 import os
 import csv
 import random
-
-
 
 def init_data(info,bypass=False):
     '''
@@ -100,22 +99,81 @@ def img_dim_shift(x,info):
 def label_oh(x,info):
     return tf.one_hot(x,info.num_classes)
 
-
 def collect_train_data(train_df,info):
     #take the training dataframe and apply the scoring functions to it
     #the output is a tf dataset with an ordered crric 
+    def calc_grad(n,data):
+        grads = []
+        for i,row in data.iterrows():
+            x = np.array(range(n)).reshape((-1,1))
+            y = row[-n:].to_numpy()
+            model = linear_model.LinearRegression().fit(x,y)
+            grads.append(model.coef_[0])
+        return pd.Series(data=grads)
 
     if info.scoring_function == 'normal':
-            train_ds = tf.data.Dataset.from_tensor_slices((
-                img_dim_shift(train_df['img'].values),
-                train_df['label'].values,
-                train_df['i'].values
-            ))
-    #add more here if needed
+        train_df = train_df.sample(frac=1)
+        train_ds = tf.data.Dataset.from_tensor_slices((
+            img_dim_shift(train_df['img'].values),
+            train_df['label'].values,
+            train_df['i'].values
+        ))
+
+    elif info.scoring_function == 'naive_grads':
+        #calc gradients over last n losses
+        #sort from lowest to highest
+        #use the selected pacing function to trim the data
+        #output the dataset
+        n = 3 #lookback for gradients
+        if info.current_epoch == 0:
+            #use all the data
+            df = train_df.copy()
+        elif info.current_epoch == 1:
+            #use the first epochs loss info
+            df = train_df.copy()
+            df['score'] = df['0']
+            df = trim_data(df,info)
+        elif info.current_epoch < n:
+            #calc grad over as many as possible
+            n = info.current_epoch
+            df = train_df.copy() 
+            df['score'] = calc_grad(n,df[:,-n:])
+            df = trim_data(df,info)
+        elif info.current_epoch >= n:
+            #needs to be n+1 epoch before it can use this
+            #TODO check the slicing of this line (should be)
+            df = train_df.loc[:,np.r_[:3,-n:]].copy() 
+            df['score'] = calc_grad(n,df[:,-n:])
+            df = trim_data(df,info)
+        
+        train_ds = tf.data.Dataset.from_tensor_slices((
+            img_dim_shift(df['img'].values),
+            df['label'].values,
+            df['i'].values
+        ))
+
     else:
         print('COLLECT TRAIN DATA: ERROR no valid scoring function')
 
     return train_ds
+
+def trim_data(df,info):
+    if info.pacing_function == 'none':
+        return df
+    elif info.pacing_function == 'naive_linear_high_first':
+        df = df.sort_values('score',ascending=True)
+        d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
+        d = min([1,d])
+        d = int(d*len(df.index))
+        return df[:d,:]
+    elif info.pacing_function == 'naive_linear_low_first':
+        df = df.sort_values('score',ascending=False)
+        d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
+        d = min([1,d])
+        d = int(d*len(df.index))
+        return df[:d,:]
+    #add more here
+
 
 def update_col(batch_loss, col, batch,info):
     #take the batch_losses and update column 
