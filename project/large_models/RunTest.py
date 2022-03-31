@@ -14,10 +14,10 @@ def parse_arguments():
     parser.add_argument('--learning_rate',type=float,default=0.01)
     parser.add_argument('--batch_size',type=int,default=16)
     parser.add_argument('--scoring_function',type=str,default='normal')
-    parser.add_argument('--pacing_function',type=str,defult='none')
+    parser.add_argument('--pacing_function',type=str,default='none')
     parser.add_argument('--dataset',type=str,default='mnist')
-    parser.add_argument('--lam_zero',type=float,defult=0.1)
-    parser.add_argument('--lam_pace',type=float,defult=0.9)
+    parser.add_argument('--lam_zero',type=float,default=0.1)
+    parser.add_argument('--lam_pace',type=float,default=0.9)
 
     args = parser.parse_args()
     return args
@@ -39,7 +39,7 @@ def main(args):
         lam_pace = args.lam_pace
 
         #if datset name is a path use that path
-        dataset_name = args.datset
+        dataset_name = args.dataset
         data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
         save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
@@ -54,7 +54,7 @@ def main(args):
         'batch_size':args.batch_size,
         'scoring_func':args.scoring_function,
         'pacing_func':args.pacing_function,
-        'dataset':args.datset,
+        'dataset':args.dataset,
         'lam_zero':args.lam_zero,
         'lam_pace':args.lam_pace
     }
@@ -83,7 +83,12 @@ def main(args):
         test_acc_metric(labels, preds)
 
     # initilise the dataframe to train on and the test dataframe
-    train_ds, test_ds, df_train_losses, info = sf.init_data(info)
+    train_ds, test_ds, df_train_losses, train_df, info = sf.init_data(info)
+    #train_ds is a tf dataset of just the training set (img,label,i)
+    #test_ds is the same 
+    #df_train_losses is a df of just training set without images, (label,i) used to record losses
+    #train_df is the df with images in it (img,label,i)
+    #TODO optimize this, does it have to be all these different things? Generators?
 
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
@@ -98,11 +103,12 @@ def main(args):
     dataused = []
 
     print('Setup Complete, Starting training:')
-    train_ds = train_ds.batch(info.batch_size)
+    #train_ds = train_ds.batch(info.batch_size)
     for info.current_epoch in range(info.max_epochs): #this may not work.
         #collect train dataset from the dataset via a scoring function
         if info.scoring_function != 'normal':
-            train_ds = sf.collect_train_data(df_train_losses,info)
+            train_ds = sf.collect_train_data(df_train_losses,train_df,info)
+            train_ds = train_ds.batch(info.batch_size)
         
         #create the column for losses
         col = pd.DataFrame(columns=['i',str(info.current_epoch)])
@@ -110,7 +116,8 @@ def main(args):
         #training step
         d = []
         for i, batch in enumerate(train_ds):
-            d += len(batch[1]) #TODO update so we can see the images used per class
+            print(batch[1].numpy())
+            d += len(batch[1].numpy()) #TODO update so we can see the images used per class
             #collect losses and train model
             if i % 100 == 0: print("Batch ="+str(i))
             batch_loss = train_step(batch[0],batch[1])

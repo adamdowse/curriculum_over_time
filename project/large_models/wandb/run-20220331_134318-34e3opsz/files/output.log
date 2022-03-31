@@ -1,0 +1,33 @@
+
+INIT: Using found mnist data
+                                                     img  ...   test
+0      [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+1      [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+2      [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+3      [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+6      [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+...                                                  ...  ...    ...
+69995  [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+69996  [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+69997  [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+69998  [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+69999  [  0   0   0   0   0   0   0   0   0   0   0  ...  ...  False
+[55994 rows x 4 columns]
+2022-03-31 13:44:06.398605: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-03-31 13:44:06.398690: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (b371895a6098): /proc/driver/nvidia/version does not exist
+2022-03-31 13:44:06.399085: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-03-31 13:44:06.400610: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 351194368 exceeds 10% of free system memory.
+2022-03-31 13:45:19.829363: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 175597184 exceeds 10% of free system memory.
+INIT: Finished creating train dataset
+INIT: Finished creating test dataset
+Setup Complete, Starting training:
+2022-03-31 13:45:33.576076: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 87845632 exceeds 10% of free system memory.
+2022-03-31 13:46:41.872858: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 351194368 exceeds 10% of free system memory.
+2022-03-31 13:47:54.759568: W tensorflow/core/framework/cpu_allocator_impl.cc:82] Allocation of 351194368 exceeds 10% of free system memory.
+Traceback (most recent call last):
+  File "RunTest.py", line 171, in <module>
+    main(args)
+  File "RunTest.py", line 119, in main
+    d += len(batch[1]) #TODO update so we can see the images used per class
+TypeError: 'int' object is not iterable

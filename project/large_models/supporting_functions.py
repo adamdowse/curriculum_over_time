@@ -76,7 +76,7 @@ def init_data(info,bypass=False):
 
     df_train_losses = df_losses[df_losses['test']==False]
 
-    return train_ds,test_ds,df_train_losses,info
+    return train_ds,test_ds,df_train_losses,train_df,info
 
 #convert from a vector image to 3d representation again and build dataset form dataframe
 def img_dim_shift(x,info):
@@ -99,7 +99,7 @@ def img_dim_shift(x,info):
 def label_oh(x,info):
     return tf.one_hot(x,info.num_classes)
 
-def collect_train_data(train_df,info):
+def collect_train_data(train_df,img_df,info):
     #take the training dataframe and apply the scoring functions to it
     #the output is a tf dataset with an ordered crric 
     def calc_grad(n,data):
@@ -112,11 +112,11 @@ def collect_train_data(train_df,info):
         return pd.Series(data=grads)
 
     if info.scoring_function == 'normal':
-        train_df = train_df.sample(frac=1)
+        img_df = img_df.sample(frac=1)
         train_ds = tf.data.Dataset.from_tensor_slices((
-            img_dim_shift(train_df['img'].values),
-            train_df['label'].values,
-            train_df['i'].values
+            img_dim_shift(img_df['img'].values,info),
+            img_df['label'].values,
+            img_df['i'].values
         ))
 
     elif info.scoring_function == 'naive_grads':
@@ -127,27 +127,28 @@ def collect_train_data(train_df,info):
         n = 3 #lookback for gradients
         if info.current_epoch == 0:
             #use all the data
-            df = train_df.copy()
+            df = img_df.copy()
         elif info.current_epoch == 1:
             #use the first epochs loss info
-            df = train_df.copy()
-            df['score'] = df['0']
+            df = img_df.copy()
+            df['score'] = train_df['0'].copy()
             df = trim_data(df,info)
         elif info.current_epoch < n:
             #calc grad over as many as possible
             n = info.current_epoch
-            df = train_df.copy() 
-            df['score'] = calc_grad(n,df[:,-n:])
+            df = img_df.copy()
+            df['score'] = calc_grad(n,train_df[:,-n:])
             df = trim_data(df,info)
         elif info.current_epoch >= n:
             #needs to be n+1 epoch before it can use this
             #TODO check the slicing of this line (should be)
-            df = train_df.loc[:,np.r_[:3,-n:]].copy() 
-            df['score'] = calc_grad(n,df[:,-n:])
+            df = img_df.copy()
+            sliced_df = train_df.loc[:,np.r_[:3,-n:]].copy() 
+            df['score'] = calc_grad(n,sliced_df[:,-n:])
             df = trim_data(df,info)
-        
+
         train_ds = tf.data.Dataset.from_tensor_slices((
-            img_dim_shift(df['img'].values),
+            img_dim_shift(df['img'].values,info),
             df['label'].values,
             df['i'].values
         ))
