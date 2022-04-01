@@ -4,6 +4,7 @@ from tensorflow import keras
 import tensorboard as tb
 import supporting_functions as sf
 import supporting_models as sm
+import datagen
 import wandb
 import argparse
 
@@ -25,8 +26,8 @@ def parse_arguments():
 def main(args):
     #TODO - Add dataused each epoch and save the array
     #TODO - Implement split data csv
-
     class Info_class :
+        #TODO remove this and use wadnb config
         #variables for test
         max_epochs = args.max_epochs
         learning_rate = args.learning_rate
@@ -48,6 +49,7 @@ def main(args):
         class_names = []
 
     info = Info_class()
+
     config = {
         'epochs':args.max_epochs,
         'learning_rate':args.learning_rate,
@@ -83,61 +85,65 @@ def main(args):
         test_acc_metric(labels, preds)
 
     # initilise the dataframe to train on and the test dataframe
-    train_ds, test_ds, df_train_losses, train_df, info = sf.init_data(info)
-    #train_ds is a tf dataset of just the training set (img,label,i)
-    #test_ds is the same 
-    #df_train_losses is a df of just training set without images, (label,i) used to record losses
-    #train_df is the df with images in it (img,label,i)
-    #TODO optimize this, does it have to be all these different things? Generators?
+    df_train_losses, train_df, test_df, info = sf.init_data(info)
+    #df_train_losses is a df of just training set without images, (i|label,score) used to record losses
+    #train_df is the df with images in it (i|img,label)
+    #test_df is the df with images in it (i|img,label)
+
+    #Init the data generators
+    train_data_gen = datagen.CustomDataGen(
+        df = train_df,
+        X_col = 'img',
+        Y_col = 'label',
+        batch_size = 4, #change this
+        input_size = (28,28,1),
+        test=False
+    )
+    test_data_gen = datagen.CustomDataGen(
+        df = test_df,
+        X_col = 'img',
+        Y_col = 'label',
+        batch_size = 4,
+        input_size = (28,28,1),
+        test=True
+    )
 
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
     optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
 
-    #setup metrics to record: [train loss, test loss, train acc, test acc, dataused]
+    #setup metrics to record: [train loss, test loss, train acc, test acc]
     train_loss = tf.keras.metrics.Mean(name='train_loss')
     train_acc_metric = keras.metrics.CategoricalAccuracy()
     test_loss = tf.keras.metrics.Mean(name='test_loss')
     test_acc_metric = keras.metrics.CategoricalAccuracy()
-    dataused = []
 
-    print('Setup Complete, Starting training:')
-    #train_ds = train_ds.batch(info.batch_size)
-    for info.current_epoch in range(info.max_epochs): #this may not work.
-        #collect train dataset from the dataset via a scoring function
-        if info.scoring_function != 'normal':
-            train_ds = sf.collect_train_data(df_train_losses,train_df,info)
-            train_ds = train_ds.batch(info.batch_size)
-        
+    print('MAIN: Started Training')
+    for info.current_epoch in range(info.max_epochs):
         #create the column for losses
         col = pd.DataFrame(columns=['i',str(info.current_epoch)])
 
         #training step
-        d = []
-        for i, batch in enumerate(train_ds):
-            print(batch[1].numpy())
-            d += len(batch[1].numpy()) #TODO update so we can see the images used per class
+        for i, (X,Y) in enumerate(train_data_gen):
             #collect losses and train model
             if i % 100 == 0: print("Batch ="+str(i))
-            batch_loss = train_step(batch[0],batch[1])
+            batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
-            col = sf.update_col(batch_loss,col,batch,info)
-            #TODO record the mean losses for each class
+            col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
 
-        #dataused
-        dataused.append(d)
+        #add the col to the loss holder
+        col = col.set_index('i') #col = (i|current_epoch)
+        df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
 
-        #add the dataframe to the 
-        #TODO add the unused data
-        print(col)
-        df_train_losses = sf.update_df(col,df_train_losses)
-        print(df_train_losses)
-
+        #TODO calc data to use next epoch NEED TO MAKE SURE THE INDEXING IS RIGHT AND TAKE THIS INTO THE GEN
+        df_train_losses = scoring_func(df_train_losses) # =(i|score,0,1,2...) 
+        df_train_losses = pacing_func(df_train_losses) # change the score to a rank and nan for not used
+        train_data_gen.on_epoch_end(df_train_losses)
 
         #test steps
-        for batch in test_ds.batch(info.batch_size):
-            test_step(batch[0],batch[1])
+        for X,Y in test_data_gen:
+            test_step(X[1],Y)
 
         wandb.log({
             'Epoch':info.current_epoch,
@@ -145,7 +151,11 @@ def main(args):
             'Test-Loss':test_loss.result().numpy(),
             'Train-Acc':train_acc_metric.result().numpy(),
             'Test-Acc':test_acc_metric.result().numpy(),
-            'Data-Used':d})
+            'Data-Used':train_data_gen.dataused,
+            'Class-Used':train_data_gen.class_used})
+        
+        #save the data info into a csv
+        #TODO
         
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
