@@ -1,0 +1,28 @@
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  i   test
+0      2  0  False
+1      0  1  False
+2      4  2  False
+3      8  3  False
+4      7  4   True
+   label  i   test
+0      2  0  False
+1      0  1  False
+2      4  2  False
+3      8  3  False
+4      7  4   True
+MAIN: Started Training
+Batch =0
+2022-04-05 10:33:37.636023: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-05 10:33:37.636091: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (69dc0e526fe3): /proc/driver/nvidia/version does not exist
+2022-04-05 10:33:37.636310: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Traceback (most recent call last):
+  File "RunTest.py", line 182, in <module>
+    main(args)
+  File "RunTest.py", line 133, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 192, in update_col
+    new_row = pd.DataFrame(data={'i':indexes[i].numpy(),str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+AttributeError: 'numpy.int64' object has no attribute 'numpy'

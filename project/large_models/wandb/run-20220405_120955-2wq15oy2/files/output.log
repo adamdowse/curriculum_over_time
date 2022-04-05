@@ -1,0 +1,87 @@
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Batch =0
+2022-04-05 12:09:59.781975: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-05 12:09:59.782058: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (69dc0e526fe3): /proc/driver/nvidia/version does not exist
+2022-04-05 12:09:59.782339: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+   label  score         0
+i
+0      2    NaN  0.001054
+1      0    NaN   0.03323
+2      4    NaN  0.005834
+3      8    NaN  0.330131
+6      0    NaN   0.00134
+   label  score         0
+i
+0      2   5971  0.001054
+1      0  50732   0.03323
+2      4  14254  0.005834
+3      8    678  0.330131
+6      0  30891   0.00134
+       label  score         0
+i
+42672      4    0.0  0.009664
+67068      9    1.0  0.126834
+20611      3    2.0  0.002944
+40556      3    3.0  0.042682
+65104      1    4.0  0.018481
+ON_EPOCH_END:
+       label  score         0
+i
+42672      4    0.0  0.009664
+67068      9    1.0  0.126834
+20611      3    2.0  0.002944
+40556      3    3.0  0.042682
+65104      1    4.0  0.018481
+                                                     img  label  score
+i
+30490  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+62029  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+52464  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+68489  [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+5488   [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+                                                     img  label  score
+i
+30490  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+62029  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+52464  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+68489  [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+5488   [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Traceback (most recent call last):
+  File "RunTest.py", line 183, in <module>
+    main(args)
+  File "RunTest.py", line 145, in main
+    train_data_gen.on_epoch_end(df_train_losses)
+  File "/com.docker.devenvironments.code/project/large_models/datagen.py", line 42, in on_epoch_end
+    self.class_used = [len(self.df[df.loc[:self.dataused,'label']==x].index) for x in range(self.num_classes)]
+  File "/com.docker.devenvironments.code/project/large_models/datagen.py", line 42, in <listcomp>
+    self.class_used = [len(self.df[df.loc[:self.dataused,'label']==x].index) for x in range(self.num_classes)]
+NameError: name 'df' is not defined

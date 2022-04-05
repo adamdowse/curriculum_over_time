@@ -1,0 +1,123 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Batch =0
+2022-04-05 13:44:32.997447: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-05 13:44:32.997520: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (69dc0e526fe3): /proc/driver/nvidia/version does not exist
+2022-04-05 13:44:32.997743: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+   label  score         0
+i
+0      2    NaN  0.006381
+1      0    NaN  0.005155
+2      4    NaN  0.006827
+3      8    NaN  0.170932
+6      0    NaN  0.002481
+   label  score         0
+i
+0      2   9962  0.006381
+1      0  19480  0.005155
+2      4  34202  0.006827
+3      8  43369  0.170932
+6      0   8955  0.002481
+       label  score         0
+i
+34471      2    0.0  0.000679
+69218      4    1.0  1.788707
+9954       0    2.0  1.886907
+42080      4    3.0  0.942187
+28201      4    4.0  0.309855
+ON_EPOCH_END:
+[5514, 6314, 5599, 5707, 5431, 5058, 5516, 5840, 5484, 5531]
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-05 13:47:09.778855: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Epoch  1 , Loss:  0.48482326 , Accuracy:  0.86965764 , Test Loss:  0.25635183 , Test Accuracy:  0.9253433
+Checkpoint saved
+Batch =0
+Batch =100
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+       label  score         0         1
+i
+34471      2    0.0  0.000679  0.000802
+69218      4    1.0  1.788707  0.052369
+9954       0    2.0  1.886907  0.877143
+42080      4    3.0  0.942187  0.774689
+28201      4    4.0  0.309855  0.010051
+       label     score         0         1
+i
+34471      2  0.000679  0.000679  0.000802
+69218      4  1.788707  1.788707  0.052369
+9954       0  1.886907  1.886907  0.877143
+42080      4  0.942187  0.942187  0.774689
+28201      4  0.309855  0.309855  0.010051
+       label  score         0    1
+i
+62848      2    0.0  0.000005  NaN
+20657      2    1.0  0.000012  NaN
+65660      0    2.0  0.000013  NaN
+38013      2    3.0  0.000014  NaN
+8643       2    4.0  0.000015  NaN
+ON_EPOCH_END:
+[5514, 6314, 5599, 5707, 5431, 5058, 5516, 5840, 5484, 5531]
+Epoch  2 , Loss:  0.25231075 , Accuracy:  0.9215158 , Test Loss:  0.24921855 , Test Accuracy:  0.927131
+Batch =0
+Batch =100
+Batch =200
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 3621, in get_loc
+    return self._engine.get_loc(casted_key)
+  File "pandas/_libs/index.pyx", line 136, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 142, in pandas._libs.index.IndexEngine.get_loc
+TypeError: '(slice(None, None, None), array([0]))' is an invalid key
+During handling of the above exception, another exception occurred:
+Traceback (most recent call last):
+  File "RunTest.py", line 193, in <module>
+    main(args)
+  File "RunTest.py", line 142, in main
+    df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 148, in scoring_func
+    df['score'] = calc_grad(n,df[:,np.r_[0,-n:]])
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 3505, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 3628, in get_loc
+    self._check_indexing_error(key)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 5637, in _check_indexing_error
+    raise InvalidIndexError(key)
+pandas.errors.InvalidIndexError: (slice(None, None, None), array([0]))
+       label  score         0    1         2
+i
+62848      2    0.0  0.000005  NaN  0.000023
+20657      2    1.0  0.000012  NaN  0.000503
+65660      0    2.0  0.000013  NaN  0.000021
+38013      2    3.0  0.000014  NaN  0.000074
+8643       2    4.0  0.000015  NaN  0.000029

@@ -1,0 +1,33 @@
+INIT: Using found mnist data
+                                                 img  label   test
+i
+0  [  0   0   0   0   0   0   0   0   0   0   0  ...      2  False
+1  [  0   0   0   0   0   0   0   0   0   0   0  ...      0  False
+2  [  0   0   0   0   0   0   0   0   0   0   0  ...      4  False
+3  [  0   0   0   0   0   0   0   0   0   0   0  ...      8  False
+6  [  0   0   0   0   0   0   0   0   0   0   0  ...      0  False
+                                                  img  label  test
+i
+4   [  0   0   0   0   0   0   0   0   0   0   0  ...      7  True
+5   [  0   0   0   0   0   0   0   0   0   0   0  ...      6  True
+7   [  0   0   0   0   0   0   0   0   0   0   0  ...      6  True
+14  [  0   0   0   0   0   0   0   0   0   0   0  ...      8  True
+26  [  0   0   0   0   0   0   0   0   0   0   0  ...      6  True
+Traceback (most recent call last):
+  File "RunTest.py", line 182, in <module>
+    main(args)
+  File "RunTest.py", line 88, in main
+    df_train_losses, train_df, test_df, info = sf.init_data(info)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 74, in init_data
+    train_df = train_df.drop('test').set_index('i')
+  File "/usr/local/lib/python3.8/dist-packages/pandas/util/_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 4948, in drop
+    return super().drop(
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/generic.py", line 4279, in drop
+    obj = obj._drop_axis(labels, axis, level=level, errors=errors)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/generic.py", line 4323, in _drop_axis
+    new_axis = axis.drop(labels, errors=errors)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 6644, in drop
+    raise KeyError(f"{list(labels[mask])} not found in axis")
+KeyError: "['test'] not found in axis"

@@ -70,14 +70,15 @@ def init_data(info,bypass=False):
     train_df = df[df['test']==False]
     test_df = df[df['test']==True]
 
-    train_df = train_df.drop('test').set_index('i')
-    test_df = test_df.drop('test').set_index('i')
+    train_df = train_df.drop(columns='test')
+    test_df = test_df.drop(columns='test')
 
     print('INIT: Finished creating train dataset')
 
     df_train_losses = df_losses[df_losses['test']==False]
-    df_train_losses = df_train_losses.drop('test').set_index('i')
+    df_train_losses = df_train_losses.drop(columns='test').set_index('i')
     df_train_losses['score'] = np.nan
+    print(df_train_losses.head())
 
     return df_train_losses,train_df,test_df,info
 
@@ -103,7 +104,7 @@ def label_oh(x,info):
     return tf.one_hot(x,info.num_classes)
 
 def scoring_func(df,info):
-    #df is train_data_losses = (i|0,1,2,3,4...)
+    #df is train_data_losses = (i|score,0,1,2,3,4...)
     #take the training dataframe and apply the scoring functions to it
     #the output is a dataframe with the score of each index
     def calc_grad(n,data):
@@ -120,34 +121,39 @@ def scoring_func(df,info):
 
     if info.scoring_function == 'normal':
         #use the normal reshuffling technique
-        i = random.shuffle(range(len(df.index)))
+        i = random.sample([x for x in range(len(df.index))],len(df.index))
         df['score'] = i
         return df
         
     elif info.scoring_function == 'naive_grads':
         #calc gradients over last n losses
         #convert any nans into last loss val
-        df_filled = df.copy()
-        df_filled = df_filled.iloc[:,1:].fillna(method='ffill',axis=1)
+        #TODO this is not being used move into the lower levels
+        #df_filled = df.copy()
+        #df_filled = df_filled.iloc[:,1:].fillna(method='ffill',axis=1)
 
         n = 3 #lookback for gradients
         if info.current_epoch == 0:
-            #use all the data but shuffled
-            i = random.shuffle(range(len(df.index)))
-            df['score'] = i
-
-        elif info.current_epoch == 1:
+            print('used 0 epoch')
+            print(df.isna().sum())
             #use the first epochs loss info
             df['score'] = df['0']
 
         elif info.current_epoch < n:
+            print('use reduced grads')
+            print(df.isna().sum())
+            #fill the missing info
+            n = info.current_epoch + 1
+            df.iloc[:,-n:] = df.iloc[:,-n:].fillna(method='ffill',axis=1)
             #calc grad over as many as possible
-            n = info.current_epoch
-            df['score'] = calc_grad(n,df[:,np.r_[0,-n:]])
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
 
-        elif info.current_epoch >= n:
+        elif info.current_epoch >= n-1:
+            print('use full grads')
+            #fill the missing info
+            df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
             #needs to be n+1 epoch before it can use this
-            df['score'] = calc_grad(n,df[:,-n:])
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
 
 
     else:
@@ -164,11 +170,11 @@ def pacing_func(df,info):
         df = df.sort_values('score',ascending=True)
         #calc amount of data to use
         d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
-        d = min([1,d])
+        d = min([1,d]) #percentage
         d = int(d*n)
-        i = range(d)
+        i = [x for x in range(d)] #[0 to dataused]
         i = i + [np.nan]*(n-d)
-        df['score'] = i
+        df['score'] = i #the final rank
         return df
 
     elif info.pacing_function == 'naive_linear_low_first':
@@ -183,12 +189,11 @@ def pacing_func(df,info):
         df['score'] = i
         return df
 
-
 def update_col(batch_loss, col, indexes,info):
     #take the batch_losses and update column 
     for i in range(len(batch_loss)):
         #add the index and loss to the column
-        new_row = pd.DataFrame(data={'i':indexes[i].numpy(),str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+        new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
         col = pd.concat([col,new_row],axis=0)
     return col
 

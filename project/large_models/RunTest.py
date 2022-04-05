@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 import tensorboard as tb
@@ -95,7 +96,7 @@ def main(args):
         df = train_df,
         X_col = 'img',
         Y_col = 'label',
-        batch_size = 4, #change this
+        batch_size = args.batch_size, #change this
         input_size = (28,28,1),
         test=False
     )
@@ -103,7 +104,7 @@ def main(args):
         df = test_df,
         X_col = 'img',
         Y_col = 'label',
-        batch_size = 4,
+        batch_size = args.batch_size,
         input_size = (28,28,1),
         test=True
     )
@@ -125,20 +126,24 @@ def main(args):
         col = pd.DataFrame(columns=['i',str(info.current_epoch)])
 
         #training step
+        s = []
         for i, (X,Y) in enumerate(train_data_gen):
             #collect losses and train model
             if i % 100 == 0: print("Batch ="+str(i))
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
-
+            s = [X,Y]
+        print(s)
+        prn()
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
 
         #TODO calc data to use next epoch NEED TO MAKE SURE THE INDEXING IS RIGHT AND TAKE THIS INTO THE GEN
-        df_train_losses = scoring_func(df_train_losses) # =(i|score,0,1,2...) 
-        df_train_losses = pacing_func(df_train_losses) # change the score to a rank and nan for not used
+
+        df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
+        df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
         train_data_gen.on_epoch_end(df_train_losses)
 
         #test steps
@@ -152,10 +157,17 @@ def main(args):
             'Train-Acc':train_acc_metric.result().numpy(),
             'Test-Acc':test_acc_metric.result().numpy(),
             'Data-Used':train_data_gen.dataused,
-            'Class-Used':train_data_gen.class_used})
+            '0-Used':train_data_gen.class_used[0],
+            '1-Used':train_data_gen.class_used[1],
+            '2-Used':train_data_gen.class_used[2],
+            '3-Used':train_data_gen.class_used[3],
+            '4-Used':train_data_gen.class_used[4],
+            '5-Used':train_data_gen.class_used[5],
+            '6-Used':train_data_gen.class_used[6],
+            '7-Used':train_data_gen.class_used[7],
+            '8-Used':train_data_gen.class_used[8],
+            '9-Used':train_data_gen.class_used[9],})
         
-        #save the data info into a csv
-        #TODO
         
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
@@ -172,7 +184,7 @@ def main(args):
             print('Checkpoint saved')
 
     #save the model and data
-    np.savetxt(info.data_path + info.dataset_name + '/dataused.csv',dataused)
+    #np.savetxt(info.data_path + info.dataset_name + '/dataused.csv',dataused)
     model.save(info.save_model_path)
     df_train_losses.to_csv(info.data_path + info.dataset_name + '/normal_loss_info.csv')
 

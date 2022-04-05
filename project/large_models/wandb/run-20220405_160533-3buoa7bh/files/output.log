@@ -1,0 +1,88 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+original [5514, 6314, 5599, 5707, 5431, 5058, 5516, 5840, 5484, 5531]
+original 55994
+original [1389, 1563, 1391, 1434, 1393, 1255, 1360, 1453, 1341, 1427]
+original 14006
+MAIN: Started Training
+Batch =0
+2022-04-05 16:05:38.520139: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-05 16:05:38.520234: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (69dc0e526fe3): /proc/driver/nvidia/version does not exist
+2022-04-05 16:05:38.520643: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+   label  score         0
+i
+0      2    NaN  0.011147
+1      0    NaN  0.003712
+2      4    NaN  0.010285
+3      8    NaN  0.253932
+6      0    NaN  0.030744
+used 0 epoch
+   label     score         0
+i
+0      2  0.011147  0.011147
+1      0  0.003712  0.003712
+2      4  0.010285  0.010285
+3      8  0.253932  0.253932
+6      0  0.030744  0.030744
+       label  score         0
+i
+25534      2    0.0   0.00001
+14744      2    1.0  0.000012
+40652      2    2.0  0.000012
+14616      3    3.0  0.000016
+46530      2    4.0  0.000018
+                                                     img  label  score
+i
+25534  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    0.0
+14744  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    1.0
+40652  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    2.0
+14616  [  0   0   0   0   0   0   0   0   0   0   0  ...      3    3.0
+46530  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    4.0
+...                                                  ...    ...    ...
+40912  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+42763  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+20297  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+50721  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+49434  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+5599
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Traceback (most recent call last):
+  File "RunTest.py", line 193, in <module>
+    main(args)
+  File "RunTest.py", line 146, in main
+    train_data_gen.on_epoch_end(df_train_losses)
+  File "/com.docker.devenvironments.code/project/large_models/datagen.py", line 43, in on_epoch_end
+    self.class_used = [len(self.df.index)-self.df.score[self.df.label==x].isnan().sum() for x in range(self.num_classes)]
+  File "/com.docker.devenvironments.code/project/large_models/datagen.py", line 43, in <listcomp>
+    self.class_used = [len(self.df.index)-self.df.score[self.df.label==x].isnan().sum() for x in range(self.num_classes)]
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/generic.py", line 5583, in __getattr__
+    return object.__getattribute__(self, name)
+AttributeError: 'Series' object has no attribute 'isnan'

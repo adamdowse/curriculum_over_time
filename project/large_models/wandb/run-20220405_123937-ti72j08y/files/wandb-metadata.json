@@ -1,0 +1,39 @@
+{
+    "os": "Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.29",
+    "python": "3.8.10",
+    "heartbeatAt": "2022-04-05T12:39:39.619203",
+    "startedAt": "2022-04-05T12:39:37.170780",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "--max_epochs",
+        "30",
+        "--learning_rate",
+        "0.01",
+        "--batch_size",
+        "32",
+        "--scoring_function",
+        "naive_grads",
+        "--pacing_function",
+        "naive_linear_high_first",
+        "--dataset",
+        "mnist",
+        "--lam_zero",
+        "0.1",
+        "--lam_pace",
+        "0.9"
+    ],
+    "state": "running",
+    "program": "RunTest.py",
+    "codePath": "project/large_models/RunTest.py",
+    "git": {
+        "remote": "https://github.com/adamdowse/curriculum_over_time",
+        "commit": "e90292dc4b6db477930a3460f094b668492dcf89"
+    },
+    "email": "adamdowse@hotmail.co.uk",
+    "root": "/com.docker.devenvironments.code",
+    "host": "69dc0e526fe3",
+    "username": "vscode",
+    "executable": "/usr/local/bin/python"
+}

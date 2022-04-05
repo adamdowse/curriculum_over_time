@@ -1,0 +1,1 @@
+{"Epoch": 0, "Train-Loss": 0.5041965246200562, "Test-Loss": 0.2647913992404938, "Train-Acc": 0.8633147478103638, "Test-Acc": 0.9212671518325806, "Data-Used": 55994, "0-Used": 0, "1-Used": 0, "2-Used": 0, "3-Used": 0, "4-Used": 0, "5-Used": 0, "6-Used": 0, "7-Used": 0, "8-Used": 0, "9-Used": 0, "_timestamp": 1649170462, "_runtime": 158, "_step": 0, "_wandb": {"runtime": 178}}
