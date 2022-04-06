@@ -1,0 +1,211 @@
+2022-04-06 10:34:01,937 INFO    MainThread:11572 [internal.py:wandb_internal():92] W&B internal server running at pid: 11572, started at: 2022-04-06 10:34:01.937209
+2022-04-06 10:34:01,941 INFO    WriterThread:11572 [datastore.py:open_for_write():77] open: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/run-3vn9nkku.wandb
+2022-04-06 10:34:01,943 DEBUG   SenderThread:11572 [sender.py:send():235] send: header
+2022-04-06 10:34:01,943 DEBUG   SenderThread:11572 [sender.py:send():235] send: run
+2022-04-06 10:34:02,176 INFO    SenderThread:11572 [dir_watcher.py:__init__():169] watching files in: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files
+2022-04-06 10:34:02,176 INFO    SenderThread:11572 [sender.py:_start_run_threads():812] run started: 3vn9nkku with start time 1649241241
+2022-04-06 10:34:02,177 DEBUG   SenderThread:11572 [sender.py:send():235] send: summary
+2022-04-06 10:34:02,178 INFO    SenderThread:11572 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:34:02,183 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: check_version
+2022-04-06 10:34:02,183 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: check_version
+2022-04-06 10:34:02,297 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: run_start
+2022-04-06 10:34:03,179 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-summary.json
+2022-04-06 10:34:04,157 DEBUG   HandlerThread:11572 [meta.py:__init__():37] meta init
+2022-04-06 10:34:04,157 DEBUG   HandlerThread:11572 [meta.py:__init__():51] meta init done
+2022-04-06 10:34:04,157 DEBUG   HandlerThread:11572 [meta.py:probe():211] probe
+2022-04-06 10:34:04,160 DEBUG   HandlerThread:11572 [meta.py:_setup_git():201] setup git
+2022-04-06 10:34:04,181 DEBUG   HandlerThread:11572 [meta.py:_setup_git():208] setup git done
+2022-04-06 10:34:04,181 DEBUG   HandlerThread:11572 [meta.py:_save_pip():55] save pip
+2022-04-06 10:34:04,182 DEBUG   HandlerThread:11572 [meta.py:_save_pip():69] save pip done
+2022-04-06 10:34:04,182 DEBUG   HandlerThread:11572 [meta.py:probe():249] probe done
+2022-04-06 10:34:04,187 DEBUG   SenderThread:11572 [sender.py:send():235] send: files
+2022-04-06 10:34:04,187 INFO    SenderThread:11572 [sender.py:_save_file():947] saving file wandb-metadata.json with policy now
+2022-04-06 10:34:04,198 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:34:04,200 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:34:04,389 DEBUG   SenderThread:11572 [sender.py:send():235] send: telemetry
+2022-04-06 10:34:04,770 INFO    Thread-11 :11572 [upload_job.py:push():137] Uploaded file /tmp/tmp9rm1zdp9wandb/301l7z72-wandb-metadata.json
+2022-04-06 10:34:05,178 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/requirements.txt
+2022-04-06 10:34:05,179 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:05,179 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-metadata.json
+2022-04-06 10:34:07,179 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:09,180 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:17,184 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:19,390 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:34:19,390 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:34:27,187 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:32,243 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:34:33,189 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/config.yaml
+2022-04-06 10:34:34,557 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:34:34,558 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:34:35,190 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:43,194 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:49,722 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:34:49,722 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:34:51,196 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:34:59,201 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:02,319 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:35:04,884 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:35:04,885 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:35:09,205 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:19,209 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:20,049 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:35:20,049 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:35:27,211 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:32,392 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:35:35,208 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:35:35,209 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:35:37,216 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:49,230 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:35:50,367 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:35:50,368 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:36:02,502 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:36:05,237 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:36:05,559 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:36:05,559 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:36:15,241 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:36:20,724 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:36:20,724 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:36:27,246 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:36:32,581 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:36:35,877 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:36:35,877 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:36:37,250 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:36:49,254 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:36:51,039 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:36:51,039 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:37:01,259 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:02,654 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:37:06,210 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:37:06,210 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:37:07,261 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:09,262 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:21,365 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:37:21,365 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:37:21,673 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 10:37:21,676 DEBUG   SenderThread:11572 [sender.py:send():235] send: history
+2022-04-06 10:37:21,676 DEBUG   SenderThread:11572 [sender.py:send():235] send: summary
+2022-04-06 10:37:21,677 INFO    SenderThread:11572 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:37:22,270 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-summary.json
+2022-04-06 10:37:23,271 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:25,271 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:31,274 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:32,734 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:37:36,552 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:37:36,553 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:37:37,276 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:38,461 WARNING MainThread:11572 [internal.py:wandb_internal():155] Internal process interrupt: 1
+2022-04-06 10:37:38,477 DEBUG   SenderThread:11572 [sender.py:send():235] send: telemetry
+2022-04-06 10:37:38,477 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 10:37:40,905 DEBUG   SenderThread:11572 [sender.py:send():235] send: exit
+2022-04-06 10:37:40,905 INFO    SenderThread:11572 [sender.py:send_exit():371] handling exit code: 255
+2022-04-06 10:37:40,908 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:40,908 INFO    SenderThread:11572 [sender.py:send_exit():373] handling runtime: 218
+2022-04-06 10:37:40,913 INFO    SenderThread:11572 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:37:40,914 INFO    SenderThread:11572 [sender.py:send_exit():379] send defer
+2022-04-06 10:37:40,915 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:40,918 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:40,919 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 0
+2022-04-06 10:37:40,921 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:40,923 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 0
+2022-04-06 10:37:40,924 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 1
+2022-04-06 10:37:40,927 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:40,928 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 1
+2022-04-06 10:37:40,967 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:40,969 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 1
+2022-04-06 10:37:40,970 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 2
+2022-04-06 10:37:40,972 DEBUG   SenderThread:11572 [sender.py:send():235] send: stats
+2022-04-06 10:37:40,977 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:40,978 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 2
+2022-04-06 10:37:40,986 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:40,986 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 2
+2022-04-06 10:37:40,987 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 3
+2022-04-06 10:37:40,989 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:40,989 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 3
+2022-04-06 10:37:40,990 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:40,991 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 3
+2022-04-06 10:37:40,991 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 4
+2022-04-06 10:37:40,993 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:40,993 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 4
+2022-04-06 10:37:40,995 DEBUG   SenderThread:11572 [sender.py:send():235] send: summary
+2022-04-06 10:37:40,998 INFO    SenderThread:11572 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:37:40,998 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:40,999 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 4
+2022-04-06 10:37:40,999 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 5
+2022-04-06 10:37:41,001 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:41,001 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 5
+2022-04-06 10:37:41,008 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:41,009 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 5
+2022-04-06 10:37:41,024 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,271 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 6
+2022-04-06 10:37:41,274 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,276 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:41,277 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 6
+2022-04-06 10:37:41,279 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:41,279 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 6
+2022-04-06 10:37:41,280 INFO    SenderThread:11572 [dir_watcher.py:finish():283] shutting down directory watcher
+2022-04-06 10:37:41,280 INFO    Thread-7  :11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-summary.json
+2022-04-06 10:37:41,281 INFO    SenderThread:11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:41,282 INFO    SenderThread:11572 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/config.yaml
+2022-04-06 10:37:41,282 INFO    SenderThread:11572 [dir_watcher.py:finish():313] scan: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files
+2022-04-06 10:37:41,283 INFO    SenderThread:11572 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log output.log
+2022-04-06 10:37:41,283 INFO    SenderThread:11572 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/config.yaml config.yaml
+2022-04-06 10:37:41,283 INFO    SenderThread:11572 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-metadata.json wandb-metadata.json
+2022-04-06 10:37:41,283 INFO    SenderThread:11572 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/requirements.txt requirements.txt
+2022-04-06 10:37:41,284 INFO    SenderThread:11572 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-summary.json wandb-summary.json
+2022-04-06 10:37:41,284 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 7
+2022-04-06 10:37:41,290 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:41,291 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 7
+2022-04-06 10:37:41,291 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:41,292 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 7
+2022-04-06 10:37:41,292 INFO    SenderThread:11572 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 10:37:41,380 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,381 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,484 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,485 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,596 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,596 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,700 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,701 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,804 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,805 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,909 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:41,910 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:41,988 INFO    Thread-13 :11572 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/config.yaml
+2022-04-06 10:37:42,027 INFO    Thread-12 :11572 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/output.log
+2022-04-06 10:37:42,029 INFO    Thread-15 :11572 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/wandb-summary.json
+2022-04-06 10:37:42,045 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:42,045 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:42,047 INFO    Thread-14 :11572 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/files/requirements.txt
+2022-04-06 10:37:42,158 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:42,158 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:42,257 INFO    Thread-6  :11572 [sender.py:transition_state():392] send defer: 8
+2022-04-06 10:37:42,259 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:42,259 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 8
+2022-04-06 10:37:42,260 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:42,260 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 8
+2022-04-06 10:37:42,261 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:42,729 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 9
+2022-04-06 10:37:42,729 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:42,731 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:42,732 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 9
+2022-04-06 10:37:42,732 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:42,733 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 9
+2022-04-06 10:37:42,733 INFO    SenderThread:11572 [sender.py:transition_state():392] send defer: 10
+2022-04-06 10:37:42,743 DEBUG   SenderThread:11572 [sender.py:send():235] send: final
+2022-04-06 10:37:42,743 DEBUG   SenderThread:11572 [sender.py:send():235] send: footer
+2022-04-06 10:37:42,744 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:37:42,744 INFO    HandlerThread:11572 [handler.py:handle_request_defer():164] handle defer: 10
+2022-04-06 10:37:42,748 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:37:42,748 INFO    SenderThread:11572 [sender.py:send_request_defer():388] handle sender defer: 10
+2022-04-06 10:37:42,833 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:37:42,834 DEBUG   SenderThread:11572 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:37:42,835 INFO    SenderThread:11572 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 10:37:43,315 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: sampled_history
+2022-04-06 10:37:43,316 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: get_summary
+2022-04-06 10:37:43,317 DEBUG   HandlerThread:11572 [handler.py:handle_request():141] handle_request: shutdown
+2022-04-06 10:37:43,317 INFO    HandlerThread:11572 [handler.py:finish():778] shutting down handler
+2022-04-06 10:37:43,747 INFO    WriterThread:11572 [datastore.py:close():281] close: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_103401-3vn9nkku/run-3vn9nkku.wandb
+2022-04-06 10:37:44,213 INFO    SenderThread:11572 [sender.py:finish():1078] shutting down sender
+2022-04-06 10:37:44,213 INFO    SenderThread:11572 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 10:37:44,213 INFO    SenderThread:11572 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 10:37:44,215 INFO    MainThread:11572 [internal.py:handle_exit():82] Internal process exited

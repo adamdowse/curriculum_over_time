@@ -1,0 +1,208 @@
+2022-04-06 08:39:52,221 INFO    MainThread:6924 [internal.py:wandb_internal():92] W&B internal server running at pid: 6924, started at: 2022-04-06 08:39:52.221350
+2022-04-06 08:39:52,235 DEBUG   SenderThread:6924 [sender.py:send():235] send: header
+2022-04-06 08:39:52,235 INFO    WriterThread:6924 [datastore.py:open_for_write():77] open: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/run-1pjpjtms.wandb
+2022-04-06 08:39:52,235 DEBUG   SenderThread:6924 [sender.py:send():235] send: run
+2022-04-06 08:39:52,455 INFO    SenderThread:6924 [dir_watcher.py:__init__():169] watching files in: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files
+2022-04-06 08:39:52,455 INFO    SenderThread:6924 [sender.py:_start_run_threads():812] run started: 1pjpjtms with start time 1649234390
+2022-04-06 08:39:52,455 DEBUG   SenderThread:6924 [sender.py:send():235] send: summary
+2022-04-06 08:39:52,456 INFO    SenderThread:6924 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 08:39:52,461 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: check_version
+2022-04-06 08:39:52,462 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: check_version
+2022-04-06 08:39:52,569 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: run_start
+2022-04-06 08:39:53,461 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-summary.json
+2022-04-06 08:39:55,118 DEBUG   HandlerThread:6924 [meta.py:__init__():37] meta init
+2022-04-06 08:39:55,118 DEBUG   HandlerThread:6924 [meta.py:__init__():51] meta init done
+2022-04-06 08:39:55,118 DEBUG   HandlerThread:6924 [meta.py:probe():211] probe
+2022-04-06 08:39:55,121 DEBUG   HandlerThread:6924 [meta.py:_setup_git():201] setup git
+2022-04-06 08:39:55,143 DEBUG   HandlerThread:6924 [meta.py:_setup_git():208] setup git done
+2022-04-06 08:39:55,144 DEBUG   HandlerThread:6924 [meta.py:_save_pip():55] save pip
+2022-04-06 08:39:55,144 DEBUG   HandlerThread:6924 [meta.py:_save_pip():69] save pip done
+2022-04-06 08:39:55,144 DEBUG   HandlerThread:6924 [meta.py:probe():249] probe done
+2022-04-06 08:39:55,148 DEBUG   SenderThread:6924 [sender.py:send():235] send: files
+2022-04-06 08:39:55,148 INFO    SenderThread:6924 [sender.py:_save_file():947] saving file wandb-metadata.json with policy now
+2022-04-06 08:39:55,160 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:39:55,162 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:39:55,374 DEBUG   SenderThread:6924 [sender.py:send():235] send: telemetry
+2022-04-06 08:39:55,460 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:39:55,460 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-metadata.json
+2022-04-06 08:39:55,461 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/requirements.txt
+2022-04-06 08:39:55,784 INFO    Thread-11 :6924 [upload_job.py:push():137] Uploaded file /tmp/tmpvx__dm51wandb/a3llph1y-wandb-metadata.json
+2022-04-06 08:39:57,460 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:39:59,462 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:40:10,378 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:40:10,378 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:40:14,485 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:40:23,260 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:40:23,491 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/config.yaml
+2022-04-06 08:40:24,491 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:40:25,549 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:40:25,549 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:40:38,506 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:40:40,799 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:40:40,800 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:40:50,512 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:40:53,468 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:40:55,978 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:40:55,978 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:41:02,516 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:41:11,197 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:41:11,198 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:41:14,532 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:41:23,637 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:41:26,385 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:41:26,386 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:41:34,550 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:41:41,607 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:41:41,608 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:41:50,559 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:41:53,824 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:41:57,368 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:41:57,368 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:42:08,572 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:42:12,547 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:42:12,548 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:42:24,047 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:42:24,588 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:42:27,723 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:42:27,724 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:42:40,604 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:42:42,904 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:42:42,904 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:42:52,608 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:42:54,114 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:42:58,198 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:42:58,198 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:43:06,614 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:43:13,374 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:43:13,374 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:43:20,619 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:43:24,194 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:43:28,533 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:43:28,533 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:43:32,624 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:43:43,687 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:43:43,688 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:43:46,636 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:43:54,310 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:43:58,640 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:43:58,894 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 08:43:58,895 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 08:44:02,021 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 08:44:02,021 DEBUG   SenderThread:6924 [sender.py:send():235] send: telemetry
+2022-04-06 08:44:03,642 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:44:04,644 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:44:04,773 DEBUG   SenderThread:6924 [sender.py:send():235] send: exit
+2022-04-06 08:44:04,773 INFO    SenderThread:6924 [sender.py:send_exit():371] handling exit code: 1
+2022-04-06 08:44:04,776 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:04,776 INFO    SenderThread:6924 [sender.py:send_exit():373] handling runtime: 252
+2022-04-06 08:44:04,781 INFO    SenderThread:6924 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 08:44:04,783 INFO    SenderThread:6924 [sender.py:send_exit():379] send defer
+2022-04-06 08:44:04,784 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:04,789 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,790 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 0
+2022-04-06 08:44:04,792 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,792 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 0
+2022-04-06 08:44:04,793 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 1
+2022-04-06 08:44:04,795 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,796 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 1
+2022-04-06 08:44:04,850 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,850 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 1
+2022-04-06 08:44:04,851 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 2
+2022-04-06 08:44:04,851 DEBUG   SenderThread:6924 [sender.py:send():235] send: stats
+2022-04-06 08:44:04,853 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,853 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 2
+2022-04-06 08:44:04,856 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,857 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 2
+2022-04-06 08:44:04,857 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 3
+2022-04-06 08:44:04,860 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,861 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 3
+2022-04-06 08:44:04,862 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,862 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 3
+2022-04-06 08:44:04,863 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 4
+2022-04-06 08:44:04,864 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,864 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 4
+2022-04-06 08:44:04,864 DEBUG   SenderThread:6924 [sender.py:send():235] send: summary
+2022-04-06 08:44:04,866 INFO    SenderThread:6924 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 08:44:04,867 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,867 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 4
+2022-04-06 08:44:04,867 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 5
+2022-04-06 08:44:04,868 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:04,869 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 5
+2022-04-06 08:44:04,869 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:04,869 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 5
+2022-04-06 08:44:04,894 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:05,109 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 6
+2022-04-06 08:44:05,110 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:05,113 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:05,114 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 6
+2022-04-06 08:44:05,115 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:05,115 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 6
+2022-04-06 08:44:05,115 INFO    SenderThread:6924 [dir_watcher.py:finish():283] shutting down directory watcher
+2022-04-06 08:44:05,216 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:05,646 INFO    Thread-7  :6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:44:05,648 INFO    SenderThread:6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/config.yaml
+2022-04-06 08:44:05,649 INFO    SenderThread:6924 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-summary.json
+2022-04-06 08:44:05,650 INFO    SenderThread:6924 [dir_watcher.py:finish():313] scan: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files
+2022-04-06 08:44:05,651 INFO    SenderThread:6924 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log output.log
+2022-04-06 08:44:05,652 INFO    SenderThread:6924 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/config.yaml config.yaml
+2022-04-06 08:44:05,655 INFO    SenderThread:6924 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-metadata.json wandb-metadata.json
+2022-04-06 08:44:05,661 INFO    SenderThread:6924 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/requirements.txt requirements.txt
+2022-04-06 08:44:05,685 INFO    SenderThread:6924 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-summary.json wandb-summary.json
+2022-04-06 08:44:05,688 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 7
+2022-04-06 08:44:05,689 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:05,699 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:05,699 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 7
+2022-04-06 08:44:05,734 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:05,753 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 7
+2022-04-06 08:44:05,753 INFO    SenderThread:6924 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 08:44:05,809 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:05,810 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:05,918 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:05,920 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,028 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,028 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,132 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,133 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,238 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,239 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,344 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,346 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,378 INFO    Thread-15 :6924 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/wandb-summary.json
+2022-04-06 08:44:06,398 INFO    Thread-14 :6924 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/requirements.txt
+2022-04-06 08:44:06,413 INFO    Thread-12 :6924 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/output.log
+2022-04-06 08:44:06,450 INFO    Thread-13 :6924 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/files/config.yaml
+2022-04-06 08:44:06,451 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,451 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,554 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:06,555 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:06,652 INFO    Thread-6  :6924 [sender.py:transition_state():392] send defer: 8
+2022-04-06 08:44:06,654 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:06,655 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 8
+2022-04-06 08:44:06,655 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:06,656 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 8
+2022-04-06 08:44:06,665 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:08,211 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 9
+2022-04-06 08:44:08,213 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:08,215 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:08,217 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 9
+2022-04-06 08:44:08,218 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:08,218 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 9
+2022-04-06 08:44:08,219 INFO    SenderThread:6924 [sender.py:transition_state():392] send defer: 10
+2022-04-06 08:44:08,225 DEBUG   SenderThread:6924 [sender.py:send():235] send: final
+2022-04-06 08:44:08,227 DEBUG   SenderThread:6924 [sender.py:send():235] send: footer
+2022-04-06 08:44:08,229 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 08:44:08,230 INFO    HandlerThread:6924 [handler.py:handle_request_defer():164] handle defer: 10
+2022-04-06 08:44:08,231 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: defer
+2022-04-06 08:44:08,232 INFO    SenderThread:6924 [sender.py:send_request_defer():388] handle sender defer: 10
+2022-04-06 08:44:08,318 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 08:44:08,319 DEBUG   SenderThread:6924 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 08:44:08,319 INFO    SenderThread:6924 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 08:44:08,834 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: sampled_history
+2022-04-06 08:44:08,838 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: get_summary
+2022-04-06 08:44:08,841 DEBUG   HandlerThread:6924 [handler.py:handle_request():141] handle_request: shutdown
+2022-04-06 08:44:08,842 INFO    HandlerThread:6924 [handler.py:finish():778] shutting down handler
+2022-04-06 08:44:09,224 INFO    WriterThread:6924 [datastore.py:close():281] close: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_083950-1pjpjtms/run-1pjpjtms.wandb
+2022-04-06 08:44:09,728 INFO    SenderThread:6924 [sender.py:finish():1078] shutting down sender
+2022-04-06 08:44:09,729 INFO    SenderThread:6924 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 08:44:09,729 INFO    SenderThread:6924 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 08:44:09,744 INFO    MainThread:6924 [internal.py:handle_exit():82] Internal process exited

@@ -22,26 +22,28 @@ class CustomDataGen(tf.keras.utils.Sequence):
         self.num_classes = df[Y_col].nunique()
         #holds the amount of data used on the next epoch 
         self.class_used = [len(self.df[self.df['label']==x].index) for x in range(self.num_classes)]
-        self.class_score = [0]*self.num_classes #TODO implement this
-        print('original',self.class_used)
-        print('original',self.dataused)
+        self.class_score = [0]*self.num_classes
+        self.class_loss_avg = [0]*self.num_classes
     
     def on_epoch_end(self,losses_df):
         #losses_df = (i|label,score,0,1,2,..) where use is from 0 to dataused and nan past dataused
         #df = (i|img,label,score)
         #update the score col in df
-        self.df.update(losses_df['score'],overwrite=True)
+        print('pre-update:',self.df) #TODO RUN AND FIX THIS (Has correct max score rank but more non nan values)
+        self.df.update(losses_df) #this is a problem
+        print('post-update:',self.df)
+
         #sort the large dataframe by the use index and put nans last so not used
         self.df = self.df.sort_values('score',na_position='last')
-        print(self.df)
+ 
         self.dataused = len(self.df.index)-self.df.score.isna().sum()
-        print(self.dataused)
+        print('dataused-on-epoch-end-',self.dataused)
 
         #produce some statistics
-        #self.class_used = [len(self.df([:self.dataused,'label'==x].index) for x in range(self.num_classes)]
-        #self.class_used = [len(self.df[(self.df.label==x) & (self.df.score !=np.nan)].index) for x in range(self.num_classes)]
         self.class_used = [len(self.df[self.df.label==x].index)-self.df.score[self.df.label==x].isna().sum() for x in range(self.num_classes)]
         print(self.class_used)
+
+
 
     def __get_input(self, img, img_shape):
         #take the individual img strings and convert them to tensors
@@ -74,15 +76,16 @@ class CustomDataGen(tf.keras.utils.Sequence):
         return tuple([index_batch,X_batch]), Y_batch
     
     def __getitem__(self, index):
-        #print('_get')
         batches = self.df[index * self.batch_size:min((index+1) * self.batch_size,len(self.df.index))]
         X, Y = self.__get_data(batches)   
-        #print(X,Y)  
         return X, Y
     
     def __len__(self):
-        #TODO this is culpret
-        #maybe need to add one but might be problem if exact size
-        return int(self.dataused // self.batch_size)
+        #This is the number of batches to use in an epoch
+        if self.dataused % self.batch_size == 0:
+            l = int(self.dataused//self.batch_size)
+        else:
+            l = int(self.dataused//self.batch_size) + 1
+        print('Length Calculated: ',l)
+        return l
 
-#TODO THIS NEEDS TO BE BATCH SIZE AGNOSTIC SO IT CAN VARY IN SIZE

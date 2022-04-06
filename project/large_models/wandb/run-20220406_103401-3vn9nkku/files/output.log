@@ -1,0 +1,80 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+2022-04-06 10:34:06.393053: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-06 10:34:06.393135: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-06 10:34:06.393690: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+used 0 epoch
+label        0
+score    55994
+0            0
+dtype: int64
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+pacing dataused  5599
+nas- 55994
+nas- 50395
+df-len- 55994
+nas- 50395
+dataused-on-epoch-end- 5599
+[1292, 143, 1152, 603, 431, 132, 820, 904, 112, 10]
+Length Calculated:  438
+Epoch  1 , Loss:  0.50237095 , Accuracy:  0.86480695 , Test Loss:  0.26043487 , Test Accuracy:  0.92396116
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-06 10:37:21.987402: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+Batch =100
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+use reduced grads
+label        0
+score    55994
+0            0
+1        50394
+dtype: int64
+Traceback (most recent call last):
+  File "RunTest.py", line 191, in <module>
+    main(args)
+  File "RunTest.py", line 142, in main
+    df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 149, in scoring_func
+    df['score'] = calc_grad(n,df.iloc[:,-n:])
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 115, in calc_grad
+    model = linear_model.LinearRegression().fit(x,y)
+  File "/usr/local/lib/python3.8/dist-packages/sklearn/linear_model/_base.py", line 718, in fit
+    self.coef_, self._residues, self.rank_, self.singular_ = linalg.lstsq(X, y)
+  File "/usr/local/lib/python3.8/dist-packages/scipy/linalg/_basic.py", line 1203, in lstsq
+    lwork, iwork = _compute_lwork(lapack_lwork, m, n, nrhs, cond)
+  File "/usr/local/lib/python3.8/dist-packages/scipy/linalg/lapack.py", line 1017, in _compute_lwork
+    ret = routine(*args, **kwargs)
+KeyboardInterrupt

@@ -128,9 +128,6 @@ def scoring_func(df,info):
     elif info.scoring_function == 'naive_grads':
         #calc gradients over last n losses
         #convert any nans into last loss val
-        #TODO this is not being used move into the lower levels
-        #df_filled = df.copy()
-        #df_filled = df_filled.iloc[:,1:].fillna(method='ffill',axis=1)
 
         n = 3 #lookback for gradients
         if info.current_epoch == 0:
@@ -172,8 +169,10 @@ def pacing_func(df,info):
         d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
         d = min([1,d]) #percentage
         d = int(d*n)
+        print('pacing dataused ',d)
         i = [x for x in range(d)] #[0 to dataused]
-        i = i + [np.nan]*(n-d)
+        if n-d != 0:
+            i = i + [np.nan]*(n-d)
         df['score'] = i #the final rank
         return df
 

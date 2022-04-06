@@ -96,7 +96,7 @@ def main(args):
         df = train_df,
         X_col = 'img',
         Y_col = 'label',
-        batch_size = args.batch_size, #change this
+        batch_size = args.batch_size, 
         input_size = (28,28,1),
         test=False
     )
@@ -126,47 +126,69 @@ def main(args):
         col = pd.DataFrame(columns=['i',str(info.current_epoch)])
 
         #training step
-        s = []
         for i, (X,Y) in enumerate(train_data_gen):
             #collect losses and train model
             if i % 100 == 0: print("Batch ="+str(i))
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
-            s = [X,Y]
-        print(s)
-        prn()
+            
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
-
-        #TODO calc data to use next epoch NEED TO MAKE SURE THE INDEXING IS RIGHT AND TAKE THIS INTO THE GEN
-
+        print('nas-',df_train_losses.score.isna().sum())
+        #grab statistics before nans are infilled
+        ce = info.current_epoch
+        class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
+        class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
+        
+        #calculate the score via a function
         df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
+        print('nas-',df_train_losses.score.isna().sum())
+
+        #take score stats
+        class_score_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
+        class_score_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
+        
+        #rank and trim data
         df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
+        print('nas-',df_train_losses.score.isna().sum())
+        #take rank statistics
+        class_rank_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
+        class_rank_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
+        
+        #run end of epoch updating
+        print(df_train_losses)
         train_data_gen.on_epoch_end(df_train_losses)
 
         #test steps
         for X,Y in test_data_gen:
             test_step(X[1],Y)
 
-        wandb.log({
+        basic = {
             'Epoch':info.current_epoch,
             'Train-Loss':train_loss.result().numpy(),
             'Test-Loss':test_loss.result().numpy(),
             'Train-Acc':train_acc_metric.result().numpy(),
             'Test-Acc':test_acc_metric.result().numpy(),
-            'Data-Used':train_data_gen.dataused,
-            '0-Used':train_data_gen.class_used[0],
-            '1-Used':train_data_gen.class_used[1],
-            '2-Used':train_data_gen.class_used[2],
-            '3-Used':train_data_gen.class_used[3],
-            '4-Used':train_data_gen.class_used[4],
-            '5-Used':train_data_gen.class_used[5],
-            '6-Used':train_data_gen.class_used[6],
-            '7-Used':train_data_gen.class_used[7],
-            '8-Used':train_data_gen.class_used[8],
-            '9-Used':train_data_gen.class_used[9],})
+            'Data-Used':train_data_gen.dataused}
+
+        keys = [x for x in info.class_names]
+        cla = {}
+        clv = {}
+        csa = {}
+        csv = {}
+        cra = {}
+        crv = {}
+        for i in range(len(keys)):
+            cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
+            clv['Loss-Var-'+keys[i]] = class_loss_var[i]
+            csa['Score-Avg-'+keys[i]] = class_score_avg[i]
+            csv['Score-Var-'+keys[i]] = class_score_var[i]
+            cra['Rank-Avg-'+keys[i]] = class_rank_avg[i]
+            crv['Rank-Var'+keys[i]] = class_rank_var[i]
+
+        wandb.log({**basic,**cla,**clv,**csa,**csv,**cra,**crv})
         
         
         #Printing to screen
@@ -192,3 +214,5 @@ def main(args):
 if __name__ =='__main__':
     args = parse_arguments()
     main(args)
+
+    #TODO not using all data using 1436 batches when should be using 1750

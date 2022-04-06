@@ -1,0 +1,165 @@
+
+INIT: Using found mnist data
+2022-04-06 12:55:51.112944: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-06 12:55:51.113014: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-06 12:55:51.113333: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 55994
+used 0 epoch
+label        0
+score    55994
+0            0
+dtype: int64
+nas- 0
+pacing dataused  5599
+nas- 50395
+       label  score          0
+i
+45461      7    0.0   0.000005
+8048       2    1.0   0.000009
+53817      2    2.0   0.000009
+42777      2    3.0    0.00001
+36264      2    4.0    0.00001
+...      ...    ...        ...
+55641      3    NaN  10.649329
+20443      4    NaN   10.98584
+41242      9    NaN  11.381488
+43515      3    NaN  13.728368
+64640      4    NaN  14.207674
+[55994 rows x 3 columns]
+pre-update: count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+Name: score, dtype: float64
+post-update: count    5599.00000
+mean     2799.00000
+std      1616.43641
+min         0.00000
+25%      1399.50000
+50%      2799.00000
+75%      4198.50000
+max      5598.00000
+Name: score, dtype: float64
+dataused-on-epoch-end- 5599
+[1065, 202, 1237, 638, 385, 105, 949, 839, 175, 4]
+Length Calculated:  438
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-06 12:59:07.821817: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Epoch  1 , Loss:  0.5151308 , Accuracy:  0.86228883 , Test Loss:  0.27459595 , Test Accuracy:  0.91667855
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+Batch =100
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 50395
+use reduced grads
+label        0
+score    55994
+0            0
+1        50394
+dtype: int64
+nas- 11165
+pacing dataused  7465
+nas- 48529
+       label  score          0          1
+i
+5542       5    0.0   0.461831   0.461831
+5541       4    1.0   2.083011   2.083011
+5443       0    2.0   0.016513   0.016513
+5584       2    3.0   0.436460   0.436460
+5597       1    4.0   4.520393   4.520393
+...      ...    ...        ...        ...
+59348      2    NaN   9.219486   9.219486
+62788      9    NaN   9.469187   9.469187
+68531      1    NaN   9.751617   9.751617
+60652      9    NaN   9.903469   9.903469
+64640      4    NaN  14.207674  14.207674
+[55994 rows x 4 columns]
+pre-update: count    5599.00000
+mean     2799.00000
+std      1616.43641
+min         0.00000
+25%      1399.50000
+50%      2799.00000
+75%      4198.50000
+max      5598.00000
+Name: score, dtype: float64
+post-update: count    12724.000000
+mean      3345.505266
+std       2003.539449
+min          0.000000
+25%       1640.750000
+50%       3277.000000
+75%       4919.250000
+max       7464.000000
+Name: score, dtype: float64
+dataused-on-epoch-end- 12724
+[1603, 845, 1818, 1358, 1154, 873, 1519, 1506, 1032, 1016]
+Length Calculated:  438
+Epoch  2 , Loss:  0.0012992603 , Accuracy:  1.0 , Test Loss:  0.27023587 , Test Accuracy:  0.9181065
+Length Calculated:  398
+Batch =0
+Traceback (most recent call last):
+  File "RunTest.py", line 216, in <module>
+    main(args)
+  File "RunTest.py", line 134, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 195, in update_col
+    new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 636, in __init__
+    mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/construction.py", line 502, in dict_to_mgr
+    return arrays_to_mgr(arrays, columns, index, dtype=dtype, typ=typ, consolidate=copy)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/construction.py", line 122, in arrays_to_mgr
+    index = ensure_index(index)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 7041, in ensure_index
+    return Index._with_infer(index_like, copy=copy, tupleize_cols=False)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 680, in _with_infer
+    result = cls(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 538, in __new__
+    return Index(subarr, dtype=dtype, copy=copy, name=name, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py", line 483, in __new__
+    data = sanitize_array(data, None, dtype=dtype, copy=copy)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/construction.py", line 533, in sanitize_array
+    if dtype is not None and is_float_dtype(data.dtype) and is_integer_dtype(dtype):
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/dtypes/common.py", line 1271, in is_float_dtype
+    return _is_dtype_type(arr_or_dtype, classes(np.floating))
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/dtypes/common.py", line 1606, in _is_dtype_type
+    return condition(arr_or_dtype.type)
+KeyboardInterrupt

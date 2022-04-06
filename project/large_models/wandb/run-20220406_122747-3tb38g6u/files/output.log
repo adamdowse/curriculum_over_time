@@ -1,0 +1,163 @@
+
+INIT: Using found mnist data
+2022-04-06 12:27:55.417532: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-06 12:27:55.417607: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-06 12:27:55.417885: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+used 0 epoch
+label        0
+score    55994
+0            0
+dtype: int64
+pacing dataused  5599
+       label  score          0
+i
+42241      2    0.0   0.000004
+8643       2    1.0   0.000005
+14744      2    2.0   0.000005
+25534      2    3.0   0.000006
+25367      2    4.0    0.00001
+...      ...    ...        ...
+10905      4    NaN  11.620741
+41103      4    NaN  11.826917
+43515      3    NaN  13.063042
+68659      1    NaN  13.072224
+64640      4    NaN  14.971114
+[55994 rows x 3 columns]
+nas- 55994
+nas- 50395
+                                                     img  label  score
+i
+13039  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+238    [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+1498   [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+30343  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+22488  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    NaN
+...                                                  ...    ...    ...
+35062  [  0   0   0   0   0   0   0   0   0   0   0  ...      3    NaN
+54886  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+24120  [  0   0   0   0   0   0   0   0   0   0   0  ...      8    NaN
+5308   [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+47242  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+df-len- 55994
+nas- 50395
+dataused-on-epoch-end- 5599
+[1307, 113, 1196, 668, 457, 139, 676, 889, 148, 6]
+Length Calculated:  438
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-06 12:31:22.262513: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Epoch  1 , Loss:  0.47252682 , Accuracy:  0.8738794 , Test Loss:  0.24970277 , Test Accuracy:  0.92688847
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+Batch =100
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+use reduced grads
+label        0
+score    55994
+0            0
+1        50394
+dtype: int64
+pacing dataused  7465
+       label  score          0          1
+i
+54372      5    0.0   0.032929   0.032929
+5585       8    1.0   0.010086   0.010086
+5547       9    2.0   0.033122   0.033122
+5513       5    3.0   2.069089   2.069089
+5598       6    4.0   0.055068   0.055068
+...      ...    ...        ...        ...
+62788      9    NaN   9.702876   9.702876
+68531      1    NaN  10.337432  10.337432
+56313      2    NaN  10.553596  10.553596
+68659      1    NaN  13.072224  13.072224
+64640      4    NaN  14.971114  14.971114
+[55994 rows x 4 columns]
+nas- 50395
+nas- 43263
+                                                     img  label   score
+i
+42241  [  0   0   0   0   0   0   0   0   0   0   0  ...      2  7059.0
+8643   [  0   0   0   0   0   0   0   0   0   0   0  ...      2     1.0
+14744  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     2.0
+25534  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     3.0
+25367  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     4.0
+...                                                  ...    ...     ...
+35062  [  0   0   0   0   0   0   0   0   0   0   0  ...      3     NaN
+54886  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+24120  [  0   0   0   0   0   0   0   0   0   0   0  ...      8     NaN
+5308   [  0   0   0   0   0   0   0   0   0   0   0  ...      5   840.0
+47242  [  0   0   0   0   0   0   0   0   0   0   0  ...      4     NaN
+[55994 rows x 3 columns]
+df-len- 55994
+nas- 43263
+dataused-on-epoch-end- 12731
+[1822, 791, 1749, 1375, 1204, 893, 1248, 1534, 1031, 1084]
+Length Calculated:  438
+Epoch  2 , Loss:  0.0012161022 , Accuracy:  1.0 , Test Loss:  0.2541469 , Test Accuracy:  0.92453235
+Length Calculated:  398
+Batch =0
+Traceback (most recent call last):
+  File "RunTest.py", line 215, in <module>
+    main(args)
+  File "RunTest.py", line 134, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 198, in update_col
+    new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/traceback_utils.py", line 150, in error_handler
+    return fn(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/dispatch.py", line 1082, in op_dispatch_handler
+    return dispatch_target(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/ops/array_ops.py", line 1039, in _slice_helper
+    stack(strides))
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/traceback_utils.py", line 150, in error_handler
+    return fn(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/util/dispatch.py", line 1082, in op_dispatch_handler
+    return dispatch_target(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/ops/array_ops.py", line 1424, in stack
+    return ops.convert_to_tensor(values, name=name)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/profiler/trace.py", line 183, in wrapped
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/ops.py", line 1695, in convert_to_tensor
+    ret = conversion_func(value, dtype=dtype, name=name, as_ref=as_ref)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/constant_op.py", line 343, in _constant_tensor_conversion_function
+    return constant(v, dtype=dtype, name=name)
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/constant_op.py", line 267, in constant
+    return _constant_impl(value, dtype, shape, name, verify_shape=False,
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/framework/constant_op.py", line 275, in _constant_impl
+    if ctx.executing_eagerly():
+  File "/usr/local/lib/python3.8/dist-packages/tensorflow/python/eager/context.py", line 927, in executing_eagerly
+    def executing_eagerly(self):
+KeyboardInterrupt

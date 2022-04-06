@@ -1,0 +1,147 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+2022-04-06 12:03:09.920809: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-06 12:03:09.920903: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-06 12:03:09.921194: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+used 0 epoch
+label        0
+score    55994
+0            0
+dtype: int64
+pacing dataused  5599
+       label  score          0
+i
+21987      2    0.0   0.000008
+64656      2    1.0   0.000008
+37480      2    2.0   0.000009
+12664      2    3.0    0.00001
+32829      2    4.0    0.00001
+...      ...    ...        ...
+43515      3    NaN    12.7718
+41242      9    NaN   13.10513
+56313      2    NaN  13.644208
+10905      4    NaN  14.277323
+64640      4    NaN  15.191792
+[55994 rows x 3 columns]
+nas- 55994
+nas- 50395
+                                                     img  label   score
+i
+21748  [  0   0   0   0   0   0   0   0   0   0   0  ...      8     NaN
+5341   [  0   0   0   0   0   0   0   0   0   0   0  ...      2     NaN
+3099   [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+54805  [  0   0   0   0   0   0   0   0   0   0   0  ...      5     NaN
+61315  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     NaN
+...                                                  ...    ...     ...
+7321   [  0   0   0   0   0   0   0   0   0   0   0  ...      8     NaN
+39472  [  0   0   0   0   0   0   0   0   0   0   0  ...      2  5462.0
+24477  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+14324  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+41977  [  0   0   0   0   0   0   0   0   0   0   0  ...      5     NaN
+[55994 rows x 3 columns]
+df-len- 55994
+nas- 50395
+dataused-on-epoch-end- 5599
+[1318, 144, 1114, 570, 449, 101, 908, 842, 142, 11]
+Length Calculated:  438
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Epoch  1 , Loss:  0.5041557 , Accuracy:  0.86284244 , Test Loss:  0.26983178 , Test Accuracy:  0.92046267
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-06 12:06:29.324261: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Batch =100
+use reduced grads
+label        0
+score    55994
+0            0
+1        50394
+dtype: int64
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+pacing dataused  7465
+       label  score          0          1
+i
+53135      7    0.0   0.022726   0.022726
+5595       9    1.0   0.167164   0.167164
+5598       6    2.0   0.095420   0.095420
+5590       8    3.0   0.006925   0.006925
+5506       1    4.0   0.031966   0.031966
+...      ...    ...        ...        ...
+68531      1    NaN   8.986187   8.986187
+60652      9    NaN   9.497067   9.497067
+61199      3    NaN  11.516274  11.516274
+56313      2    NaN  13.644208  13.644208
+64640      4    NaN  15.191792  15.191792
+[55994 rows x 4 columns]
+nas- 50395
+nas- 43226
+                                                     img  label   score
+i
+21987  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     0.0
+64656  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     1.0
+37480  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     2.0
+12664  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     3.0
+32829  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     4.0
+...                                                  ...    ...     ...
+59024  [  0   0   0   0   0   0   0   0   0   0   0  ...      9     NaN
+7321   [  0   0   0   0   0   0   0   0   0   0   0  ...      8  4046.0
+24477  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+14324  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+41977  [  0   0   0   0   0   0   0   0   0   0   0  ...      5     NaN
+[55994 rows x 3 columns]
+df-len- 55994
+nas- 43226
+dataused-on-epoch-end- 12768
+[1830, 806, 1714, 1318, 1184, 911, 1445, 1496, 1057, 1007]
+Length Calculated:  438
+Epoch  2 , Loss:  0.0015287878 , Accuracy:  1.0 , Test Loss:  0.2689949 , Test Accuracy:  0.92031986
+Length Calculated:  399
+Batch =0
+Traceback (most recent call last):
+  File "RunTest.py", line 215, in <module>
+    main(args)
+  File "RunTest.py", line 134, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 198, in update_col
+    new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 636, in __init__
+    mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/construction.py", line 483, in dict_to_mgr
+    arrays = [com.maybe_iterable_to_list(data[k]) for k in keys]
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/construction.py", line 483, in <listcomp>
+    arrays = [com.maybe_iterable_to_list(data[k]) for k in keys]
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/common.py", line 293, in maybe_iterable_to_list
+    obj = cast(Collection, obj)
+KeyboardInterrupt

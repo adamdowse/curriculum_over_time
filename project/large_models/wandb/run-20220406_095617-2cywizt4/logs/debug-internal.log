@@ -1,0 +1,580 @@
+2022-04-06 09:56:17,896 INFO    MainThread:22245 [internal.py:wandb_internal():92] W&B internal server running at pid: 22245, started at: 2022-04-06 09:56:17.895289
+2022-04-06 09:56:17,898 INFO    WriterThread:22245 [datastore.py:open_for_write():77] open: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/run-2cywizt4.wandb
+2022-04-06 09:56:17,901 DEBUG   SenderThread:22245 [sender.py:send():235] send: header
+2022-04-06 09:56:17,902 DEBUG   SenderThread:22245 [sender.py:send():235] send: run
+2022-04-06 09:56:18,239 INFO    SenderThread:22245 [dir_watcher.py:__init__():169] watching files in: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files
+2022-04-06 09:56:18,240 INFO    SenderThread:22245 [sender.py:_start_run_threads():812] run started: 2cywizt4 with start time 1649238977
+2022-04-06 09:56:18,241 DEBUG   SenderThread:22245 [sender.py:send():235] send: summary
+2022-04-06 09:56:18,242 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 09:56:18,245 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: check_version
+2022-04-06 09:56:18,246 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: check_version
+2022-04-06 09:56:18,387 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: run_start
+2022-04-06 09:56:19,245 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 09:56:20,282 DEBUG   HandlerThread:22245 [meta.py:__init__():37] meta init
+2022-04-06 09:56:20,282 DEBUG   HandlerThread:22245 [meta.py:__init__():51] meta init done
+2022-04-06 09:56:20,282 DEBUG   HandlerThread:22245 [meta.py:probe():211] probe
+2022-04-06 09:56:20,285 DEBUG   HandlerThread:22245 [meta.py:_setup_git():201] setup git
+2022-04-06 09:56:20,304 DEBUG   HandlerThread:22245 [meta.py:_setup_git():208] setup git done
+2022-04-06 09:56:20,304 DEBUG   HandlerThread:22245 [meta.py:_save_pip():55] save pip
+2022-04-06 09:56:20,305 DEBUG   HandlerThread:22245 [meta.py:_save_pip():69] save pip done
+2022-04-06 09:56:20,305 DEBUG   HandlerThread:22245 [meta.py:probe():249] probe done
+2022-04-06 09:56:20,309 DEBUG   SenderThread:22245 [sender.py:send():235] send: files
+2022-04-06 09:56:20,310 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-metadata.json with policy now
+2022-04-06 09:56:20,319 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:56:20,319 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:56:20,498 DEBUG   SenderThread:22245 [sender.py:send():235] send: telemetry
+2022-04-06 09:56:20,875 INFO    Thread-11 :22245 [upload_job.py:push():137] Uploaded file /tmp/tmpwznmqb3lwandb/35e7ecy0-wandb-metadata.json
+2022-04-06 09:56:21,245 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:21,245 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-metadata.json
+2022-04-06 09:56:21,245 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_created():217] file/dir created: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/requirements.txt
+2022-04-06 09:56:23,245 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:25,246 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:33,253 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:35,510 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:56:35,510 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:56:41,256 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:47,258 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:56:48,365 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:56:49,259 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/config.yaml
+2022-04-06 09:56:50,663 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:56:50,663 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:56:55,261 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:03,264 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:05,819 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:57:05,819 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:57:13,267 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:18,435 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:57:20,995 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:57:20,995 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:57:21,270 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:29,274 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:36,165 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:57:36,165 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:57:39,277 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:48,506 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:57:49,281 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:57:51,315 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:57:51,315 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:57:57,284 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:06,472 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:58:06,472 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:58:07,288 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:17,291 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:18,578 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:58:21,623 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:58:21,623 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:58:27,295 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:36,781 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:58:36,781 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:58:39,303 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:48,656 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:58:49,307 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:58:51,951 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:58:51,951 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:59:01,311 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:05,313 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:07,116 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:59:07,117 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:59:07,314 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:17,769 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 09:59:17,773 DEBUG   SenderThread:22245 [sender.py:send():235] send: history
+2022-04-06 09:59:17,774 DEBUG   SenderThread:22245 [sender.py:send():235] send: summary
+2022-04-06 09:59:17,775 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 09:59:18,318 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 09:59:18,735 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:59:19,318 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:21,319 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:22,280 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:59:22,281 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:59:27,321 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:33,323 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 09:59:37,733 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:59:37,733 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:59:48,815 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 09:59:52,923 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 09:59:52,923 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 09:59:59,332 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:08,123 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:00:08,123 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:00:09,987 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 10:00:09,990 DEBUG   SenderThread:22245 [sender.py:send():235] send: history
+2022-04-06 10:00:09,990 DEBUG   SenderThread:22245 [sender.py:send():235] send: summary
+2022-04-06 10:00:09,991 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:00:10,336 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 10:00:11,337 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:18,887 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 10:00:19,340 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:23,324 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:00:23,324 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:00:27,344 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:35,347 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:38,506 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:00:38,506 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:00:43,370 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:00:48,968 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 10:00:53,695 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:00:53,695 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:01:08,872 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:01:08,872 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:01:13,383 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:15,384 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:19,038 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 10:01:24,430 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:01:24,430 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:01:27,576 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 10:01:27,579 DEBUG   SenderThread:22245 [sender.py:send():235] send: history
+2022-04-06 10:01:27,579 DEBUG   SenderThread:22245 [sender.py:send():235] send: summary
+2022-04-06 10:01:27,580 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:01:28,389 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 10:01:29,390 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:35,392 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:39,601 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:01:39,601 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:01:45,395 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:49,112 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 10:01:53,398 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:01:54,812 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: stop_status
+2022-04-06 10:01:54,813 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: stop_status
+2022-04-06 10:02:01,401 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:02:08,628 WARNING MainThread:22245 [internal.py:wandb_internal():155] Internal process interrupt: 1
+2022-04-06 10:02:08,649 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: partial_history
+2022-04-06 10:02:08,650 DEBUG   SenderThread:22245 [sender.py:send():235] send: telemetry
+2022-04-06 10:02:09,404 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:02:11,068 DEBUG   SenderThread:22245 [sender.py:send():235] send: exit
+2022-04-06 10:02:11,068 INFO    SenderThread:22245 [sender.py:send_exit():371] handling exit code: 255
+2022-04-06 10:02:11,068 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:11,069 INFO    SenderThread:22245 [sender.py:send_exit():373] handling runtime: 352
+2022-04-06 10:02:11,069 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:02:11,070 INFO    SenderThread:22245 [sender.py:send_exit():379] send defer
+2022-04-06 10:02:11,070 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:02:11,071 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,071 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 0
+2022-04-06 10:02:11,072 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,072 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 0
+2022-04-06 10:02:11,072 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 1
+2022-04-06 10:02:11,072 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,073 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 1
+2022-04-06 10:02:11,173 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,174 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 1
+2022-04-06 10:02:11,175 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 2
+2022-04-06 10:02:11,176 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:11,177 DEBUG   SenderThread:22245 [sender.py:send():235] send: stats
+2022-04-06 10:02:11,179 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,180 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:02:11,181 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 2
+2022-04-06 10:02:11,183 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,183 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 2
+2022-04-06 10:02:11,184 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 3
+2022-04-06 10:02:11,185 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,185 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 3
+2022-04-06 10:02:11,186 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,187 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 3
+2022-04-06 10:02:11,187 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 4
+2022-04-06 10:02:11,188 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,189 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 4
+2022-04-06 10:02:11,194 DEBUG   SenderThread:22245 [sender.py:send():235] send: summary
+2022-04-06 10:02:11,196 INFO    SenderThread:22245 [sender.py:_save_file():947] saving file wandb-summary.json with policy end
+2022-04-06 10:02:11,197 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,197 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 4
+2022-04-06 10:02:11,197 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 5
+2022-04-06 10:02:11,199 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:02:11,199 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 5
+2022-04-06 10:02:11,200 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:02:11,201 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 5
+2022-04-06 10:02:11,286 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:11,407 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 10:02:11,408 INFO    Thread-7  :22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:02:16,386 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:21,487 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:26,590 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:31,691 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:36,795 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:41,898 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:44,974 ERROR   SenderThread:22245 [retry.py:__call__():126] Retry attempt failed:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 421, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 3, in raise_from
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 416, in _make_request
+    httplib_response = conn.getresponse()
+  File "/usr/lib/python3.8/http/client.py", line 1348, in getresponse
+    response.begin()
+  File "/usr/lib/python3.8/http/client.py", line 316, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.8/http/client.py", line 277, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.8/socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+  File "/usr/lib/python3.8/ssl.py", line 1241, in recv_into
+    return self.read(nbytes, buffer)
+  File "/usr/lib/python3.8/ssl.py", line 1099, in read
+    return self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/usr/lib/python3/dist-packages/urllib3/util/retry.py", line 400, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/usr/lib/python3/dist-packages/six.py", line 703, in reraise
+    raise value
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 423, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 330, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/sdk/internal/internal_api.py", line 140, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/transport/requests.py", line 38, in execute
+    request = requests.post(self.url, **post_args)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 116, in post
+    return request('post', url, data=data, json=json, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 529, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+2022-04-06 10:02:47,001 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:52,101 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:02:57,204 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:02,306 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:07,410 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:12,510 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:17,612 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:22,713 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:27,814 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:32,917 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:36,317 WARNING FileStreamThread:22245 [file_stream.py:request_with_retry():594] requests_with_retry encountered retryable exception: 500 Server Error: Internal Server Error for url: https://api.wandb.ai/files/adamdowse/curriculum_over_time/2cywizt4/file_stream. func: <bound method Session.post of <requests.sessions.Session object at 0x7fe5feae21c0>>, args: ('https://api.wandb.ai/files/adamdowse/curriculum_over_time/2cywizt4/file_stream',), kwargs: {'json': {'files': {'wandb-summary.json': {'offset': 0, 'content': ['{"Epoch": 2, "Train-Loss": 0.10044937580823898, "Test-Loss": 0.2630162835121155, "Train-Acc": 0.9802631735801697, "Test-Acc": 0.9225332140922546, "Data-Used": 18357, "0-Used": 2410, "1-Used": 1521, "2-Used": 2194, "3-Used": 1885, "4-Used": 1757, "5-Used": 1443, "6-Used": 1994, "7-Used": 2007, "8-Used": 1569, "9-Used": 1577, "_timestamp": 1649239287, "_runtime": 310, "_step": 2, "_wandb": {"runtime": 352}}']}, 'wandb-events.jsonl': {'offset': 10, 'content': ['{"system.cpu": 34.55, "system.memory": 41.97, "system.disk": 6.5, "system.proc.memory.availableMB": 3642.74, "system.proc.memory.rssMB": 359.64, "system.proc.memory.percent": 5.73, "system.proc.cpu.threads": 12.0, "system.network.sent": 6210211, "system.network.recv": 6320173, "_wandb": true, "_timestamp": 1649239309, "_runtime": 332}', '{"system.cpu": 32.0, "system.memory": 41.85, "system.disk": 6.5, "system.proc.memory.availableMB": 3648.73, "system.proc.memory.rssMB": 359.64, "system.proc.memory.percent": 5.73, "system.proc.cpu.threads": 12.0, "system.network.sent": 6641112, "system.network.recv": 6755672, "_wandb": true, "_timestamp": 1649239331, "_runtime": 354}']}, 'output.log': {'offset': 90, 'content': ['2022-04-06T10:01:53.225255 Batch =300\n', '2022-04-06T10:02:01.239867 Batch =400\n', '2022-04-06T10:02:09.267820 Batch =500\n', 'ERROR 2022-04-06T10:02:09.335759 Traceback (most recent call last):\n', 'ERROR 2022-04-06T10:02:09.335759   File "RunTest.py", line 191, in <module>\n', 'ERROR 2022-04-06T10:02:09.335759     main(args)\n', 'ERROR 2022-04-06T10:02:09.335759   File "RunTest.py", line 134, in main\n', 'ERROR 2022-04-06T10:02:09.335759     col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)\n', 'ERROR 2022-04-06T10:02:09.335759   File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 197, in update_col\n', 'ERROR 2022-04-06T10:02:09.335759     col = pd.concat([col,new_row],axis=0)\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/util/_decorators.py", line 311, in wrapper\n', 'ERROR 2022-04-06T10:02:09.335759     return func(*args, **kwargs)\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/core/reshape/concat.py", line 359, in concat\n', 'ERROR 2022-04-06T10:02:09.335759     return op.get_result()\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/core/reshape/concat.py", line 592, in get_result\n', 'ERROR 2022-04-06T10:02:09.335759     new_data = concatenate_managers(\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/concat.py", line 224, in concatenate_managers\n', 'ERROR 2022-04-06T10:02:09.335759     elif _is_uniform_join_units(join_units):\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/concat.py", line 556, in _is_uniform_join_units\n', 'ERROR 2022-04-06T10:02:09.335759     if first.dtype.kind == "V":\n', 'ERROR 2022-04-06T10:02:09.335759   File "pandas/_libs/properties.pyx", line 37, in pandas._libs.properties.CachedProperty.__get__\n', 'ERROR 2022-04-06T10:02:09.335759   File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/blocks.py", line 354, in dtype\n', 'ERROR 2022-04-06T10:02:09.335759     @cache_readonly\n', 'ERROR 2022-04-06T10:02:09.335759 KeyboardInterrupt\n']}}, 'dropped': 0}}
+2022-04-06 10:03:38,018 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:39,680 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 6
+2022-04-06 10:03:39,681 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,681 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:03:39,683 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 6
+2022-04-06 10:03:39,682 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,684 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,684 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,684 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,685 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,685 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,685 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,685 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,685 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,686 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:39,687 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:03:39,687 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 6
+2022-04-06 10:03:39,687 INFO    SenderThread:22245 [dir_watcher.py:finish():283] shutting down directory watcher
+2022-04-06 10:03:39,790 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:40,455 INFO    SenderThread:22245 [dir_watcher.py:_on_file_modified():230] file/dir modified: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/config.yaml
+2022-04-06 10:03:40,456 INFO    SenderThread:22245 [dir_watcher.py:finish():313] scan: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files
+2022-04-06 10:03:40,457 INFO    SenderThread:22245 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log output.log
+2022-04-06 10:03:40,458 INFO    SenderThread:22245 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/config.yaml config.yaml
+2022-04-06 10:03:40,467 INFO    SenderThread:22245 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-metadata.json wandb-metadata.json
+2022-04-06 10:03:40,473 INFO    SenderThread:22245 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/requirements.txt requirements.txt
+2022-04-06 10:03:40,482 INFO    SenderThread:22245 [dir_watcher.py:finish():327] scan save: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json wandb-summary.json
+2022-04-06 10:03:40,507 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 7
+2022-04-06 10:03:40,514 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:40,530 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:03:40,536 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 7
+2022-04-06 10:03:40,562 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:03:40,563 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 7
+2022-04-06 10:03:40,563 INFO    SenderThread:22245 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 10:03:40,647 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:40,647 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:40,753 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:40,755 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:40,860 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:40,861 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:40,965 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:40,966 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,071 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,072 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,176 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,178 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,283 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,284 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,389 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,390 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,495 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,496 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,601 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,602 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,708 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,708 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,814 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,815 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:41,919 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:41,920 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,023 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,024 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,129 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,130 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,235 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,236 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,341 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,343 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,447 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,448 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,553 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,555 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,660 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,661 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,767 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,768 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,874 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,876 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:42,982 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:42,983 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,088 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,090 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,195 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,196 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,301 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,303 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,410 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,411 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,518 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,519 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,624 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,626 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,732 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,733 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,838 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,838 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:43,885 INFO    Thread-15 :22245 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/wandb-summary.json
+2022-04-06 10:03:43,941 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:43,941 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,047 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,048 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,157 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,158 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,264 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,266 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,374 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,375 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,481 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,482 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,587 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,589 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,695 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,696 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,801 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,803 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:44,910 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:44,911 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,016 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,017 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,123 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,125 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,230 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,231 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,337 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,339 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,446 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,447 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,552 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,552 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,656 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,657 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,760 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,761 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,864 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,866 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:45,962 INFO    Thread-12 :22245 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/output.log
+2022-04-06 10:03:45,973 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:45,975 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,082 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,082 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,185 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,187 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,292 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,294 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,402 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,403 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,509 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,509 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,614 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,615 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,721 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,723 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,828 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,828 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:46,927 INFO    Thread-13 :22245 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/config.yaml
+2022-04-06 10:03:46,935 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:46,937 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,041 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,042 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,145 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,146 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,251 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,252 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,358 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,366 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,471 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,472 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,577 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,577 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,679 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,679 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,781 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,781 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,883 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,883 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:47,985 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:47,986 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,087 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,088 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,189 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,190 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,293 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,295 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,401 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,401 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,503 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,504 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,605 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,606 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,708 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,708 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,810 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,810 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:48,912 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:48,912 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,014 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,014 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,116 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,116 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,219 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,221 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,326 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,327 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,433 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,434 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,539 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,539 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,642 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,643 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,746 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,746 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,849 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,850 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:49,955 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:49,956 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,060 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,061 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,166 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,167 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,271 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,271 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,374 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,375 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,481 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,483 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,588 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,589 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,695 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,696 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,802 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,804 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:50,908 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:50,908 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,011 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,011 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,113 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,113 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,216 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,217 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,323 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,323 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,426 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,428 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,533 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,534 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,639 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,640 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,745 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,746 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,850 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,851 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:51,954 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:51,955 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,060 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,061 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,169 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,171 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,276 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,277 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,381 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,382 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,487 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,488 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,592 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,593 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,697 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,698 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,804 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,806 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:52,913 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:52,915 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:53,008 INFO    Thread-14 :22245 [upload_job.py:push():137] Uploaded file /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/files/requirements.txt
+2022-04-06 10:03:53,021 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:53,023 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:53,130 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:53,131 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:53,213 INFO    Thread-6  :22245 [sender.py:transition_state():392] send defer: 8
+2022-04-06 10:03:53,215 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:03:53,217 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 8
+2022-04-06 10:03:53,222 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:03:53,222 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 8
+2022-04-06 10:03:53,237 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:54,827 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 9
+2022-04-06 10:03:54,827 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:54,829 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:03:54,829 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 9
+2022-04-06 10:03:54,830 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:03:54,830 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 9
+2022-04-06 10:03:54,830 INFO    SenderThread:22245 [sender.py:transition_state():392] send defer: 10
+2022-04-06 10:03:54,833 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: defer
+2022-04-06 10:03:54,834 DEBUG   SenderThread:22245 [sender.py:send():235] send: final
+2022-04-06 10:03:54,835 DEBUG   SenderThread:22245 [sender.py:send():235] send: footer
+2022-04-06 10:03:54,835 INFO    HandlerThread:22245 [handler.py:handle_request_defer():164] handle defer: 10
+2022-04-06 10:03:54,836 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: defer
+2022-04-06 10:03:54,836 INFO    SenderThread:22245 [sender.py:send_request_defer():388] handle sender defer: 10
+2022-04-06 10:03:54,931 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: poll_exit
+2022-04-06 10:03:54,932 DEBUG   SenderThread:22245 [sender.py:send_request():249] send_request: poll_exit
+2022-04-06 10:03:54,932 INFO    SenderThread:22245 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 10:03:57,074 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: sampled_history
+2022-04-06 10:03:57,076 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: get_summary
+2022-04-06 10:03:57,077 DEBUG   HandlerThread:22245 [handler.py:handle_request():141] handle_request: shutdown
+2022-04-06 10:03:57,077 INFO    HandlerThread:22245 [handler.py:finish():778] shutting down handler
+2022-04-06 10:03:57,836 INFO    WriterThread:22245 [datastore.py:close():281] close: /com.docker.devenvironments.code/project/large_models/wandb/run-20220406_095617-2cywizt4/run-2cywizt4.wandb
+2022-04-06 10:03:57,971 INFO    SenderThread:22245 [sender.py:finish():1078] shutting down sender
+2022-04-06 10:03:57,971 INFO    SenderThread:22245 [file_pusher.py:finish():145] shutting down file pusher
+2022-04-06 10:03:57,972 INFO    SenderThread:22245 [file_pusher.py:join():150] waiting for file pusher
+2022-04-06 10:03:57,975 INFO    MainThread:22245 [internal.py:handle_exit():82] Internal process exited
