@@ -1,0 +1,357 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+2022-04-06 13:51:08.694451: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-06 13:51:08.694568: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-06 13:51:08.695232: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+Batch =700
+Batch =800
+Batch =900
+Batch =1000
+Batch =1100
+Batch =1200
+Batch =1300
+Batch =1400
+Batch =1500
+Batch =1600
+Batch =1700
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 55994
+used 0 epoch
+label        0
+score    55994
+0            0
+dtype: int64
+nas- 0
+pacing dataused  5599
+nas- 50395
+       label  score          0
+i
+25534      2    0.0   0.000005
+20671      2    1.0   0.000006
+44431      2    2.0   0.000009
+62848      2    3.0    0.00001
+57494      0    4.0   0.000011
+...      ...    ...        ...
+10905      4    NaN  11.754507
+15731      7    NaN  12.130213
+41242      9    NaN  12.674594
+43515      3    NaN  12.755341
+64640      4    NaN  14.061742
+[55994 rows x 3 columns]
+pre-update:                                                      img  label  score
+i
+42445  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+29856  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    NaN
+52552  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    NaN
+36736  [  0   0   0   0   0   0   0   0   0   0   0  ...      3    NaN
+57684  [  0   0   0   0   0   0   0   0   0   0   0  ...      8    NaN
+...                                                  ...    ...    ...
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+27474  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label   score
+i
+42445  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     NaN
+29856  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     NaN
+52552  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     NaN
+36736  [  0   0   0   0   0   0   0   0   0   0   0  ...      3     NaN
+57684  [  0   0   0   0   0   0   0   0   0   0   0  ...      8     NaN
+...                                                  ...    ...     ...
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9     NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0     NaN
+27474  [  0   0   0   0   0   0   0   0   0   0   0  ...      7  4934.0
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4     NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 5599
+[1245, 170, 1094, 617, 471, 206, 719, 839, 222, 16]
+Length Calculated:  438
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch  1 , Loss:  0.45978108 , Accuracy:  0.8754331 , Test Loss:  0.25644767 , Test Accuracy:  0.9224618
+2022-04-06 13:55:45.032776: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+Batch =100
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 50395
+use reduced grads
+label        0
+score    55994
+0            0
+1        50394
+dtype: int64
+nas- 11165
+pacing dataused  7465
+nas- 48529
+       label  score          0          1
+i
+54262      1    0.0   0.103910   0.103910
+5510       4    1.0   0.325508   0.325508
+5541       4    2.0   2.022648   2.022648
+5582       8    3.0   0.056322   0.056322
+5518       6    4.0   0.004297   0.004297
+...      ...    ...        ...        ...
+60652      9    NaN   8.799885   8.799885
+69775      3    NaN   8.958776   8.958776
+62520      0    NaN   9.159884   9.159884
+68659      1    NaN  10.024375  10.024375
+64640      4    NaN  14.061742  14.061742
+[55994 rows x 4 columns]
+pre-update:                                                      img  label  score
+i
+25534  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    0.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    1.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    2.0
+62848  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    3.0
+57494  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    4.0
+...                                                  ...    ...    ...
+4391   [  0   0   0   0   0   0   0   0   0   0   0  ...      8    NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label   score
+i
+25534  [  0   0   0   0   0   0   0   0   0   0   0  ...      2  6873.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     1.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     2.0
+62848  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     3.0
+57494  [  0   0   0   0   0   0   0   0   0   0   0  ...      0     4.0
+...                                                  ...    ...     ...
+4391   [  0   0   0   0   0   0   0   0   0   0   0  ...      8  1172.0
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9     NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0     NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4     NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 12770
+[1758, 844, 1690, 1317, 1240, 944, 1292, 1513, 1079, 1093]
+Length Calculated:  438
+Epoch  2 , Loss:  0.0015145272 , Accuracy:  1.0 , Test Loss:  0.25279537 , Test Accuracy:  0.92438954
+Length Calculated:  400
+Batch =0
+Batch =100
+Batch =200
+Batch =300
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 48529
+use reduced grads
+label        0
+score    55994
+0            0
+1            0
+2        43194
+dtype: int64
+nas- 11165
+pacing dataused  9332
+nas- 46662
+       label  score          0          1          2
+i
+14822      7    0.0   0.000920   0.000786   0.000431
+14793      7    1.0   0.004206   0.004206   0.004206
+14788      8    2.0   0.002974   0.002278   0.000680
+2512       7    3.0   0.058822   0.058822   0.058822
+15360      1    4.0   0.119513   0.119513   0.006102
+...      ...    ...        ...        ...        ...
+60652      9    NaN   8.799885   8.799885   8.799885
+69775      3    NaN   8.958776   8.958776   8.958776
+62520      0    NaN   9.159884   9.159884   9.159884
+68659      1    NaN  10.024375  10.024375  10.024375
+64640      4    NaN  14.061742  14.061742  14.061742
+[55994 rows x 5 columns]
+pre-update:                                                      img  label  score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    0.0
+5510   [  0   0   0   0   0   0   0   0   0   0   0  ...      4    1.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    1.0
+5541   [  0   0   0   0   0   0   0   0   0   0   0  ...      4    2.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    2.0
+...                                                  ...    ...    ...
+45208  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label   score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     0.0
+5510   [  0   0   0   0   0   0   0   0   0   0   0  ...      4  3163.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     1.0
+5541   [  0   0   0   0   0   0   0   0   0   0   0  ...      4   493.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     2.0
+...                                                  ...    ...     ...
+45208  [  0   0   0   0   0   0   0   0   0   0   0  ...      7  7826.0
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9     NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0     NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4     NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 17997
+[2260, 1477, 2166, 1852, 1723, 1449, 1799, 2010, 1662, 1599]
+Length Calculated:  438
+Epoch  3 , Loss:  0.08971943 , Accuracy:  0.9827344 , Test Loss:  0.2570113 , Test Accuracy:  0.9229616
+Length Calculated:  563
+Batch =0
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 46662
+use full grads
+nas- 11165
+pacing dataused  11198
+nas- 44796
+       label  score          0          1          2          3
+i
+1955       6    0.0   0.010062   0.010062   0.010062   0.002442
+2200       8    1.0   0.005910   0.005910   0.003559   0.001213
+44512      2    2.0   0.394109   0.394109   0.007056   0.006483
+40945      9    3.0   0.056025   0.056025   0.056025   0.056025
+40949      5    4.0   0.408173   0.408173   0.483697   0.543358
+...      ...    ...        ...        ...        ...        ...
+60652      9    NaN   8.799885   8.799885   8.799885   8.799885
+69775      3    NaN   8.958776   8.958776   8.958776   8.958776
+62520      0    NaN   9.159884   9.159884   9.159884   9.159884
+68659      1    NaN  10.024375  10.024375  10.024375  10.024375
+64640      4    NaN  14.061742  14.061742  14.061742  14.061742
+[55994 rows x 6 columns]
+pre-update:                                                      img  label  score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    0.0
+14822  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    0.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    1.0
+14793  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    1.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    2.0
+...                                                  ...    ...    ...
+49733  [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label   score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1     0.0
+14822  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     0.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2     1.0
+14793  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     1.0
+44431  [  0   0   0   0   0   0   0   0   0   0   0  ...      2  4625.0
+...                                                  ...    ...     ...
+49733  [  0   0   0   0   0   0   0   0   0   0   0  ...      5     NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9     NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7     NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0     NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4     NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 21778
+[2617, 1970, 2503, 2206, 2071, 1827, 2156, 2399, 2045, 1984]
+Length Calculated:  438
+Epoch  4 , Loss:  0.14202322 , Accuracy:  0.96203375 , Test Loss:  0.23677054 , Test Accuracy:  0.9302442
+Length Calculated:  681
+Batch =0
+Batch =100
+Batch =200
+Batch =300
+Batch =400
+Batch =500
+Batch =600
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+nas- 44796
+use full grads
+nas- 11165
+pacing dataused  13065
+nas- 42929
+       label  score          0          1          2          3          4
+i
+7097       6    0.0   0.315007   0.315007   0.011437   0.018752   0.018478
+8548       3    1.0   0.053917   0.053917   0.053917   0.053917   0.053917
+2531       8    2.0   0.042616   0.042616   0.042616   0.000995   0.002012
+7321       8    3.0   0.435671   0.435671   0.435671   0.435671   0.171312
+5307       4    4.0   0.009005   0.009005   0.002763   0.001768   0.010604
+...      ...    ...        ...        ...        ...        ...        ...
+60652      9    NaN   8.799885   8.799885   8.799885   8.799885   8.799885
+69775      3    NaN   8.958776   8.958776   8.958776   8.958776   8.958776
+62520      0    NaN   9.159884   9.159884   9.159884   9.159884   9.159884
+68659      1    NaN  10.024375  10.024375  10.024375  10.024375  10.024375
+64640      4    NaN  14.061742  14.061742  14.061742  14.061742  14.061742
+[55994 rows x 7 columns]
+pre-update:                                                      img  label  score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1    0.0
+14822  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    0.0
+1955   [  0   0   0   0   0   0   0   0   0   0   0  ...      6    0.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    1.0
+14793  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    1.0
+...                                                  ...    ...    ...
+49733  [  0   0   0   0   0   0   0   0   0   0   0  ...      5    NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7    NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label    score
+i
+54262  [  0   0   0   0   0   0   0   0   0   0   0  ...      1      0.0
+14822  [  0   0   0   0   0   0   0   0   0   0   0  ...      7   7014.0
+1955   [  0   0   0   0   0   0   0   0   0   0   0  ...      6      0.0
+20671  [  0   0   0   0   0   0   0   0   0   0   0  ...      2      1.0
+14793  [  0   0   0   0   0   0   0   0   0   0   0  ...      7  10918.0
+...                                                  ...    ...      ...
+49733  [  0   0   0   0   0   0   0   0   0   0   0  ...      5      NaN
+63955  [  0   0   0   0   0   0   0   0   0   0   0  ...      9      NaN
+47186  [  0   0   0   0   0   0   0   0   0   0   0  ...      7      NaN
+16545  [  0   0   0   0   0   0   0   0   0   0   0  ...      0      NaN
+65728  [  0   0   0   0   0   0   0   0   0   0   0  ...      4      NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 25491
+[2946, 2450, 2817, 2586, 2483, 2179, 2512, 2784, 2399, 2335]
+Length Calculated:  438
+Epoch  5 , Loss:  0.14833383 , Accuracy:  0.9595264 , Test Loss:  0.23001303 , Test Accuracy:  0.93224335
+Length Calculated:  797
+Batch =0
+Batch =100
+Traceback (most recent call last):
+  File "RunTest.py", line 216, in <module>
+    main(args)
+  File "RunTest.py", line 134, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 195, in update_col
+    new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 612, in __init__
+    manager = get_option("mode.data_manager")
+  File "/usr/local/lib/python3.8/dist-packages/pandas/_config/config.py", line 256, in __call__
+    return self.__func__(*args, **kwds)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/_config/config.py", line 132, in _get_option
+    return root[k]
+KeyboardInterrupt

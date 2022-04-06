@@ -30,6 +30,7 @@ class CustomDataGen(tf.keras.utils.Sequence):
         #df = (i|img,label,score)
         #update the score col in df
         print('pre-update:',self.df) #TODO RUN AND FIX THIS (Has correct max score rank but more non nan values)
+        self.df.score = np.nan
         self.df.update(losses_df) #this is a problem
         print('post-update:',self.df)
 
