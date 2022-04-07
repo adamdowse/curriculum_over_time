@@ -1,7 +1,5 @@
 import os
 
-
-
 #File used to test running the experiments
 
 epochs = str(30)

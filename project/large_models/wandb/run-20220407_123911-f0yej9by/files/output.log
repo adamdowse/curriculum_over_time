@@ -1,0 +1,21 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+["['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']"]
+Traceback (most recent call last):
+  File "RunTest.py", line 220, in <module>
+    main(args)
+  File "RunTest.py", line 96, in main
+    info.class_names = sf.str_to_list(info.class_names[0])
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 104, in str_to_list
+    img = [float(y) for y in img]
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 104, in <listcomp>
+    img = [float(y) for y in img]
+ValueError: could not convert string to float: "'0',"

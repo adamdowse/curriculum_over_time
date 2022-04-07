@@ -1,0 +1,50 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.12.11
+    framework: keras
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.10
+    start_time: 1649335151
+    t:
+      1:
+      - 2
+      - 3
+      - 5
+      2:
+      - 2
+      - 3
+      - 5
+      3:
+      - 16
+      4: 3.8.10
+      5: 0.12.11
+      8:
+      - 5
+batch_size:
+  desc: null
+  value: 32
+dataset:
+  desc: null
+  value: mnist
+epochs:
+  desc: null
+  value: 30
+lam_pace:
+  desc: null
+  value: 0.9
+lam_zero:
+  desc: null
+  value: 0.1
+learning_rate:
+  desc: null
+  value: 0.01
+pacing_func:
+  desc: null
+  value: naive_linear_high_first
+scoring_func:
+  desc: null
+  value: naive_grads

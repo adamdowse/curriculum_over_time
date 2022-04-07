@@ -91,6 +91,13 @@ def main(args):
     #train_df is the df with images in it (i|img,label)
     #test_df is the df with images in it (i|img,label)
 
+    #Sort class_name var into list
+    info.class_names = sf.str_to_list(info.class_names[0])
+    info.class_names = [y.replace(',','') for y in info.class_names]
+    info.class_names = [y.replace("'",'') for y in info.class_names]
+    print('class names: ',info.class_names)
+
+
     #Init the data generators
     train_data_gen = datagen.CustomDataGen(
         df = train_df,
@@ -128,7 +135,7 @@ def main(args):
         #training step
         for i, (X,Y) in enumerate(train_data_gen):
             #collect losses and train model
-            if i % 100 == 0: print("Batch ="+str(i))
+            if i % 500 == 0: print("Batch ="+str(i))
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
@@ -136,7 +143,7 @@ def main(args):
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
-        print('nas-',df_train_losses.score.isna().sum())
+
         #grab statistics before nans are infilled
         ce = info.current_epoch
         class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
@@ -144,7 +151,6 @@ def main(args):
         
         #calculate the score via a function
         df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
-        print('nas-',df_train_losses.score.isna().sum())
 
         #take score stats
         class_score_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
@@ -152,7 +158,7 @@ def main(args):
         
         #rank and trim data
         df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
-        print('nas-',df_train_losses.score.isna().sum())
+
         #take rank statistics
         class_rank_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
         class_rank_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
@@ -172,7 +178,6 @@ def main(args):
             'Train-Acc':train_acc_metric.result().numpy(),
             'Test-Acc':test_acc_metric.result().numpy(),
             'Data-Used':train_data_gen.dataused}
-
         keys = [x for x in info.class_names]
         cla = {}
         clv = {}

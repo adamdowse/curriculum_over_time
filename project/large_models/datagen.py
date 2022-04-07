@@ -29,16 +29,13 @@ class CustomDataGen(tf.keras.utils.Sequence):
         #losses_df = (i|label,score,0,1,2,..) where use is from 0 to dataused and nan past dataused
         #df = (i|img,label,score)
         #update the score col in df
-        print('pre-update:',self.df) #TODO RUN AND FIX THIS (Has correct max score rank but more non nan values)
         self.df.score = np.nan
         self.df.update(losses_df) #this is a problem
-        print('post-update:',self.df)
 
         #sort the large dataframe by the use index and put nans last so not used
         self.df = self.df.sort_values('score',na_position='last')
  
         self.dataused = len(self.df.index)-self.df.score.isna().sum()
-        print('dataused-on-epoch-end-',self.dataused)
 
         #produce some statistics
         self.class_used = [len(self.df[self.df.label==x].index)-self.df.score[self.df.label==x].isna().sum() for x in range(self.num_classes)]
@@ -87,6 +84,6 @@ class CustomDataGen(tf.keras.utils.Sequence):
             l = int(self.dataused//self.batch_size)
         else:
             l = int(self.dataused//self.batch_size) + 1
-        print('Length Calculated: ',l)
+        print('Number of batches to use: ',l)
         return l
 

@@ -87,18 +87,22 @@ def img_dim_shift(x,info):
     #x is a vector of strings
     new_x = []
     for img in x:
-        img = img.replace('[','')
-        img = img.replace(']','')
-        img = img.replace('\n','')
-        img = img.split(' ')
-        img = [y.replace(' ','') for y in img]
-        img = [y for y in img if y!= '']
+        img = str_to_list(img)
         img = [float(y) for y in img]
         img = [y/256 for y in img]
         img = np.array(img)
         img = img.reshape(info.img_shape)
         new_x.append(img)
     return new_x
+
+def str_to_list(img):
+    img = img.replace('[','')
+    img = img.replace(']','')
+    img = img.replace('\n','')
+    img = img.split(' ')
+    img = [y.replace(' ','') for y in img]
+    img = [y for y in img if y!= '']
+    return img
 
 def label_oh(x,info):
     return tf.one_hot(x,info.num_classes)
@@ -132,13 +136,11 @@ def scoring_func(df,info):
         n = 3 #lookback for gradients
         if info.current_epoch == 0:
             print('used 0 epoch')
-            print(df.isna().sum())
             #use the first epochs loss info
             df['score'] = df['0']
 
         elif info.current_epoch < n:
             print('use reduced grads')
-            print(df.isna().sum())
             #fill the missing info
             n = info.current_epoch + 1
             df.iloc[:,-n:] = df.iloc[:,-n:].fillna(method='ffill',axis=1)

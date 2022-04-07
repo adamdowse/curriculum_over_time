@@ -1,0 +1,101 @@
+
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+1      0    NaN
+2      4    NaN
+3      8    NaN
+6      0    NaN
+MAIN: Started Training
+Length Calculated:  1750
+Batch =0
+2022-04-07 12:17:04.874780: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-07 12:17:04.874930: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (e175316c4453): /proc/driver/nvidia/version does not exist
+2022-04-07 12:17:04.875954: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Batch =500
+Batch =1000
+Batch =1500
+used 0 epoch
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+pacing dataused  5599
+       label  score          0
+i
+24255      2    0.0   0.000002
+68677      0    1.0   0.000004
+14616      3    2.0   0.000007
+22287      0    3.0   0.000008
+25534      2    4.0   0.000009
+...      ...    ...        ...
+31745      7    NaN  11.558965
+46257      9    NaN  11.789228
+64640      4    NaN  11.999098
+43515      3    NaN  13.244151
+10905      4    NaN  13.376013
+[55994 rows x 3 columns]
+pre-update:                                                      img  label  score
+i
+16042  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+9552   [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+50632  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    NaN
+2816   [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+56985  [  0   0   0   0   0   0   0   0   0   0   0  ...      8    NaN
+...                                                  ...    ...    ...
+43907  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+26956  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+20510  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+3450   [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+37334  [  0   0   0   0   0   0   0   0   0   0   0  ...      3    NaN
+[55994 rows x 3 columns]
+post-update:                                                      img  label  score
+i
+16042  [  0   0   0   0   0   0   0   0   0   0   0  ...      6    NaN
+9552   [  0   0   0   0   0   0   0   0   0   0   0  ...      1    NaN
+50632  [  0   0   0   0   0   0   0   0   0   0   0  ...      2    NaN
+2816   [  0   0   0   0   0   0   0   0   0   0   0  ...      4    NaN
+56985  [  0   0   0   0   0   0   0   0   0   0   0  ...      8    NaN
+...                                                  ...    ...    ...
+43907  [  0   0   0   0   0   0   0   0   0   0   0  ...      6  408.0
+26956  [  0   0   0   0   0   0   0   0   0   0   0  ...      0    NaN
+20510  [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+3450   [  0   0   0   0   0   0   0   0   0   0   0  ...      9    NaN
+37334  [  0   0   0   0   0   0   0   0   0   0   0  ...      3    NaN
+[55994 rows x 3 columns]
+dataused-on-epoch-end- 5599
+[1402, 99, 1134, 647, 479, 153, 627, 966, 87, 5]
+Length Calculated:  438
+["['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']"]
+Epoch  1 , Loss:  0.47628987 , Accuracy:  0.87318283 , Test Loss:  0.26581463 , Test Accuracy:  0.92153364
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+2022-04-07 12:22:02.616217: W tensorflow/python/util/util.cc:368] Sets are not currently considered sequences, but this may change in the future, so consider avoiding using them.
+Checkpoint saved
+Length Calculated:  175
+Batch =0
+use reduced grads
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Traceback (most recent call last):
+  File "RunTest.py", line 215, in <module>
+    main(args)
+  File "RunTest.py", line 146, in main
+    df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 144, in scoring_func
+    df['score'] = calc_grad(n,df.iloc[:,-n:])
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 112, in calc_grad
+    for i,row in data.iterrows():
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/frame.py", line 1324, in iterrows
+    s = klass(v, index=columns, name=k)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/series.py", line 455, in __init__
+    data = SingleBlockManager.from_array(data, index)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/managers.py", line 1736, in from_array
+    block = new_block(array, placement=slice(0, len(index)), ndim=1)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/blocks.py", line 2035, in new_block
+    values = maybe_coerce_values(values)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/blocks.py", line 1961, in maybe_coerce_values
+    values = ensure_wrapped_if_datetimelike(values)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/construction.py", line 443, in ensure_wrapped_if_datetimelike
+    if arr.dtype.kind == "M":
+KeyboardInterrupt
