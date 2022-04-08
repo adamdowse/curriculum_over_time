@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -7,6 +8,7 @@ import supporting_functions as sf
 import supporting_models as sm
 import datagen
 import wandb
+import os
 import argparse
 
 def parse_arguments():
@@ -42,8 +44,8 @@ def main(args):
 
         #if datset name is a path use that path
         dataset_name = args.dataset
-        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -61,6 +63,7 @@ def main(args):
         'lam_zero':args.lam_zero,
         'lam_pace':args.lam_pace
     }
+    os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
     wandb.login()
     wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
     tf.keras.backend.clear_session()
@@ -206,7 +209,7 @@ def main(args):
         test_acc_metric.reset_states()
 
         #save the model
-        if info.current_epoch % 5 == 0: #TODO change back to 10 for full test
+        if info.current_epoch % 10 == 0:
             model.save(info.save_model_path)
             print('Checkpoint saved')
 
@@ -220,4 +223,3 @@ if __name__ =='__main__':
     args = parse_arguments()
     main(args)
 
-    #TODO not using all data using 1436 batches when should be using 1750
