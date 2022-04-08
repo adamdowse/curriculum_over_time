@@ -1,0 +1,38 @@
+
+INIT: Cannot find  mnist  data, downloading now...
+2022-04-08 13:18:25.984790: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2022-04-08 13:18:26.771073: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1525] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 11433 MB memory:  -> device: 0, name: TITAN X (Pascal), pci bus id: 0000:04:00.0, compute capability: 6.1
+INIT: Finished creating train dataset
+  label  score
+i
+0     2    NaN
+1     0    NaN
+2     4    NaN
+3     8    NaN
+4     7    NaN
+class names:  ['0']
+MAIN: Started Training
+Number of batches to use:  1744
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+/usr/local/lib/python3.8/dist-packages/pandas/core/indexes/base.py:6982: FutureWarning: In a future version, the Index constructor will not infer numeric dtypes when passed object-dtype sequences (matching Series behavior)
+  return Index(sequences[0], name=names)
+Traceback (most recent call last):
+  File "RunTest.py", line 224, in <module>
+    main(args)
+  File "RunTest.py", line 139, in main
+    for i, (X,Y) in enumerate(train_data_gen):
+  File "/usr/local/lib/python3.8/dist-packages/keras/utils/data_utils.py", line 486, in __iter__
+    for item in (self[i] for i in range(len(self))):
+  File "/usr/local/lib/python3.8/dist-packages/keras/utils/data_utils.py", line 486, in <genexpr>
+    for item in (self[i] for i in range(len(self))):
+  File "/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datagen.py", line 78, in __getitem__
+    X, Y = self.__get_data(batches)
+  File "/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datagen.py", line 71, in __get_data
+    X_batch = np.asarray([self.__get_input(x, self.input_size) for x  in img_batch])
+  File "/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datagen.py", line 71, in <listcomp>
+    X_batch = np.asarray([self.__get_input(x, self.input_size) for x  in img_batch])
+  File "/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datagen.py", line 48, in __get_input
+    img = img.replace('[','')
+AttributeError: 'numpy.ndarray' object has no attribute 'replace'

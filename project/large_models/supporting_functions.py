@@ -54,10 +54,7 @@ def init_data(info,bypass=False):
             i += 1
         
         #make the required directory and save the data
-        try:
-            os.mkdir(info.data_path + info.dataset_name)
-        except OSError as error:
-            print(error)
+        os.makedirs(info.data_path + info.dataset_name)
         df.to_csv(info.data_path + info.dataset_name + '/imagedata.csv')
         df_losses.to_csv(info.data_path  + info.dataset_name + '/lossdata.csv')
         with open(info.data_path+info.dataset_name+'/metadata.csv','w',newline='') as f:
