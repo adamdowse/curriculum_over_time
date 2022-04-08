@@ -1,0 +1,45 @@
+
+INIT: Cannot find  mnist  data, downloading now...
+2022-04-08 13:52:51.342989: E tensorflow/stream_executor/cuda/cuda_driver.cc:271] failed call to cuInit: UNKNOWN ERROR (34)
+2022-04-08 13:52:51.343119: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (c8f727e0b809): /proc/driver/nvidia/version does not exist
+2022-04-08 13:52:51.343677: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+INIT: Using found mnist data
+INIT: Finished creating train dataset
+   label  score
+i
+0      2    NaN
+3      8    NaN
+4      7    NaN
+5      6    NaN
+6      0    NaN
+class names:  ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+MAIN: Started Training
+Number of batches to use:  1748
+Batch =0
+Batch =500
+Batch =1000
+Batch =1500
+Traceback (most recent call last):
+  File "RunTest.py", line 226, in <module>
+    main(args)
+  File "RunTest.py", line 146, in main
+    col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+  File "/com.docker.devenvironments.code/project/large_models/supporting_functions.py", line 196, in update_col
+    col = pd.concat([col,new_row],axis=0)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/util/_decorators.py", line 311, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/reshape/concat.py", line 359, in concat
+    return op.get_result()
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/reshape/concat.py", line 592, in get_result
+    new_data = concatenate_managers(
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/concat.py", line 241, in concatenate_managers
+    values = _concatenate_join_units(join_units, copy=copy)
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/concat.py", line 479, in _concatenate_join_units
+    elif any(is_1d_only_ea_obj(t) for t in to_concat):
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/internals/concat.py", line 479, in <genexpr>
+    elif any(is_1d_only_ea_obj(t) for t in to_concat):
+  File "/usr/local/lib/python3.8/dist-packages/pandas/core/dtypes/common.py", line 1404, in is_1d_only_ea_obj
+    from pandas.core.arrays import (
+  File "<frozen importlib._bootstrap>", line 1017, in _handle_fromlist
+KeyboardInterrupt

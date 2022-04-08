@@ -44,8 +44,10 @@ def main(args):
 
         #if datset name is a path use that path
         dataset_name = args.dataset
-        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 

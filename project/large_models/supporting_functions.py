@@ -12,24 +12,7 @@ def init_data(info,bypass=False):
     '''
     Take a named dataset and if it already exists use the pre svaed data otherwise download it.
     '''
-    if os.path.isdir(info.data_path + info.dataset_name) and bypass==False:
-        print('INIT: Using found',info.dataset_name, 'data')
-        #if the data exists import the csv and change data into a tf dataset
-        # need to take the csvs and fix the image data dimentions and turn into a tfdataset
-        df = pd.read_csv(info.data_path + info.dataset_name + '/imagedata.csv',index_col='Unnamed: 0')
-        df_losses = pd.read_csv(info.data_path + info.dataset_name + '/lossdata.csv',index_col='Unnamed: 0')
-        with open(info.data_path+info.dataset_name+'/metadata.csv',newline='') as f:
-            reader = csv.reader(f)
-            file_content = []
-            for row in reader:
-                file_content.append(row)
-            info.num_classes = int(file_content[0][0])
-            info.class_names = file_content[1]
-            info.img_shape = file_content[2][0]
-            info.img_shape = info.img_shape[1:-1]
-            info.img_shape = info.img_shape.split(',')
-            info.img_shape = [int(x) for x in info.img_shape]
-    else:
+    if not os.path.isdir(info.data_path + info.dataset_name) or bypass==True:
         print('INIT: Cannot find ',info.dataset_name, ' data, downloading now...')
         #take the tfds dataset and produce a dataset and dataframe
         ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
@@ -62,6 +45,24 @@ def init_data(info,bypass=False):
             writer.writerow([info.num_classes])
             writer.writerow([info.class_names])
             writer.writerow([info.img_shape])
+
+    print('INIT: Using found',info.dataset_name, 'data')
+    #if the data exists import the csv and change data into a tf dataset
+    # need to take the csvs and fix the image data dimentions and turn into a tfdataset
+    df = pd.read_csv(info.data_path + info.dataset_name + '/imagedata.csv',index_col='Unnamed: 0')
+    df_losses = pd.read_csv(info.data_path + info.dataset_name + '/lossdata.csv',index_col='Unnamed: 0')
+    with open(info.data_path+info.dataset_name+'/metadata.csv',newline='') as f:
+        reader = csv.reader(f)
+        file_content = []
+        for row in reader:
+            file_content.append(row)
+        info.num_classes = int(file_content[0][0])
+        info.class_names = file_content[1]
+        info.img_shape = file_content[2][0]
+        info.img_shape = info.img_shape[1:-1]
+        info.img_shape = info.img_shape.split(',')
+        info.img_shape = [int(x) for x in info.img_shape]
+        
 
     df = df.set_index('i')
     train_df = df[df['test']==False]
