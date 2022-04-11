@@ -109,6 +109,10 @@ def scoring_func(df,info):
     #df is train_data_losses = (i|score,0,1,2,3,4...)
     #take the training dataframe and apply the scoring functions to it
     #the output is a dataframe with the score of each index
+
+    #TODO change this to have a list of 'filling functions' and then scoring functions
+
+
     def calc_grad(n,data):
         grads = []
         for i,row in data.iterrows():
@@ -118,6 +122,64 @@ def scoring_func(df,info):
             grads.append(model.coef_[0])
         return pd.Series(data=grads)
 
+    def reg_fill(n,data,info):
+        #take the losses and fill the nan values in the last row with a regression output
+        #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
+        print('fill data = ',data)
+        if data.iloc[-1] == np.nan:
+            if info.current_epoch == 0:
+                print('error must use all data for current version of reg_fill on epoch 0')
+            elif info.current_epoch == 1:
+                #use the last epochs loss
+                out = data.iloc[-2]
+                print('out = ',out)
+            elif info.current_epoch < n:
+                print('in e < n')
+                #use a smaller lookback for regression
+                n = info.current_epoch
+                x = np.array(range(n)).reshape((-1,1))
+                y = data[-(n+1):-1].to_numpy() 
+                model = linear_model.LinearRegression().fit(x,y)
+                out = model.predict([n].reshape((-1,1)))
+                print('out = ',out)
+            elif info.current_epoch >= n:
+                #use the specified lookback and predict next
+                x = np.array(range(n)).reshape((-1,1))
+                y = data[-(n+1):-1].to_numpy() 
+                model = linear_model.LinearRegression().fit(x,y)
+                out = model.predict([n].reshape((-1,1)))
+        else:
+            out = data.iloc[-1]
+        return out
+
+    def reg_fill_grav(n,data,info):
+        #take the losses and fill the nan values in the last row with a regression output
+        #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
+        
+        if data[-1] == np.nan:
+            if info.current_epoch == 0:
+                print('error must use all data for current version of reg_fill on epoch 0')
+            elif info.current_epoch == 1:
+                #use the last epochs loss
+                out = data[-2] - info.score_grav
+            elif info.current_epoch < n:
+                #use a smaller lookback for regression
+                n = info.current_epoch
+                x = np.array(range(n)).reshape((-1,1))
+                y = data[-(n+1):-1].to_numpy() 
+                model = linear_model.LinearRegression().fit(x,y)
+                out = model.predict([n].reshape((-1,1))) - info.score_grav
+            elif info.current_epoch >= n:
+                #use the specified lookback and predict next
+                x = np.array(range(n)).reshape((-1,1))
+                y = data[-(n+1):-1].to_numpy() 
+                model = linear_model.LinearRegression().fit(x,y)
+                out = model.predict([n].reshape((-1,1))) - info.score_grav
+        else:
+            out = data[-1]
+        return out
+                
+    #-------------------------------main functions---------------------------
     #reset the scores
     df['score'] = np.nan
 
@@ -131,7 +193,7 @@ def scoring_func(df,info):
         #calc gradients over last n losses
         #convert any nans into last loss val
 
-        n = 3 #lookback for gradients
+        n = info.score_lookback #lookback for gradients
         if info.current_epoch == 0:
             print('used 0 epoch')
             #use the first epochs loss info
@@ -152,6 +214,70 @@ def scoring_func(df,info):
             #needs to be n+1 epoch before it can use this
             df['score'] = calc_grad(n,df.iloc[:,-n:])
 
+    elif info.scoring_function == 'pred_grads':
+        #calc gradients over last n losses
+        #fill the missing losses with the predicted value from the regression
+
+        n = info.score_lookback #lookback for gradients
+        if info.current_epoch == 0:
+            print('used 0 epoch')
+            #use the first epochs loss info
+            df['score'] = df['0']
+
+        elif info.current_epoch < n:
+            print('use reduced grads')
+            #fill the missing info with regression
+            n = info.current_epoch + 1
+            df.iloc[:,-1] = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            print(df)
+            if np.nan in df.iloc[:,-1]:
+                print('NAN found after fill proceduce')
+            #calc grad over as many as possible
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
+
+        elif info.current_epoch >= n-1:
+            print('use full grads')
+            #fill the missing info
+            df.iloc[:,-1] = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            print(df)
+            if np.nan in df.iloc[:,-1]:
+                print('NAN found after fill proceduce')
+            
+            #needs to be n+1 epoch before it can use this
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
+
+    elif info.scoring_function == 'pred_grads_gravity':
+        #calc gradients over last n losses
+        #fill the missing losses with the predicted value from the regression
+        #addition of reducing the loss if np.nan is found 
+            #predicted with regression but a set value is removed from the loss each na step
+
+        n = info.score_lookback #lookback for gradients
+        if info.current_epoch == 0:
+            print('used 0 epoch')
+            #use the first epochs loss info
+            df['score'] = df['0']
+
+        elif info.current_epoch < n:
+            print('use reduced grads')
+            #fill the missing info with regression
+            n = info.current_epoch + 1
+            df.iloc[:,-1] = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
+            if np.nan in df.iloc[:,-1]:
+                print('NAN found after fill proceduce')
+            #calc grad over as many as possible
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
+
+        elif info.current_epoch >= n-1:
+            print('use full grads')
+            #fill the missing info
+            df.iloc[:,-1] = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
+            if np.nan in df.iloc[:,-1]:
+                print('NAN found after fill proceduce')
+            
+            #needs to be n+1 epoch before it can use this
+            df['score'] = calc_grad(n,df.iloc[:,-n:])
+
 
     else:
         print('COLLECT TRAIN DATA: ERROR no valid scoring function')
@@ -159,14 +285,35 @@ def scoring_func(df,info):
     return df
 
 def pacing_func(df,info):
+    '''
+    functions:
+        none
+        naive_linear
+        naive_grad
+        stat_grad (not done)
+    '''
+    #df=(i|socore, 0,1,2,3...)
+
+
+    def get_grad(n,row):
+        #n is the lookback
+        #data is a row
+        x = np.array(range(n)).reshape((-1,1))
+        y = row[-n:].to_numpy()
+        model = linear_model.LinearRegression().fit(x,y)
+        return model.coef_[0]
+
+
     if info.pacing_function == 'none':
+        #shuffle all data
+        df['score'] = random.sample([x for x in range(len(df.index))],len(df.index))
         return df
 
-    elif info.pacing_function == 'naive_linear_high_first':
+    elif info.pacing_function == 'naive_linear':
         n = len(df.index)
-        df = df.sort_values('score',ascending=True)
+        df = df.sort_values('score',ascending=info.lam_high_first)
         #calc amount of data to use
-        d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
+        d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_max))*info.current_epoch #ref from cl survey
         d = min([1,d]) #percentage
         d = int(d*n)
         print('pacing dataused ',d)
@@ -175,18 +322,45 @@ def pacing_func(df,info):
             i = i + [np.nan]*(n-d)
         df['score'] = i #the final rank
         return df
+    
+    elif info.pacing_function == 'naive_grad':
+        #use the loss tracts as a guage of of well the model is doing
+        #start with fixed small amount of data (COULD DO MORE WITH THIS, WHAT IS THE BEST STARTING SET?)
+        #if average train loss:
+            #<< add data
+            #>> remove data
+            #range around 0 keep fixed
 
-    elif info.pacing_function == 'naive_linear_low_first':
-        n = len(df.index)
-        df = df.sort_values('score',ascending=False)
-        #calc amount of data to use
-        d = info.lam_zero + ((1-info.lam_zero)/(info.max_epochs * info.lam_pace))*info.current_epoch #ref from cl survey
-        d = min([1,d])
-        d = int(d*n)
-        i = range(d)
-        i = i + [np.nan]*(n-d)
-        df['score'] = i
-        return df
+        #current epoch is doing these calc for next epoch (epoch 0 has loss info for epoch 0 and rank will be used in epoch 1)
+        total_data = len(df.index)
+        if info.current_epoch == 0:
+            info.lam_data = total_data * info.lam_zero
+        else:
+            #calc average grad
+            if info.current_epoch < info.lam_lookback:
+                n = info.current_epoch +1
+            else:
+                n = info.lam_lookback
+            avg_grad = get_grad(n,df.iloc[:,-n:].mean())
+
+            #modify amount of data used
+            #TODO add a learning rate system maybe?
+            if info.lam_low_first == True:
+                if avg_grad < info.lam_lower_bound:
+                    info.lam_data = info.lam_data + (avg_grad * info.lam_data_multiplier)
+                elif avg_grad > info.lam_upper_bound:
+                    info.lam_data = info.lam_data - (avg_grad * info.lam_data_multiplier)
+        
+        #clip to min and max data
+        info.lam_data = min([total_data,info.lam_data])
+        info.lam_data = max([info.lam_zero,info.lam_data])
+
+        df = df.sort_values('score',ascending=info.lam_high_first) #can be high or low first
+        df['score'] = range(info.lam_data) +[np.nan]*(total_data-info.lam_data)
+    
+    elif info.pacing_function == 'stat_grad':
+        #use a statistical process to find the best addition reduction of data
+        print('This has not been developed yet... ERROR')
 
 def update_col(batch_loss, col, indexes,info):
     #take the batch_losses and update column 

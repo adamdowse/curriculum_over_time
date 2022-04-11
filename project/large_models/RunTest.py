@@ -20,8 +20,15 @@ def parse_arguments():
     parser.add_argument('--scoring_function',type=str,default='normal')
     parser.add_argument('--pacing_function',type=str,default='none')
     parser.add_argument('--dataset',type=str,default='mnist')
+
     parser.add_argument('--lam_zero',type=float,default=0.1)
-    parser.add_argument('--lam_pace',type=float,default=0.9)
+    parser.add_argument('--lam_max',type=float,default=0.9)
+    parser.add_argument('--lam_lookback',type=int,default=3)
+    parser.add_argument('--lam_high_first',type=bool,default=True)
+    parser.add_argument('--lam_data_multiplier',type=float,default=1)
+
+    parser.add_argument('--score_grav',type=float,default=0.1)
+    parser.add_argument('--score_lookback',type=float,default=3)
 
     args = parser.parse_args()
     return args
@@ -29,6 +36,8 @@ def parse_arguments():
 def main(args):
     #TODO - Add dataused each epoch and save the array
     #TODO - Implement split data csv
+    #TODO - add restricted dataset runs
+    #TODO - add early stopping avalibility if set epoch is not used
     class Info_class :
         #TODO remove this and use wadnb config
         #variables for test
@@ -39,8 +48,17 @@ def main(args):
         pacing_function = args.pacing_function
         current_epoch = 0
 
-        lam_zero = args.lam_zero
-        lam_pace = args.lam_pace
+        #pacing vars
+        lam_data = 0 #amount of data used
+        lam_zero = args.lam_zero #initial amount of data
+        lam_max = args.lam_max #epoch to use full data at
+        lam_lookback = args.lam_lookback #regression lookback
+        lam_high_first = args.lam_high_first #use the high score values first (false uses low values first)
+        lam_data_multiplier = args.lam_data_multiplier #multiplied by the gradient to add or remove data from the set
+
+        #scoring vars
+        score_grav = args.score_grav #gravity to reduce regression predictions by
+        score_lookback = args.score_lookback #lookback for regression
 
         #if datset name is a path use that path
         dataset_name = args.dataset
@@ -54,7 +72,7 @@ def main(args):
         class_names = []
 
     info = Info_class()
-
+    #TODO update config file for new vars
     config = {
         'epochs':args.max_epochs,
         'learning_rate':args.learning_rate,
@@ -62,8 +80,7 @@ def main(args):
         'scoring_func':args.scoring_function,
         'pacing_func':args.pacing_function,
         'dataset':args.dataset,
-        'lam_zero':args.lam_zero,
-        'lam_pace':args.lam_pace
+
     }
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
     wandb.login()
