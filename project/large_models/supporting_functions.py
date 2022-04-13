@@ -105,24 +105,22 @@ def str_to_list(img):
 def label_oh(x,info):
     return tf.one_hot(x,info.num_classes)
 
-def scoring_func(df,info):
-    #df is train_data_losses = (i|score,0,1,2,3,4...)
-    #take the training dataframe and apply the scoring functions to it
-    #the output is a dataframe with the score of each index
 
-    #TODO change this to have a list of 'filling functions' and then scoring functions
+def calc_grad(n,data):
+    grads = []
+    for i,row in data.iterrows():
+        x = np.array(range(n)).reshape((-1,1))
+        y = row[-n:].to_numpy()
+        model = linear_model.LinearRegression().fit(x,y)
+        grads.append(model.coef_[0])
+    return pd.Series(data=grads)
 
+def fill_func(n,row,info):
 
-    def calc_grad(n,data):
-        grads = []
-        for i,row in data.iterrows():
-            x = np.array(range(n)).reshape((-1,1))
-            y = row[-n:].to_numpy()
-            model = linear_model.LinearRegression().fit(x,y)
-            grads.append(model.coef_[0])
-        return pd.Series(data=grads)
+    if info.fill_func == 'ffill':
+        data.iloc[-2:] = data.iloc[:,-2:].fillna(method='ffill',axis=1)
 
-    def reg_fill(n,data,info):
+    elif info.fill_func == 'reg_fill':
         #take the losses and fill the nan values in the last row with a regression output
         #input is a df (i|score,0,1,2,...,j) if j is np.nan predict it)
         if pd.isnull(data.iloc[-1]):
@@ -144,9 +142,8 @@ def scoring_func(df,info):
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
                 data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0]
-        return data
 
-    def reg_fill_grav(n,data,info):
+    elif info.fill_func == 'reg_fill_grav':
         #take the losses and fill the nan values in the last row with a regression output
         #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
         if pd.isnull(data.iloc[-1]):
@@ -168,9 +165,15 @@ def scoring_func(df,info):
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
                 data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0] - info.score_grav
-        return data
-                
-    #-------------------------------main functions---------------------------
+        
+    return data
+
+def scoring_func(df,info):
+    #df is train_data_losses = (i|score,0,1,2,3,4...)
+    #take the training dataframe and apply the scoring functions to it
+    #the output is a dataframe with the score of each index
+
+    #TODO Clean this all up 
     #reset the scores
     df['score'] = np.nan
 
@@ -179,33 +182,8 @@ def scoring_func(df,info):
         i = random.sample([x for x in range(len(df.index))],len(df.index))
         df['score'] = i
         return df
-        
-    elif info.scoring_function == 'naive_grads':
-        #calc gradients over last n losses
-        #convert any nans into last loss val
 
-        n = info.score_lookback #lookback for gradients
-        if info.current_epoch == 0:
-            print('used 0 epoch')
-            #use the first epochs loss info
-            df['score'] = df['0']
-
-        elif info.current_epoch < n:
-            print('use reduced grads')
-            #fill the missing info
-            n = info.current_epoch + 1
-            df.iloc[:,-n:] = df.iloc[:,-n:].fillna(method='ffill',axis=1)
-            #calc grad over as many as possible
-            df['score'] = calc_grad(n,df.iloc[:,-n:])
-
-        elif info.current_epoch >= n-1:
-            print('use full grads')
-            #fill the missing info
-            df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
-            #needs to be n+1 epoch before it can use this
-            df['score'] = calc_grad(n,df.iloc[:,-n:])
-
-    elif info.scoring_function == 'pred_grads':
+    elif info.scoring_function == 'grads':
         #calc gradients over last n losses
         #fill the missing losses with the predicted value from the regression
 
@@ -215,15 +193,14 @@ def scoring_func(df,info):
             #use the first epochs loss info
             df['score'] = df['0']
         elif info.current_epoch == 1:
-            #df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
             #fill nas
-            df = df.apply(lambda row : reg_fill(n,row,info),axis=1)
+            df = df.apply(lambda row : fill_func(n,row,info),axis=1)
             #df = reg_fill(n,df,info)
             df['score'] = df['1']
         elif info.current_epoch < n:
             print('use reduced grads')
             #fill the missing info with regression
-            df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            df = df.apply(lambda row : fill_func(n,row,info), axis=1)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             #calc grad over as many as possible
@@ -232,47 +209,13 @@ def scoring_func(df,info):
         elif info.current_epoch >= n:
             print('use full grads')
             #fill the missing info
-            df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            df = df.apply(lambda row : fill_func(n,row,info), axis=1)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             
-            #needs to be n+1 epoch before it can use this
             df['score'] = calc_grad(n,df.iloc[:,-n:])
 
-    elif info.scoring_function == 'pred_grads_gravity':
-        #calc gradients over last n losses
-        #fill the missing losses with the predicted value from the regression
-        #addition of reducing the loss if np.nan is found 
-            #predicted with regression but a set value is removed from the loss each na step
-
-        n = info.score_lookback #lookback for gradients
-        if info.current_epoch == 0:
-            print('used 0 epoch')
-            #use the first epochs loss info
-            df['score'] = df['0']
-        elif info.current_epoch == 1:
-            df = df.apply(lambda row : reg_fill_grav(n,row,info),axis=1)
-	    #df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
-            df['score'] = df['1']
-        elif info.current_epoch < n:
-            print('use reduced grads')
-            #fill the missing info with regression
-            df = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
-            if np.nan in df.iloc[:,-1]:
-                print('NAN found after fill proceduce')
-            #calc grad over as many as possible
-            df['score'] = calc_grad(n,df.iloc[:,-n:])
-
-        elif info.current_epoch >= n-1:
-            print('use full grads')
-            #fill the missing info
-            df = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
-            if np.nan in df.iloc[:,-1]:
-                print('NAN found after fill proceduce')
-            
-            #needs to be n+1 epoch before it can use this
-            df['score'] = calc_grad(n,df.iloc[:,-n:])
-
+    elif info.scoring_function == 'class_corr':
 
     else:
         print('COLLECT TRAIN DATA: ERROR no valid scoring function')
