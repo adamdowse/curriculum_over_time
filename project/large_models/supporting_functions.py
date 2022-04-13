@@ -124,60 +124,52 @@ def scoring_func(df,info):
 
     def reg_fill(n,data,info):
         #take the losses and fill the nan values in the last row with a regression output
-        #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
-        print('fill data = ',data)
-        if data.iloc[-1] == np.nan:
+        #input is a df (i|score,0,1,2,...,j) if j is np.nan predict it)
+        if pd.isnull(data.iloc[-1]):
             if info.current_epoch == 0:
                 print('error must use all data for current version of reg_fill on epoch 0')
             elif info.current_epoch == 1:
                 #use the last epochs loss
-                out = data.iloc[-2]
-                print('out = ',out)
+                data.iloc[-1] = data.iloc[-2]
             elif info.current_epoch < n:
-                print('in e < n')
                 #use a smaller lookback for regression
                 n = info.current_epoch
                 x = np.array(range(n)).reshape((-1,1))
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
-                out = model.predict([n].reshape((-1,1)))
-                print('out = ',out)
-            elif info.current_epoch >= n:
+                data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0]
+            else:
                 #use the specified lookback and predict next
                 x = np.array(range(n)).reshape((-1,1))
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
-                out = model.predict([n].reshape((-1,1)))
-        else:
-            out = data.iloc[-1]
-        return out
+                data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0]
+        return data
 
     def reg_fill_grav(n,data,info):
+        #TODO update like abpve
         #take the losses and fill the nan values in the last row with a regression output
         #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
-        
-        if data[-1] == np.nan:
+        if pd.isnull(data.iloc[-1]):
             if info.current_epoch == 0:
                 print('error must use all data for current version of reg_fill on epoch 0')
             elif info.current_epoch == 1:
                 #use the last epochs loss
-                out = data[-2] - info.score_grav
+                data.iloc[-1] = data.iloc[-2] - info.score_grav
             elif info.current_epoch < n:
                 #use a smaller lookback for regression
                 n = info.current_epoch
                 x = np.array(range(n)).reshape((-1,1))
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
-                out = model.predict([n].reshape((-1,1))) - info.score_grav
-            elif info.current_epoch >= n:
+                data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0] - info.score_grav
+            else:
                 #use the specified lookback and predict next
                 x = np.array(range(n)).reshape((-1,1))
                 y = data[-(n+1):-1].to_numpy() 
                 model = linear_model.LinearRegression().fit(x,y)
-                out = model.predict([n].reshape((-1,1))) - info.score_grav
-        else:
-            out = data[-1]
-        return out
+                data.iloc[-1] = model.predict(np.array([n]).reshape((-1,1)))[0] - info.score_grav
+        return data
                 
     #-------------------------------main functions---------------------------
     #reset the scores
@@ -223,22 +215,27 @@ def scoring_func(df,info):
             print('used 0 epoch')
             #use the first epochs loss info
             df['score'] = df['0']
-
+        elif info.current_epoch == 1:
+            #df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
+            #fill nas
+            df = df.apply(lambda row : reg_fill(n,row,info),axis=1)
+            #df = reg_fill(n,df,info)
+            print(df)
+            df['score'] = df['1']
         elif info.current_epoch < n:
             print('use reduced grads')
             #fill the missing info with regression
-            n = info.current_epoch + 1
-            df.iloc[:,-1] = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
             print(df)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             #calc grad over as many as possible
-            df['score'] = calc_grad(n,df.iloc[:,-n:])
+            df['score'] = calc_grad(info.current_epoch,df.iloc[:,-info.current_epoch:])
 
-        elif info.current_epoch >= n-1:
+        elif info.current_epoch >= n:
             print('use full grads')
             #fill the missing info
-            df.iloc[:,-1] = df.apply(lambda row : reg_fill(n,row,info), axis=1)
+            df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
             print(df)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
@@ -257,7 +254,9 @@ def scoring_func(df,info):
             print('used 0 epoch')
             #use the first epochs loss info
             df['score'] = df['0']
-
+        elif info.current_epoch == 1:
+            df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
+            df['score'] = df['1']
         elif info.current_epoch < n:
             print('use reduced grads')
             #fill the missing info with regression
