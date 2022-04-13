@@ -147,7 +147,6 @@ def scoring_func(df,info):
         return data
 
     def reg_fill_grav(n,data,info):
-        #TODO update like abpve
         #take the losses and fill the nan values in the last row with a regression output
         #input is a row (i|score,0,1,2,...,j) if j is np.nan predict it
         if pd.isnull(data.iloc[-1]):
@@ -220,13 +219,11 @@ def scoring_func(df,info):
             #fill nas
             df = df.apply(lambda row : reg_fill(n,row,info),axis=1)
             #df = reg_fill(n,df,info)
-            print(df)
             df['score'] = df['1']
         elif info.current_epoch < n:
             print('use reduced grads')
             #fill the missing info with regression
             df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
-            print(df)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             #calc grad over as many as possible
@@ -236,7 +233,6 @@ def scoring_func(df,info):
             print('use full grads')
             #fill the missing info
             df = df.apply(lambda row : reg_fill(n,row,info), axis=1)
-            print(df)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             
@@ -255,13 +251,13 @@ def scoring_func(df,info):
             #use the first epochs loss info
             df['score'] = df['0']
         elif info.current_epoch == 1:
-            df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
+            df = df.apply(lambda row : reg_fill_grav(n,row,info),axis=1)
+	    #df.iloc[:,-2:] = df.iloc[:,-2:].fillna(method='ffill',axis=1)
             df['score'] = df['1']
         elif info.current_epoch < n:
             print('use reduced grads')
             #fill the missing info with regression
-            n = info.current_epoch + 1
-            df.iloc[:,-1] = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
+            df = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             #calc grad over as many as possible
@@ -270,7 +266,7 @@ def scoring_func(df,info):
         elif info.current_epoch >= n-1:
             print('use full grads')
             #fill the missing info
-            df.iloc[:,-1] = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
+            df = df.apply(lambda row : reg_fill_grav(n,row,info), axis=1)
             if np.nan in df.iloc[:,-1]:
                 print('NAN found after fill proceduce')
             
@@ -280,7 +276,8 @@ def scoring_func(df,info):
 
     else:
         print('COLLECT TRAIN DATA: ERROR no valid scoring function')
-
+    
+    print(df)
     return df
 
 def pacing_func(df,info):

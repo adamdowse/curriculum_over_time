@@ -28,7 +28,7 @@ def parse_arguments():
     parser.add_argument('--lam_data_multiplier',type=float,default=1)
 
     parser.add_argument('--score_grav',type=float,default=0.1)
-    parser.add_argument('--score_lookback',type=float,default=3)
+    parser.add_argument('--score_lookback',type=int,default=3)
 
     args = parser.parse_args()
     return args
@@ -62,10 +62,10 @@ def main(args):
 
         #if datset name is a path use that path
         dataset_name = args.dataset
-        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
