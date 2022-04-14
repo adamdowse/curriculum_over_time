@@ -10,6 +10,7 @@ import datagen
 import wandb
 import os
 import argparse
+import time
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Arguments from script')
@@ -19,13 +20,17 @@ def parse_arguments():
     parser.add_argument('--batch_size',type=int,default=16)
     parser.add_argument('--scoring_function',type=str,default='normal')
     parser.add_argument('--pacing_function',type=str,default='none')
+    parser.add_argument('--fill_function',type=str,default='ffill')
     parser.add_argument('--dataset',type=str,default='mnist')
+    parser.add_argument('--early_stopping', type=int,default=0)
 
     parser.add_argument('--lam_zero',type=float,default=0.1)
     parser.add_argument('--lam_max',type=float,default=0.9)
     parser.add_argument('--lam_lookback',type=int,default=3)
-    parser.add_argument('--lam_high_first',type=bool,default=True)
+    parser.add_argument('--lam_low_first',type=bool,default=True)
     parser.add_argument('--lam_data_multiplier',type=float,default=1)
+    parser.add_argument('--lam_lower_bound',type=float,default=-0.5)
+    parser.add_argument('--lam_upper_bound',type=float,default=0.5)
 
     parser.add_argument('--score_grav',type=float,default=0.1)
     parser.add_argument('--score_lookback',type=int,default=3)
@@ -37,7 +42,6 @@ def main(args):
     #TODO - Add dataused each epoch and save the array
     #TODO - Implement split data csv
     #TODO - add restricted dataset runs
-    #TODO - add early stopping avalibility if set epoch is not used
     class Info_class :
         #TODO remove this and use wadnb config
         #variables for test
@@ -46,6 +50,12 @@ def main(args):
         batch_size = args.batch_size
         scoring_function = args.scoring_function
         pacing_function = args.pacing_function
+        fill_function = args.fill_function
+
+        #early stopping
+        early_stopping = args.early_stopping #number
+        early_stopping_counter = 0
+        early_stopping_max = 0
         current_epoch = 0
 
         #pacing vars
@@ -53,8 +63,10 @@ def main(args):
         lam_zero = args.lam_zero #initial amount of data
         lam_max = args.lam_max #epoch to use full data at
         lam_lookback = args.lam_lookback #regression lookback
-        lam_high_first = args.lam_high_first #use the high score values first (false uses low values first)
+        lam_low_first = args.lam_low_first #use the high score values first (True uses low values first)
         lam_data_multiplier = args.lam_data_multiplier #multiplied by the gradient to add or remove data from the set
+        lam_lower_bound = args.lam_lower_bound
+        lam_upper_bound = args.lam_upper_bound
 
         #scoring vars
         score_grav = args.score_grav #gravity to reduce regression predictions by
@@ -62,10 +74,10 @@ def main(args):
 
         #if datset name is a path use that path
         dataset_name = args.dataset
-        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -78,10 +90,14 @@ def main(args):
         'learning_rate':args.learning_rate,
         'batch_size':args.batch_size,
         'scoring_func':args.scoring_function,
+        'fill_func':args.fill_function,
         'pacing_func':args.pacing_function,
         'dataset':args.dataset,
 
     }
+
+
+
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
     wandb.login()
     wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
@@ -106,6 +122,7 @@ def main(args):
         m_loss = tf.math.reduce_mean(t_loss)
         test_loss(m_loss)
         test_acc_metric(labels, preds)
+
 
     # initilise the dataframe to train on and the test dataframe
     df_train_losses, train_df, test_df, info = sf.init_data(info)
@@ -137,18 +154,34 @@ def main(args):
         input_size = (28,28,1),
         test=True
     )
+    
+    class timer:
+        def __init__(self):
+            self.t = {}
+            self.tic = time.perf_counter()            
+        
+        def click(self,name):
+            toc = time.perf_counter()
+            self.t[name] = toc - self.tic
+            self.tic = toc
+
+        def print(self):
+            print(self.t)
+
+    tim = timer()
+
 
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
     optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
-
+    tim.click('Build funcs')
     #setup metrics to record: [train loss, test loss, train acc, test acc]
     train_loss = tf.keras.metrics.Mean(name='train_loss')
     train_acc_metric = keras.metrics.CategoricalAccuracy()
     test_loss = tf.keras.metrics.Mean(name='test_loss')
     test_acc_metric = keras.metrics.CategoricalAccuracy()
-
+    tim.click('Metrics')
     print('MAIN: Started Training')
     for info.current_epoch in range(info.max_epochs):
         #create the column for losses
@@ -161,38 +194,39 @@ def main(args):
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
-            
+        tim.click('training Step')
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
-
+        tim.click('combine col')
         #grab statistics before nans are infilled
-        ce = info.current_epoch
         class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
         class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
-        
+        tim.click('calc loss')
         #calculate the score via a function
         df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
-
+        tim.click('scoring func')
         #take score stats
         class_score_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
         class_score_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
-        
+        tim.click('calc score')
+        print(df_train_losses)
         #rank and trim data
         df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
-
+        tim.click('pacing func')
         #take rank statistics
+        print(df_train_losses)
         class_rank_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
         class_rank_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
-        
+        tim.click('calc rank')
         #run end of epoch updating
-        print(df_train_losses)
+        #print(df_train_losses)
         train_data_gen.on_epoch_end(df_train_losses)
-
+        tim.click('on epoch end')
         #test steps
         for X,Y in test_data_gen:
             test_step(X[1],Y)
-
+        tim.click('test steps')
         basic = {
             'Epoch':info.current_epoch,
             'Train-Loss':train_loss.result().numpy(),
@@ -221,16 +255,29 @@ def main(args):
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
         
+        #early stopping
+        if info.early_stopping > 0:
+            #increment if test acc lower
+            if test_acc_metric.result().numpy() < info.early_stopping_max:
+                info.early_stopping_counter += 1
+            else:
+                info.early_stopping_max = test_acc_metric.result().numpy()
+
+            if info.early_stopping_counter >= info.early_stopping:
+                print('EARLY STOPPING REACHED: MAX TEST ACC = ',info.early_stopping_max)
+                break
+
         #reset the metrics
         train_loss.reset_states()
         train_acc_metric.reset_states()
         test_loss.reset_states()
         test_acc_metric.reset_states()
-
+        tim.click('logging')
         #save the model
         if info.current_epoch % 10 == 0:
             model.save(info.save_model_path)
             print('Checkpoint saved')
+        tim.print()
 
     #save the model and data
     #np.savetxt(info.data_path + info.dataset_name + '/dataused.csv',dataused)
