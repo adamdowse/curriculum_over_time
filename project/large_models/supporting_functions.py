@@ -249,8 +249,22 @@ def pacing_func(df,info):
     
     elif info.pacing_function == 'ordered':
         #order the data by scoring func but dont reduce data
-        #TODO
-        print('This has not been developed yet... ERROR')
+        df = df.sort_values('score',ascending=info.lam_low_first)
+        df['score'] = [x for x in range(len(df.index))]
+        return df
+    
+    elif info.pacing_function = 'mixed':
+        df = df.sort_values('score',ascending=info.lam_low_first)
+        a = [x for x in range(len(df.index))]
+        #order from highest lowest second hgihest, second lowest ect
+        i = []
+        for x in range(len(df.index)):
+            if x % 2 == 0 :
+                i.append(a.pop(0))
+            else:
+                i.append(a.pop(-1))
+
+        df['score'] = i
 
     elif info.pacing_function == 'naive_linear':
         n = len(df.index)
