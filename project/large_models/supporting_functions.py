@@ -195,6 +195,10 @@ def scoring_func(df,info):
         df['score'] = i
         return df
 
+    elif info.scoring_function == 'last_loss':
+        df['score'] = df.iloc[:,-1]
+        return df
+
     elif info.scoring_function == 'grads':
         #calc gradients over last n losses
         #fill the missing losses with the predicted value from the regression
@@ -288,10 +292,10 @@ def pacing_func(df,info):
                 info.lam_data = int(info.lam_data + (avg_grad * info.lam_data_multiplier))
             elif avg_grad > info.lam_upper_bound:
                 info.lam_data = int(info.lam_data - (avg_grad * info.lam_data_multiplier))
-        
+
         #clip to min and max data
         info.lam_data = min([total_data,info.lam_data])
-        info.lam_data = max([info.lam_zero,info.lam_data])
+        info.lam_data = max([int(info.lam_zero*total_data),info.lam_data])
         print(info.lam_data)
         df = df.sort_values('score',ascending=info.lam_low_first) #can be high or low first
         df['score'] = [x for x in range(info.lam_data)] + [np.nan]*(total_data-info.lam_data)
@@ -300,6 +304,7 @@ def pacing_func(df,info):
 
         #use a statistical process to find the best addition reduction of data
         print('This has not been developed yet... ERROR')
+
 
     else:
         print('not correct pacing function')

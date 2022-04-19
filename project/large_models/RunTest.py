@@ -86,13 +86,21 @@ def main(args):
     info = Info_class()
     #TODO update config file for new vars
     config = {
-        'epochs':args.max_epochs,
         'learning_rate':args.learning_rate,
         'batch_size':args.batch_size,
         'scoring_func':args.scoring_function,
         'fill_func':args.fill_function,
         'pacing_func':args.pacing_function,
         'dataset':args.dataset,
+	'early_stopping':args.early_stopping,
+	'lam_zero':args.lam_zero,
+	'lam_max':args.lam_lookback,
+	'lam_low_first':args.lam_low_first,
+	'lam_data_multiplier':args.lam_data_multiplier,
+	'lam_lower_bound':args.lam_lower_bound,
+	'lam_upper_bound':args.lam_upper_bound,
+	'score_grav':args.score_grav,
+	'score_lookback':args.score_lookback,
 
     }
 
