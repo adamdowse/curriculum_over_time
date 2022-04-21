@@ -1,2 +1,2 @@
-project/large_models/datasets/mnist/imagedata.csv
-project/large_models/*
+project/large_models/datasets/*
+project/large_models/wandb/*
