@@ -1,0 +1,87 @@
+2022-04-21 13:31:05,132 INFO    MainThread:14211 [wandb_setup.py:_flush():75] Loading settings from /home/vscode/.config/wandb/settings
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_setup.py:_flush():75] Loading settings from /com.docker.devenvironments.code/project/large_models/wandb/settings
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_setup.py:_flush():75] Loading settings from environment variables: {'api_key': '***REDACTED***'}
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_setup.py:_flush():75] Inferring run settings from compute environment: {'program_relpath': 'project/large_models/RunTest.py', 'program': 'RunTest.py'}
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_init.py:_log_setup():405] Logging user logs to /com.docker.devenvironments.code/project/large_models/wandb/run-20220421_133105-23m9m455/logs/debug.log
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_init.py:_log_setup():406] Logging internal logs to /com.docker.devenvironments.code/project/large_models/wandb/run-20220421_133105-23m9m455/logs/debug-internal.log
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_init.py:init():439] calling init triggers
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_init.py:init():442] wandb.init called with sweep_config: {}
+config: {'learning_rate': 0.01, 'batch_size': 32, 'scoring_func': 'grads', 'fill_func': 'ffill', 'pacing_func': 'naive_grad', 'dataset': 'mnist', 'early_stopping': 5, 'lam_zero': 0.1, 'lam_max': 3, 'lam_low_first': True, 'lam_data_multiplier': 1, 'lam_lower_bound': 0.0, 'lam_upper_bound': 0.0, 'score_grav': 0.1, 'score_lookback': 3}
+2022-04-21 13:31:05,133 INFO    MainThread:14211 [wandb_init.py:init():492] starting backend
+2022-04-21 13:31:05,134 INFO    MainThread:14211 [backend.py:_multiprocessing_setup():99] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2022-04-21 13:31:05,147 INFO    MainThread:14211 [backend.py:ensure_launched():219] starting backend process...
+2022-04-21 13:31:05,165 INFO    MainThread:14211 [backend.py:ensure_launched():224] started backend process with pid: 14374
+2022-04-21 13:31:05,167 INFO    MainThread:14211 [wandb_init.py:init():501] backend started and connected
+2022-04-21 13:31:05,183 INFO    MainThread:14211 [wandb_init.py:init():565] updated telemetry
+2022-04-21 13:31:05,205 INFO    MainThread:14211 [wandb_init.py:init():596] communicating run to backend with 30 second timeout
+2022-04-21 13:31:33,627 ERROR   Thread-2  :14211 [retry.py:__call__():126] Retry attempt failed:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 421, in _make_request
+    six.raise_from(e, None)
+  File "<string>", line 3, in raise_from
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 416, in _make_request
+    httplib_response = conn.getresponse()
+  File "/usr/lib/python3.8/http/client.py", line 1348, in getresponse
+    response.begin()
+  File "/usr/lib/python3.8/http/client.py", line 316, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python3.8/http/client.py", line 277, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+  File "/usr/lib/python3.8/socket.py", line 669, in readinto
+    return self._sock.recv_into(b)
+  File "/usr/lib/python3.8/ssl.py", line 1241, in recv_into
+    return self.read(nbytes, buffer)
+  File "/usr/lib/python3.8/ssl.py", line 1099, in read
+    return self._sslobj.read(len, buffer)
+socket.timeout: The read operation timed out
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 439, in send
+    resp = conn.urlopen(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 719, in urlopen
+    retries = retries.increment(
+  File "/usr/lib/python3/dist-packages/urllib3/util/retry.py", line 400, in increment
+    raise six.reraise(type(error), error, _stacktrace)
+  File "/usr/lib/python3/dist-packages/six.py", line 703, in reraise
+    raise value
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 665, in urlopen
+    httplib_response = self._make_request(
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 423, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/usr/lib/python3/dist-packages/urllib3/connectionpool.py", line 330, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/wandb/sdk/lib/retry.py", line 102, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/sdk/internal/internal_api.py", line 140, in execute
+    return self.client.execute(*args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/usr/local/lib/python3.8/dist-packages/wandb/vendor/gql-0.2.0/wandb_gql/transport/requests.py", line 38, in execute
+    request = requests.post(self.url, **post_args)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 116, in post
+    return request('post', url, data=data, json=json, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/api.py", line 60, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 533, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/usr/lib/python3/dist-packages/requests/sessions.py", line 646, in send
+    r = adapter.send(request, **kwargs)
+  File "/usr/lib/python3/dist-packages/requests/adapters.py", line 529, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+2022-04-21 13:31:35,207 INFO    MainThread:14211 [interface_shared.py:_communicate_run():322] couldn't get run from backend
+2022-04-21 13:31:35,208 ERROR   MainThread:14211 [wandb_init.py:init():601] backend process timed out
+2022-04-21 13:31:35,208 ERROR   MainThread:14211 [wandb_init.py:init():610] encountered error: Error communicating with wandb process
+try: wandb.init(settings=wandb.Settings(start_method='fork'))
+or:  wandb.init(settings=wandb.Settings(start_method='thread'))
+For more info see: https://docs.wandb.ai/library/init#init-start-error
+2022-04-21 13:33:16,535 INFO    MainThread:14211 [wandb_init.py:teardown():253] tearing down wandb.init
