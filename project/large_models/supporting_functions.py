@@ -76,7 +76,14 @@ def init_data(info,bypass=False):
     df_train_losses = df_losses[df_losses['test']==False]
     df_train_losses = df_train_losses.drop(columns='test').set_index('i')
     df_train_losses['score'] = np.nan
-    print(df_train_losses.head())
+
+    #reduce the dataset
+    if info.dataset_size != 1:
+        d = int(info.dataset_size * len(train_df))
+        train_df = train_df.iloc[:d,:]
+        df_train_losses = df_train_losses.iloc[:d,:]
+
+        print(train_df.label.value_counts())
 
     return df_train_losses,train_df,test_df,info
 
@@ -253,7 +260,7 @@ def pacing_func(df,info):
         df['score'] = [x for x in range(len(df.index))]
         return df
     
-    elif info.pacing_function = 'mixed':
+    elif info.pacing_function == 'mixed':
         df = df.sort_values('score',ascending=info.lam_low_first)
         a = [x for x in range(len(df.index))]
         #order from highest lowest second hgihest, second lowest ect
