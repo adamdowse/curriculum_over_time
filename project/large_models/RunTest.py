@@ -26,6 +26,7 @@ def parse_arguments():
     parser.add_argument('--early_stopping', type=int,default=0)
 
     parser.add_argument('--group', type=str,default=None)
+    parser.add_argument('--record_loss',type=str,default='sum')
 
     parser.add_argument('--lam_zero',type=float,default=0.1)
     parser.add_argument('--lam_max',type=float,default=0.9)
@@ -54,6 +55,9 @@ def main(args):
         scoring_function = args.scoring_function
         pacing_function = args.pacing_function
         fill_function = args.fill_function
+        
+        record_loss = args.record_loss
+        record_loss = tf.convert_to_tensor(record_loss,tf.string)
 
         #early stopping
         early_stopping = args.early_stopping #number
@@ -78,10 +82,10 @@ def main(args):
         #if datset name is a path use that path
         dataset_name = args.dataset
         dataset_size = args.dataset_size #proportion of dataset to use
-        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -128,7 +132,11 @@ def main(args):
         optimizer[0].apply_gradients(zip(grads,model.trainable_variables))
         train_loss(loss)
         train_acc_metric(labels,preds)
-        return batch_loss
+        if tf.equal(info.record_loss,tf.constant('sum',tf.string)):
+            return batch_loss
+        else:
+            return preds
+    
 
     @tf.function
     def test_step(imgs, labels):
@@ -208,16 +216,17 @@ def main(args):
             if i % 500 == 0: print("Batch ="+str(i))
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
-            col = sf.update_col(batch_loss,col,X[0],info) # = (i,current_epoch)
+            col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
         tim.click('training Step')
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
         tim.click('combine col')
+
         #grab statistics before nans are infilled
-        class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
-        class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
-        tim.click('calc loss')
+        #class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
+        #class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
+        #tim.click('calc loss')
         #calculate the score via a function
         df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
         tim.click('scoring func')

@@ -4,6 +4,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
 from sklearn import linear_model
+from sklearn import cluster
+from sklearn import decomposition
 import os
 import csv
 import random
@@ -223,6 +225,35 @@ def scoring_func(df,info):
 
     elif info.scoring_function == 'class_corr':
         print('NOT DEVELOPED')
+    elif info.scoring_function == 'pred_clusters':
+        #use the prediction landscape to cluster into batch size number of groups then randomly sample from each
+        
+        #convert to np array
+        data = np.array([x for x in df.loc[:,str(info.current_epoch)].to_numpy()])
+
+        #dim reduction if needed here
+
+        #calc kmeans
+        km = cluster.MiniBatchKMeans(n_clusters=info.batch_size)
+        km = km.fit(data)
+        cluster_data = km.predict(data)
+        #visulise
+        if True:
+            #compress to 2 dims
+            #pca = decomposition.PCA(n_components=3)
+            #pca.fit(data)
+            #comp_data = pca.transform(data)
+            fig = plt.figure()
+            ax = fig.add_subplot(projection='3d')
+            print(km.predict(data))
+            print(data[0])
+            ax.scatter(data[:,0],data[:,1],data[:,2],c=cluster_data)
+            ax.set_xlabel('0')
+            ax.set_ylabel('1')
+            ax.set_zlabel('2')
+            fig.savefig('pred_cluster_loss')
+
+        prn()
     else:
         print('SCORING FUNCTION: ERROR no valid scoring function')
     
@@ -332,11 +363,24 @@ def pacing_func(df,info):
     
     return df
 
-def update_col(batch_loss, col, indexes,info):
-    #take the batch_losses and update column 
-    for i in range(len(batch_loss)):
-        #add the index and loss to the column
-        new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
-        col = pd.concat([col,new_row],axis=0)
-    return col
+def update_col(batch_loss,labels, col, indexes,info):
+    if info.record_loss == 'sum':
+        #take the batch_losses and update column 
+        for i in range(len(batch_loss)):
+            #add the index and loss to the column
+            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+            col = pd.concat([col,new_row],axis=0)
+        return col
+    else:
+        #compress the predictions USE AVERAGE ERROR
+        for i in range(len(batch_loss)):
+            #find the new loss vals
+            label = labels[i]
+            loss_vals = batch_loss[i].numpy()
+            loss_vals = [abs(label[j]-loss_vals[j]) for j in range(info.num_classes)]
+            
+            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):[loss_vals]},index=[0])
+
+            col = pd.concat([col,new_row],axis=0)
+        return col
 

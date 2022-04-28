@@ -5,8 +5,8 @@ import os
 epochs = str(30)
 lr = str(0.01)
 batch_size = str(32)
-#'normal' 'grads' 
-scoring_function = 'grads'
+#'normal' 'grads' pred_clusters
+scoring_function = 'pred_clusters'
 #'none' 'naive_linear' 'naive_grad'
 pacing_function = 'naive_grad'
 fill_function = 'ffill'
@@ -18,6 +18,7 @@ es = str(5)
 lower_bound = str(0)
 upper_bound = str(0)
 group = scoring_function+'_'+pacing_function+'_'+data_amount
+record_loss = 'do'
 
 command = [
     'python RunTest.py ',
@@ -33,7 +34,8 @@ command = [
     ' --lam_max '+l_max,
     ' --lam_lower_bound '+lower_bound,
     ' --lam_upper_bound '+upper_bound,
-    ' --early_stopping '+es
-    ' --group '+group]
+    ' --early_stopping '+es,
+    ' --group '+group,
+    ' --record_loss '+record_loss]
 
 os.system(''.join(command))
