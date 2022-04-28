@@ -115,11 +115,11 @@ def main(args):
 
 
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    wandb.login()
-    if args.group == None:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
-    else:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
+    #wandb.login()
+    #if args.group == None:
+    #    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
+    #else:
+    #    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
     @tf.function

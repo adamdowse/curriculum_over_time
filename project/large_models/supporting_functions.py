@@ -237,8 +237,9 @@ def scoring_func(df,info):
         km = cluster.MiniBatchKMeans(n_clusters=info.batch_size)
         km = km.fit(data)
         cluster_data = km.predict(data)
+
         #visulise
-        if True:
+        if False:
             #compress to 2 dims
             #pca = decomposition.PCA(n_components=3)
             #pca.fit(data)
@@ -253,7 +254,39 @@ def scoring_func(df,info):
             ax.set_zlabel('2')
             fig.savefig('pred_cluster_loss')
 
-        prn()
+        #order by cluster
+        df['score'] = cluster_data
+        df = df.sort_values('score',ascending=True)
+        cluster_data = df['score'].to_numpy()
+
+        #convert clusters to indexes
+        output = []
+        current = 0
+        count = 0
+        for i in range(len(df.index)):
+            if cluster_data[i] != current:
+                current = cluster_data[i]
+                count = 0
+
+            output.append(cluster_data[i] + (info.batch_size*count))
+            count += 1
+
+        #shuffle the inside the clusters
+        new_output = []
+        s = 0
+        cluster_counts =[np.count_nonzero(cluster_data==x) for x in range(info.batch_size)]
+        for i in cluster_counts[:-1]:
+            #take the cluster
+            temp = output[s:(s+i)]
+            random.shuffle(temp)
+            new_output.extend(temp)
+            s += i
+        #final step
+        temp = output[s:]
+        random.shuffle(temp)
+        new_output.extend(temp)
+        df['score'] = new_output
+
     else:
         print('SCORING FUNCTION: ERROR no valid scoring function')
     
