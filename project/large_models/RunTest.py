@@ -115,11 +115,12 @@ def main(args):
 
 
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    #wandb.login()
-    #if args.group == None:
-    #    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
-    #else:
-    #    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
+    os.environ['WANDB_DISABLED'] = 'true'
+    wandb.login()
+    if args.group == None:
+        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
+    else:
+        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
     @tf.function
@@ -266,8 +267,8 @@ def main(args):
         cra = {}
         crv = {}
         for i in range(len(keys)):
-            cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
-            clv['Loss-Var-'+keys[i]] = class_loss_var[i]
+            #cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
+            #clv['Loss-Var-'+keys[i]] = class_loss_var[i]
             csa['Score-Avg-'+keys[i]] = class_score_avg[i]
             csv['Score-Var-'+keys[i]] = class_score_var[i]
             cra['Rank-Avg-'+keys[i]] = class_rank_avg[i]
@@ -307,6 +308,7 @@ def main(args):
     #np.savetxt(info.data_path + info.dataset_name + '/dataused.csv',dataused)
     model.save(info.save_model_path)
     df_train_losses.to_csv(info.data_path + info.dataset_name + '/normal_loss_info.csv')
+
 
 
 if __name__ =='__main__':

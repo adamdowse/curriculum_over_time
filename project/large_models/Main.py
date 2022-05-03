@@ -5,10 +5,10 @@ import os
 epochs = str(30)
 lr = str(0.01)
 batch_size = str(32)
-#'normal' 'grads' pred_clusters
-scoring_function = 'pred_clusters'
+#'normal' 'grads' pred_clusters pred_biggest_move pred_best_angle
+scoring_function = 'pred_biggest_move'
 #'none' 'naive_linear' 'naive_grad'
-pacing_function = 'naive_grad'
+pacing_function = 'none'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.01)

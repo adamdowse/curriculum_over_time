@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import tensorflow_datasets as tfds
+from sklearn import metrics
 from sklearn import linear_model
 from sklearn import cluster
 from sklearn import decomposition
@@ -285,8 +286,52 @@ def scoring_func(df,info):
         temp = output[s:]
         random.shuffle(temp)
         new_output.extend(temp)
+
         df['score'] = new_output
 
+    elif info.scoring_function == 'pred_biggest_move':
+        #TODO Needs checking
+        #euclidian distance
+        #order by the biggest move towards 0 
+        if info.current_epoch == 0:
+            #randomly assign
+            i = random.sample([x for x in range(len(df.index))],len(df.index))
+            df['score'] = i
+        else:
+            #find the hyp distance of 1st points
+            def euq_dis (x):
+                print(x)
+                a = x.iloc[0]
+                print(a)
+                a = [i**2 for i in a]
+                a = np.sum(a)
+                a = np.power(a,(1/10))
+
+                b = x.iloc[1]
+                b = np.sum(b)
+                b = [i**2 for i in b]
+                b = np.sum(b)
+                b = np.power(b,(1/10))
+
+                #compare distances
+                dist = a-b
+                return dist
+
+            n = info.current_epoch + 2
+            df['score'] = df.iloc[:,n-1:n].apply(euq_dis,axis=1)
+
+
+    elif info.scoring_function == 'pred_best_angle':
+        #TODO needs checking
+        #cosign distance from ~45degs
+        def cos_dist(x):
+            return metrics.pairwise.cosine_similarity(x,[1]*10)
+        
+        n = info.current_epoch
+        df['score'] = df.iloc[:,n].apply(cos_dis,axis=1)
+
+    elif info.scoring_function == 'pred_grad_cluster':
+        prnt()
     else:
         print('SCORING FUNCTION: ERROR no valid scoring function')
     
