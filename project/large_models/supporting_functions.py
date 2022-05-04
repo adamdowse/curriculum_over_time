@@ -290,7 +290,6 @@ def scoring_func(df,info):
         df['score'] = new_output
 
     elif info.scoring_function == 'pred_biggest_move':
-        #TODO Needs checking
         #euclidian distance
         #order by the biggest move towards 0 
         if info.current_epoch == 0:
@@ -300,35 +299,30 @@ def scoring_func(df,info):
         else:
             #find the hyp distance of 1st points
             def euq_dis (x):
-                print(x)
-                a = x.iloc[0]
-                print(a)
-                a = [i**2 for i in a]
-                a = np.sum(a)
-                a = np.power(a,(1/10))
+                #calculate the difference between equlidian distances of 2 points 
+                a = [i**2 for i in x.iloc[0]]
+                a = np.power(np.sum(a),(1/10))
 
-                b = x.iloc[1]
-                b = np.sum(b)
-                b = [i**2 for i in b]
-                b = np.sum(b)
-                b = np.power(b,(1/10))
+                b = [i**2 for i in x.iloc[1]]
+                b = np.power(np.sum(b),(1/10))
 
                 #compare distances
                 dist = a-b
                 return dist
 
-            n = info.current_epoch + 2
-            df['score'] = df.iloc[:,n-1:n].apply(euq_dis,axis=1)
+            n = info.current_epoch + 3
+            df['score'] = df.iloc[:,n-2:n].apply(euq_dis,axis=1)
 
 
     elif info.scoring_function == 'pred_best_angle':
         #TODO needs checking
         #cosign distance from ~45degs
         def cos_dist(x):
-            return metrics.pairwise.cosine_similarity(x,[1]*10)
+            sim = metrics.pairwise.cosine_similarity([x,[1]*10])
+            return sim[0,1]
         
-        n = info.current_epoch
-        df['score'] = df.iloc[:,n].apply(cos_dis,axis=1)
+        n = info.current_epoch + 2
+        df['score'] = df.iloc[:,n].apply(cos_dist)
 
     elif info.scoring_function == 'pred_grad_cluster':
         prnt()
