@@ -23,6 +23,7 @@ def parse_arguments():
     parser.add_argument('--fill_function',type=str,default='ffill')
     parser.add_argument('--dataset',type=str,default='mnist')
     parser.add_argument('--dataset_size',type=float,default=1)
+    parser.add_argument('--dataset_similarity',type=str,default='True')
     parser.add_argument('--early_stopping', type=int,default=0)
 
     parser.add_argument('--group', type=str,default=None)
@@ -82,10 +83,11 @@ def main(args):
         #if datset name is a path use that path
         dataset_name = args.dataset
         dataset_size = args.dataset_size #proportion of dataset to use
-        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
+        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -100,6 +102,8 @@ def main(args):
         'fill_func':args.fill_function,
         'pacing_func':args.pacing_function,
         'dataset':args.dataset,
+        'dataset_size':args.dataset_size,
+        'dataset_similarity':args.dataset_similarity,
         'early_stopping':args.early_stopping,
         'lam_zero':args.lam_zero,
         'lam_max':args.lam_lookback,
@@ -112,16 +116,6 @@ def main(args):
 
     }
 
-
-
-    os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    #os.environ['WANDB_DISABLED'] = 'true'
-    wandb.login()
-    if args.group == None:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
-    else:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
-    tf.keras.backend.clear_session()
 
     @tf.function
     def train_step(imgs,labels):
@@ -146,6 +140,17 @@ def main(args):
         m_loss = tf.math.reduce_mean(t_loss)
         test_loss(m_loss)
         test_acc_metric(labels, preds)
+
+
+    #Setup logs and records
+    os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
+    os.environ['WANDB_DISABLED'] = 'true'
+    wandb.login()
+    if args.group == None:
+        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
+    else:
+        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
+    tf.keras.backend.clear_session()
 
 
     # initilise the dataframe to train on and the test dataframe

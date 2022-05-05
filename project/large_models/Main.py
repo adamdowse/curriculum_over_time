@@ -12,6 +12,7 @@ pacing_function = 'none'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.01)
+dataset_similarity = 'False' 
 l_0 = str(0.1)
 l_max = str(0.9)
 es = str(5)
@@ -36,6 +37,7 @@ command = [
     ' --lam_upper_bound '+upper_bound,
     ' --early_stopping '+es,
     ' --group '+group,
-    ' --record_loss '+record_loss]
+    ' --record_loss '+record_loss,
+    ' --dataset_similarity '+dataset_similarity,]
 
 os.system(''.join(command))

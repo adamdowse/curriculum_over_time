@@ -81,10 +81,16 @@ def init_data(info,bypass=False):
     df_train_losses['score'] = np.nan
 
     #reduce the dataset
-    if info.dataset_size != 1:
-        d = int(info.dataset_size * len(train_df))
-        train_df = train_df.iloc[:d,:]
-        df_train_losses = df_train_losses.iloc[:d,:]
+    if info.dataset_size < 1 and info.dataset_size > 0:
+        if info.dataset_similarity == 'True':
+            d = int(info.dataset_size * len(train_df))
+            print('amount of data used = ',d)
+            train_df = train_df.iloc[:d,:]
+            df_train_losses = df_train_losses.iloc[:d,:]
+        else:
+            print('frac used = ',info.dataset_size)
+            train_df = train_df.sample(frac=info.dataset_size,axis=0)
+            df_train_losses = df_train_losses.loc[train_df.index,:]
 
         print(train_df.label.value_counts())
 
