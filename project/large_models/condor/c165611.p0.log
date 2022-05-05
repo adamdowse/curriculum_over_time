@@ -1,0 +1,48 @@
+000 (165611.000.000) 2022-05-04 11:33:03 Job submitted from host: <131.227.81.72:9618?addrs=131.227.81.72-9618&alias=condor.eps.surrey.ac.uk&noUDP&sock=schedd_2762_14ab>
+...
+040 (165611.000.000) 2022-05-04 11:47:07 Finished transferring input files
+...
+001 (165611.000.000) 2022-05-04 11:47:08 Job executing on host: <131.227.80.29:9618?addrs=131.227.80.29-9618&alias=elenwe.eps.surrey.ac.uk&noUDP&sock=startd_2141_205b>
+...
+006 (165611.000.000) 2022-05-04 11:52:23 Image size of job updated: 4500
+	1300  -  MemoryUsage of job (MB)
+	1331908  -  ResidentSetSize of job (KB)
+...
+006 (165611.000.000) 2022-05-04 11:57:24 Image size of job updated: 4500
+	2108  -  MemoryUsage of job (MB)
+	2158932  -  ResidentSetSize of job (KB)
+...
+006 (165611.000.000) 2022-05-04 12:02:25 Image size of job updated: 4500
+	2113  -  MemoryUsage of job (MB)
+	2164320  -  ResidentSetSize of job (KB)
+...
+006 (165611.000.000) 2022-05-04 12:07:25 Image size of job updated: 4500
+	2120  -  MemoryUsage of job (MB)
+	2171596  -  ResidentSetSize of job (KB)
+...
+006 (165611.000.000) 2022-05-04 12:08:56 Image size of job updated: 4500
+	2121  -  MemoryUsage of job (MB)
+	2172588  -  ResidentSetSize of job (KB)
+...
+040 (165611.000.000) 2022-05-04 12:08:56 Started transferring output files
+...
+040 (165611.000.000) 2022-05-04 12:08:56 Finished transferring output files
+...
+005 (165611.000.000) 2022-05-04 12:08:56 Job terminated.
+	(1) Normal termination (return value 0)
+		Usr 0 00:22:05, Sys 0 00:01:31  -  Run Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Run Local Usage
+		Usr 0 00:22:05, Sys 0 00:01:31  -  Total Remote Usage
+		Usr 0 00:00:00, Sys 0 00:00:00  -  Total Local Usage
+	194733  -  Run Bytes Sent By Job
+	0  -  Run Bytes Received By Job
+	194733  -  Total Bytes Sent By Job
+	0  -  Total Bytes Received By Job
+	Partitionable Resources :    Usage  Request Allocated Assigned
+	   Cpus                 :     0.00        4         4 
+	   Disk (KB)            :   814        4500    133051 
+	   Gpus (Average)       :                 1         1 "CUDA1"
+	   Memory (MB)          :  2121        4000      4096 
+
+	Job terminated of its own accord at 2022-05-04T11:08:56Z.
+...

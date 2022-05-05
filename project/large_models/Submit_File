@@ -4,7 +4,7 @@ universe = docker
 docker_image = registry.eps.surrey.ac.uk/adamsdocker:36939
 
 executable = /usr/bin/python3
-arguments = $ENV(PWD)/RunTest.py --max_epochs $(max_epochs) --fill_function $(fill_func) --learning_rate $(lr_rate) --batch_size $(batch_size) --scoring_function $(scoring_function) --pacing_function $(pacing_function) --dataset $(dataset) --lam_zero $(lam_zero) --lam_max $(lam_max) --lam_lookback $(lam_lookback) --lam_low_first $(lam_low_first) --lam_data_multiplier $(lam_data_multiplier) --score_grav $(score_grav) --score_lookback $(score_lookback) --early_stopping $(early_stopping) --lam_lower_bound $(lam_lower_bound) --lam_upper_bound $(lam_upper_bound) 
+arguments = $ENV(PWD)/RunTest.py --record_loss $(record_loss) --max_epochs $(max_epochs) --fill_function $(fill_func) --learning_rate $(lr_rate) --batch_size $(batch_size) --scoring_function $(scoring_function) --pacing_function $(pacing_function) --dataset $(dataset) --lam_zero $(lam_zero) --lam_max $(lam_max) --lam_lookback $(lam_lookback) --lam_low_first $(lam_low_first) --lam_data_multiplier $(lam_data_multiplier) --score_grav $(score_grav) --score_lookback $(score_lookback) --early_stopping $(early_stopping) --lam_lower_bound $(lam_lower_bound) --lam_upper_bound $(lam_upper_bound) --dataset_size $(dataset_size)  
 
 should_transfer_files = YES
 #environment = "mount=$ENV(PWD)"
@@ -23,18 +23,28 @@ request_GPUs = 1
 request_CPUs = 4
 request_memory = 4000
 
-#set the vars and runs here
+#------------------------------------------
+#Useful defs
+#scoring_function = normal last_loss grads class_corr pred_clusters pred_biggest_move pred_best_angle
+#pacing_function = none ordered mixed naieve_linear naieve_grad
+#record_loss = sum = loss recorded otherwise preds recorded
 
+#-------------------------------------------
+
+#set the vars and runs here
+record_loss = do
 max_epochs = 50
 lr_rate = 0.01
 batch_size = 32
 #normal, grads, class_corr, last_loss
-scoring_function = class_corr
+scoring_function = pred_clusters
 #none, ordered, naive_linear, naive_grad, stat_grad
 pacing_function = ordered
 #ffill, reg_fill, reg_fill_grav
 fill_func = ffill
 dataset = mnist
+dataset_size = 0.01
+
 lam_zero = 0.1
 lam_max = 0.9
 lam_lookback = 3
@@ -45,20 +55,14 @@ lam_upper_bound = $(lim)
 early_stopping = 20
 score_grav = 0.1
 score_lookback = 3
+lim = 0.1
 
-lim = -0.001
+queue 2
 
-queue 1
+scoring_function = pred_biggest_move
 
-lim = -0.01
+queue 3
 
-queue 1
+scoring_function = pred_best_angle
 
-lim =-0.1
-
-queue 1
-
-lim = -1
-queue 1
-lim = -10
-queue 1
+queue 3
