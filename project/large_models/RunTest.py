@@ -84,10 +84,10 @@ def main(args):
         dataset_name = args.dataset
         dataset_size = args.dataset_size #proportion of dataset to use
         dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
-        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -144,12 +144,10 @@ def main(args):
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    os.environ['WANDB_DISABLED'] = 'true'
+    #os.environ['WANDB_DISABLED'] = 'true'
     wandb.login()
-    if args.group == None:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config)
-    else:
-        wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
+          
+    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
 

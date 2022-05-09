@@ -15,7 +15,7 @@ def init_data(info,bypass=False):
     '''
     Take a named dataset and if it already exists use the pre svaed data otherwise download it.
     '''
-    if not os.path.isdir(info.data_path + info.dataset_name) or bypass==True:
+    if not os.path.isdir(info.data_path + info.dataset_name + '/imagedata.csv') or bypass==True:
         print('INIT: Cannot find ',info.dataset_name, ' data, downloading now...')
         #take the tfds dataset and produce a dataset and dataframe
         ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
@@ -232,6 +232,36 @@ def scoring_func(df,info):
 
     elif info.scoring_function == 'class_corr':
         print('NOT DEVELOPED')
+
+
+    elif info.scoring_function == 'loss_clusters':
+        #convert to the array
+        data = np.array([x for x in df.loc[:,str(info.current_epoch)].to_numpy()])
+        print(data)
+
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=info.batch_size)
+        km = km.fit(data)
+        cluster_data = km.predict(data)
+
+        df['score'] = cluster_data
+        df = df.sort_values('score',ascending=True)
+        cluster_data = df['score'].to_numpy()
+
+        #convert clusters to indexes
+        output = []
+        current = 0
+        count = 0
+        for i in range(len(df.index)):
+            if cluster_data[i] != current:
+                current = cluster_data[i]
+                count = 0
+
+            output.append(cluster_data[i] + (info.batch_size*count))
+            count += 1
+
+        df['score'] = output
+
     elif info.scoring_function == 'pred_clusters':
         #use the prediction landscape to cluster into batch size number of groups then randomly sample from each
         
@@ -278,22 +308,7 @@ def scoring_func(df,info):
             output.append(cluster_data[i] + (info.batch_size*count))
             count += 1
 
-        #shuffle the inside the clusters
-        new_output = []
-        s = 0
-        cluster_counts =[np.count_nonzero(cluster_data==x) for x in range(info.batch_size)]
-        for i in cluster_counts[:-1]:
-            #take the cluster
-            temp = output[s:(s+i)]
-            random.shuffle(temp)
-            new_output.extend(temp)
-            s += i
-        #final step
-        temp = output[s:]
-        random.shuffle(temp)
-        new_output.extend(temp)
-
-        df['score'] = new_output
+        df['score'] = output
 
     elif info.scoring_function == 'pred_biggest_move':
         #euclidian distance

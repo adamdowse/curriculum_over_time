@@ -6,7 +6,7 @@ epochs = str(30)
 lr = str(0.01)
 batch_size = str(32)
 #'normal' 'grads' pred_clusters pred_biggest_move pred_best_angle
-scoring_function = 'pred_best_angle'
+scoring_function = 'loss_clusters'
 #'none' 'naive_linear' 'naive_grad'
 pacing_function = 'none'
 fill_function = 'ffill'

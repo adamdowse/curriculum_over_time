@@ -37,7 +37,7 @@ max_epochs = 50
 lr_rate = 0.01
 batch_size = 32
 #normal, grads, class_corr, last_loss
-scoring_function = pred_clusters
+scoring_function = loss_clusters
 #none, ordered, naive_linear, naive_grad, stat_grad
 pacing_function = ordered
 #ffill, reg_fill, reg_fill_grav
@@ -60,14 +60,3 @@ lim = 0.1
 
 queue 3
 
-scoring_function = pred_biggest_move
-
-queue 3
-
-scoring_function = pred_best_angle
-
-queue 3
-
-scoring_function = normal
-
-queue 3
