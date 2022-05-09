@@ -20,6 +20,7 @@ lower_bound = str(0)
 upper_bound = str(0)
 group = scoring_function+'_'+pacing_function+'_'+data_amount
 record_loss = 'do'
+batch_logs = 'True'
 
 command = [
     'python RunTest.py ',
@@ -38,6 +39,7 @@ command = [
     ' --early_stopping '+es,
     ' --group '+group,
     ' --record_loss '+record_loss,
-    ' --dataset_similarity '+dataset_similarity,]
+    ' --dataset_similarity '+dataset_similarity,
+    ' --batch_logs '+batch_logs]
 
 os.system(''.join(command))

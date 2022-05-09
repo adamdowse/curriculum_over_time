@@ -28,6 +28,7 @@ def parse_arguments():
 
     parser.add_argument('--group', type=str,default=None)
     parser.add_argument('--record_loss',type=str,default='sum')
+    parser.add_argument('--batch_logs',type=str,default='False')
 
     parser.add_argument('--lam_zero',type=float,default=0.1)
     parser.add_argument('--lam_max',type=float,default=0.9)
@@ -59,6 +60,7 @@ def main(args):
         
         record_loss = args.record_loss
         record_loss = tf.convert_to_tensor(record_loss,tf.string)
+        batch_logs = args.batch_logs
 
         #early stopping
         early_stopping = args.early_stopping #number
@@ -84,10 +86,10 @@ def main(args):
         dataset_name = args.dataset
         dataset_size = args.dataset_size #proportion of dataset to use
         dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
-        data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        #data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        #save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
+        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
+        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
 
         img_shape = 0
         dataused = [] 
@@ -140,6 +142,7 @@ def main(args):
         m_loss = tf.math.reduce_mean(t_loss)
         test_loss(m_loss)
         test_acc_metric(labels, preds)
+        return m_loss
 
 
     #Setup logs and records
@@ -202,14 +205,15 @@ def main(args):
     model = sm.Simple_CNN(info.num_classes)
     optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
-    tim.click('Build funcs')
+
     #setup metrics to record: [train loss, test loss, train acc, test acc]
     train_loss = tf.keras.metrics.Mean(name='train_loss')
     train_acc_metric = keras.metrics.CategoricalAccuracy()
     test_loss = tf.keras.metrics.Mean(name='test_loss')
     test_acc_metric = keras.metrics.CategoricalAccuracy()
-    tim.click('Metrics')
+
     print('MAIN: Started Training')
+    batch_num = 0
     for info.current_epoch in range(info.max_epochs):
         #create the column for losses
         col = pd.DataFrame(columns=['i',str(info.current_epoch)])
@@ -221,47 +225,56 @@ def main(args):
             batch_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
-        tim.click('training Step')
+            
+            #record the batch by batch logs
+            if info.batch_logs == 'True':
+                for X,Y in test_data_gen:
+                    batch_test_loss = test_step(X[1],Y)
+                wandb.log({
+                    'batch_train_loss':batch_loss, 
+                    'batch_num':batch_num, 
+                    'batch_test_loss':batch_test_loss,
+                    'batch_test_acc':test_acc_metric.result().numpy()})
+                batch_num += 1
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
-        tim.click('combine col')
 
         #grab statistics before nans are infilled
         #class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
         #class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
-        #tim.click('calc loss')
+
         #calculate the score via a function
         df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
-        tim.click('scoring func')
+
         #take score stats
         class_score_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
         class_score_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
-        tim.click('calc score')
-        print(df_train_losses)
+
         #rank and trim data
         df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
-        tim.click('pacing func')
+
         #take rank statistics
-        print(df_train_losses)
         class_rank_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
         class_rank_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
-        tim.click('calc rank')
+
         #run end of epoch updating
-        #print(df_train_losses)
         train_data_gen.on_epoch_end(df_train_losses)
-        tim.click('on epoch end')
+
         #test steps
         for X,Y in test_data_gen:
             test_step(X[1],Y)
-        tim.click('test steps')
-        basic = {
-            'Epoch':info.current_epoch,
-            'Train-Loss':train_loss.result().numpy(),
-            'Test-Loss':test_loss.result().numpy(),
-            'Train-Acc':train_acc_metric.result().numpy(),
-            'Test-Acc':test_acc_metric.result().numpy(),
-            'Data-Used':train_data_gen.dataused}
+
+        if info.batch_logs == 'True':
+            basic = {}
+        else:
+            basic = {
+                'Epoch':info.current_epoch,
+                'Train-Loss':train_loss.result().numpy(),
+                'Test-Loss':test_loss.result().numpy(),
+                'Train-Acc':train_acc_metric.result().numpy(),
+                'Test-Acc':test_acc_metric.result().numpy(),
+                'Data-Used':train_data_gen.dataused}
         keys = [x for x in info.class_names]
         cla = {}
         clv = {}
