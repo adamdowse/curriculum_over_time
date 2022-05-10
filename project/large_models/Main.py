@@ -7,8 +7,8 @@ lr = str(0.01)
 batch_size = str(32)
 #'normal' 'grads' pred_clusters pred_biggest_move pred_best_angle
 scoring_function = 'loss_clusters'
-#'none' 'naive_linear' 'naive_grad'
-pacing_function = 'none'
+#'shuffle' 'ordered' 'mixed' 'naive_linear' 'naive_grad'
+pacing_function = 'ordered'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.01)
@@ -19,8 +19,11 @@ es = str(5)
 lower_bound = str(0)
 upper_bound = str(0)
 group = scoring_function+'_'+pacing_function+'_'+data_amount
-record_loss = 'do'
+record_loss = 'sum'
 batch_logs = 'True'
+data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
+save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
+
 
 command = [
     'python RunTest.py ',
@@ -40,6 +43,8 @@ command = [
     ' --group '+group,
     ' --record_loss '+record_loss,
     ' --dataset_similarity '+dataset_similarity,
-    ' --batch_logs '+batch_logs]
+    ' --batch_logs '+batch_logs,
+    ' --data_path '+data_path,
+    ' --save_model_path '+save_model_path]
 
 os.system(''.join(command))

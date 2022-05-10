@@ -15,7 +15,8 @@ def init_data(info,bypass=False):
     '''
     Take a named dataset and if it already exists use the pre svaed data otherwise download it.
     '''
-    if not os.path.isdir(info.data_path + info.dataset_name + '/imagedata.csv') or bypass==True:
+    #TODO change this to does file exist
+    if not os.path.isdir(info.data_path + info.dataset_name) or bypass==True:
         print('INIT: Cannot find ',info.dataset_name, ' data, downloading now...')
         #take the tfds dataset and produce a dataset and dataframe
         ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
@@ -241,8 +242,8 @@ def scoring_func(df,info):
 
         #km cluster
         km = cluster.MiniBatchKMeans(n_clusters=info.batch_size)
-        km = km.fit(data)
-        cluster_data = km.predict(data)
+        km = km.fit(data.reshape((-1,1)))
+        cluster_data = km.predict(data.reshape((-1,1)))
 
         df['score'] = cluster_data
         df = df.sort_values('score',ascending=True)
@@ -373,7 +374,7 @@ def pacing_func(df,info):
         return model.coef_[0]
 
 
-    if info.pacing_function == 'none':
+    if info.pacing_function == 'shuffle':
         #shuffle all data
         df['score'] = random.sample([x for x in range(len(df.index))],len(df.index))
         return df

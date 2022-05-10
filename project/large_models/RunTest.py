@@ -24,6 +24,8 @@ def parse_arguments():
     parser.add_argument('--dataset',type=str,default='mnist')
     parser.add_argument('--dataset_size',type=float,default=1)
     parser.add_argument('--dataset_similarity',type=str,default='True')
+    parser.add_argument('--data_path',type=str,default='none')
+    parser.add_argument('--save_model_path',type=str,default='none')
     parser.add_argument('--early_stopping', type=int,default=0)
 
     parser.add_argument('--group', type=str,default=None)
@@ -45,9 +47,7 @@ def parse_arguments():
     return args
 
 def main(args):
-    #TODO - Add dataused each epoch and save the array
     #TODO - Implement split data csv
-    #TODO - add restricted dataset runs
     class Info_class :
         #TODO remove this and use wadnb config
         #variables for test
@@ -86,11 +86,10 @@ def main(args):
         dataset_name = args.dataset
         dataset_size = args.dataset_size #proportion of dataset to use
         dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
-        #data_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/'
-        data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
-        #save_model_path = '/user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/'
-        save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
-
+        
+        data_path = args.data_path
+        save_model_path = args.save_model_path
+        
         img_shape = 0
         dataused = [] 
         class_names = []
