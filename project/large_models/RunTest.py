@@ -129,9 +129,9 @@ def main(args):
         train_loss(loss)
         train_acc_metric(labels,preds)
         if tf.equal(info.record_loss,tf.constant('sum',tf.string)):
-            return batch_loss
+            return batch_loss, loss
         else:
-            return preds
+            return preds, loss
     
 
     @tf.function
@@ -221,7 +221,7 @@ def main(args):
         for i, (X,Y) in enumerate(train_data_gen):
             #collect losses and train model
             if i % 500 == 0: print("Batch ="+str(i))
-            batch_loss = train_step(X[1],Y)
+            batch_loss, mean_loss = train_step(X[1],Y)
             #create a dataframe of the single column
             col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
             
@@ -230,7 +230,7 @@ def main(args):
                 for X,Y in test_data_gen:
                     batch_test_loss = test_step(X[1],Y)
                 wandb.log({
-                    'batch_train_loss':batch_loss, 
+                    'batch_train_loss':mean_loss, 
                     'batch_num':batch_num, 
                     'batch_test_loss':batch_test_loss,
                     'batch_test_acc':test_acc_metric.result().numpy()})
