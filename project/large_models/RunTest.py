@@ -47,7 +47,7 @@ def parse_arguments():
     return args
 
 def main(args):
-    #TODO - Implement split data csv
+
     class Info_class :
         #TODO remove this and use wadnb config
         #variables for test
@@ -128,10 +128,8 @@ def main(args):
         optimizer[0].apply_gradients(zip(grads,model.trainable_variables))
         train_loss(loss)
         train_acc_metric(labels,preds)
-        if tf.equal(info.record_loss,tf.constant('sum',tf.string)):
-            return batch_loss, loss
-        else:
-            return preds, loss
+        return batch_loss, loss, preds
+
     
 
     @tf.function
@@ -141,7 +139,7 @@ def main(args):
         m_loss = tf.math.reduce_mean(t_loss)
         test_loss(m_loss)
         test_acc_metric(labels, preds)
-        return t_loss, m_loss
+        return preds, t_loss, m_loss
 
 
     #Setup logs and records
@@ -155,6 +153,7 @@ def main(args):
     # initilise the dataframe to train on and the test dataframe
     df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)
     #df_train_losses is a df of just training set without images, (i|label,score) used to record losses
+    #df_test_losses is a df of just training set without images, (i|label,loss,pred) used to record losses
     #train_df is the df with images in it (i|img,label)
     #test_df is the df with images in it (i|img,label)
 
@@ -196,7 +195,7 @@ def main(args):
         def print(self):
             print(self.t)
 
-    tim = timer()
+
 
 
     #build and load model, optimizer and loss functions
@@ -218,25 +217,56 @@ def main(args):
 
         #training step
         for i, (X,Y) in enumerate(train_data_gen):
-            #collect losses and train model
+            #print batch num
             if i % 500 == 0: print("Batch ="+str(i))
-            batch_loss, mean_loss = train_step(X[1],Y)
-            #create a dataframe of the single column
-            col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
+            
+            #collect losses and train model
+            batch_loss, mean_loss, preds = train_step(X[1],Y)
+
+            #create a dataframe of the single column for train record
+            #this is done to avoid acsessing the large df multiple times
+            #TODO this may not need to be this complex, copy the df_train_losses cols or update directly
+            if info.record_loss == 'sum':
+                col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
+            else:
+                #this function also converts softmax array into softmax error 
+                col = sf.update_col(preds,Y,col,X[0],info) # = (i,current_epoch)
             
             #record the batch by batch logs
             if info.batch_logs == 'True':
-                t_col = pd.DataFrame(columns=['i',str(info.current_epoch)])
+                #Run the test dataset to assess the training batch update
                 for X,Y in test_data_gen:
-                    batch_test_loss, test_loss = test_step(X[1],Y)
-                    t_col = sf.update_col(batch_test_loss,Y,t_col,X[0],info)
+                    preds, batch_test_loss, test_loss = test_step(X[1],Y)
+                    df_test_losses = sf.update_test_df(df_test_losses,batch_test_loss,preds,X[0])
+
+                #create class specific analysis
+                keys = [x for x in info.class_names]
+                bcla = {}
+                bcf1 = {}
+                batch_class_test_f1 = [sf.f1_score(df_test_losses,x) for x in range(train_data_gen.num_classes)]
+                batch_class_loss_avg = [df_test_losses[df_test_losses.label==x].loc[:,'loss'].mean() for x in range(train_data_gen.num_classes)]
+                for i in range(len(keys)):
+                    bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
+                    bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
+
+                #log the batch 
                 wandb.log({
-                    'batch_train_loss':mean_loss, 
+                    'batch_mean_train_loss':mean_loss, 
+                    'batch_train_loss':batch_loss,
                     'batch_num':batch_num, 
-                    'batch_test_loss':batch_test_loss,
-                    'batch_test_acc':test_acc_metric.result().numpy()})
+                    'batch_test_loss':df_test_losses.loss.mean(),
+                    'batch_test_acc':test_acc_metric.result().numpy(),
+                    **bcla,
+                    **bcf1})
+
                 batch_num += 1
 
+                #reset the test metrics so no clashes
+                test_loss.reset_states()
+                test_acc_metric.reset_states()
+
+
+        #END OF EPOCH
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
@@ -266,16 +296,13 @@ def main(args):
         for X,Y in test_data_gen:
             test_step(X[1],Y)
 
-        if info.batch_logs == 'True':
-            basic = {}
-        else:
-            basic = {
-                'Epoch':info.current_epoch,
-                'Train-Loss':train_loss.result().numpy(),
-                'Test-Loss':test_loss.result().numpy(),
-                'Train-Acc':train_acc_metric.result().numpy(),
-                'Test-Acc':test_acc_metric.result().numpy(),
-                'Data-Used':train_data_gen.dataused}
+        basic = {
+            'Epoch':info.current_epoch,
+            'Train-Loss':train_loss.result().numpy(),
+            'Test-Loss':test_loss.result().numpy(),
+            'Train-Acc':train_acc_metric.result().numpy(),
+            'Test-Acc':test_acc_metric.result().numpy(),
+            'Data-Used':train_data_gen.dataused}
         keys = [x for x in info.class_names]
         cla = {}
         clv = {}
@@ -298,6 +325,7 @@ def main(args):
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
         
         #early stopping
+        #TODO this needs checking 
         if info.early_stopping > 0:
             #increment if test acc lower
             if test_acc_metric.result().numpy() < info.early_stopping_max:
@@ -314,15 +342,13 @@ def main(args):
         train_acc_metric.reset_states()
         test_loss.reset_states()
         test_acc_metric.reset_states()
-        tim.click('logging')
+
         #save the model
         if info.current_epoch % 10 == 0:
             model.save(info.save_model_path)
             print('Checkpoint saved')
-        tim.print()
 
     #save the model and data
-    #np.savetxt(info.data_path + info.dataset_name + '/dataused.csv',dataused)
     model.save(info.save_model_path)
     df_train_losses.to_csv(info.data_path + info.dataset_name + '/normal_loss_info.csv')
 

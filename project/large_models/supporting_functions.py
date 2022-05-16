@@ -122,8 +122,11 @@ def init_data(info,bypass=False):
     #create the loss info dfs
     df_train_losses = train_df.copy()
     df_train_losses = df_train_losses.drop('img')
+    df_train_losses['score'] = np.nan
     df_test_losses = test_df.copy()
     df_test_losses = df_test_losses.drop('img')
+    df_test_losses['loss'] = np.nan
+    df_test_losses['pred'] = np.nan
 
     print('INIT: Finished creating train dataset')
 
@@ -489,12 +492,13 @@ def pacing_func(df,info):
     
     return df
 
-def update_col(batch_loss,labels, col, indexes,info):
+def update_col(val,labels, col, indexes,info):
+    #This takes the list of losses from the batch, the labels
     if info.record_loss == 'sum':
         #take the batch_losses and update column 
         for i in range(len(batch_loss)):
             #add the index and loss to the column
-            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):batch_loss[i].numpy()},index=[0])
+            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):val[i].numpy()},index=[0])
             col = pd.concat([col,new_row],axis=0)
         return col
     else:
@@ -509,4 +513,28 @@ def update_col(batch_loss,labels, col, indexes,info):
 
             col = pd.concat([col,new_row],axis=0)
         return col
+
+def update_test_df(df,batch_loss,preds,indexes):
+    #takes the df and 2 arrays of indexes and losses to update the df
+    for i in range(len(batch_loss)):
+        df.loc[indexes[i],'loss'] = batch_loss[i]
+        df.loc[indexes[i],'pred'] = [preds[i]]
+
+    return df
+
+def f1_score(df,target):
+    #tp/tp+0.5(fp+fn)
+
+    #calc pred class
+    df['pred'] = [x.index(max(x)) for x in df['pred']]
+
+    #count 
+    tp = len(df[(df['label'] == x) & (df['label'] == df['pred'])].index)
+    fp = len(df[(df['label'] != x) & (df['label'] == df['pred'])].index)
+    tn = len(df[(df['label'] == x) & (df['label'] != df['pred'])].index)
+    fn = len(df[(df['label'] != x) & (df['label'] != df['pred'])].index)
+
+    return tp/(tp + 0.5*(fp+fn))
+    
+
 
