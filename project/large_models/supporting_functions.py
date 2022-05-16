@@ -10,18 +10,40 @@ from sklearn import decomposition
 import os
 import csv
 import random
+import glob
+
+def split_save_df(df,fpath):
+    #save the df as multiple smaller files
+    num_rows = 10000
+    i = 0
+    while len(df.index) > num_rows:
+        df.iloc[:num_rows,:].to_csv(fpath+str(i))
+        df = df.drop(df.iloc[:num_rows,:].index)
+        i += 1
+    print('Saved DF in '+str(i+1)+' chunks')
+
+def split_load_df(fpath):
+    fns = glob.glob(fpath+'*.csv')
+    #find first file
+    fn = fns[0]
+    df = pd.read_csv(fn,index_col='Unnamed: 0')
+    for fn in fns[1:]:
+        temp_df  =  pd.read_csv(fn,index_col='Unnamed: 0')
+        pd.concat([df,temp_df])
+    print('DF loaded with '+len(fns)+' parts')
+    return df
+
 
 def init_data(info,bypass=False):
     '''
     Take a named dataset and if it already exists use the pre svaed data otherwise download it.
     '''
-    #TODO change this to does file exist
     if not os.path.isdir(info.data_path + info.dataset_name) or bypass==True:
         print('INIT: Cannot find ',info.dataset_name, ' data, downloading now...')
         #take the tfds dataset and produce a dataset and dataframe
         ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
         df = pd.DataFrame(columns=['img','label','i','test'])
-        df_losses = pd.DataFrame(columns=['label','i','test']) #for speed reasons
+        #df_losses = pd.DataFrame(columns=['label','i','test']) #for speed reasons
 
         #record ds metadata
         info.num_classes = ds_info.features['label'].num_classes
@@ -36,14 +58,15 @@ def init_data(info,bypass=False):
             else: test = False
             new_row = pd.DataFrame(data={'img':[image.numpy().flatten()], 'label':label.numpy(),'i':i,'test':test},index=[i])
             df = pd.concat([df,new_row],axis=0)
-            n_row = pd.DataFrame(data={'label':label.numpy(),'i':i,'test':test},index=[i])
-            df_losses = pd.concat([df_losses,n_row],axis=0)
+            #n_row = pd.DataFrame(data={'label':label.numpy(),'i':i,'test':test},index=[i])
+            #df_losses = pd.concat([df_losses,n_row],axis=0)
             i += 1
         
         #make the required directory and save the data
         os.makedirs(info.data_path + info.dataset_name)
-        df.to_csv(info.data_path + info.dataset_name + '/imagedata.csv')
-        df_losses.to_csv(info.data_path  + info.dataset_name + '/lossdata.csv')
+        split_save_df(df,info.data_path + info.dataset_name + '/imagedata')
+        #df.to_csv(info.data_path + info.dataset_name + '/imagedata.csv')
+        #df_losses.to_csv(info.data_path  + info.dataset_name + '/lossdata.csv')
         with open(info.data_path+info.dataset_name+'/metadata.csv','w',newline='') as f:
             writer = csv.writer(f)
             writer.writerow([info.num_classes])
@@ -53,8 +76,9 @@ def init_data(info,bypass=False):
     print('INIT: Using found',info.dataset_name, 'data')
     #if the data exists import the csv and change data into a tf dataset
     # need to take the csvs and fix the image data dimentions and turn into a tfdataset
-    df = pd.read_csv(info.data_path + info.dataset_name + '/imagedata.csv',index_col='Unnamed: 0')
-    df_losses = pd.read_csv(info.data_path + info.dataset_name + '/lossdata.csv',index_col='Unnamed: 0')
+    #df = pd.read_csv(info.data_path + info.dataset_name + '/imagedata.csv',index_col='Unnamed: 0')
+    df = split_load_df(info.data_path+info.dataset_name+'/imagedata')
+    #df_losses = pd.read_csv(info.data_path + info.dataset_name + '/lossdata.csv',index_col='Unnamed: 0')
     with open(info.data_path+info.dataset_name+'/metadata.csv',newline='') as f:
         reader = csv.reader(f)
         file_content = []
@@ -75,11 +99,11 @@ def init_data(info,bypass=False):
     train_df = train_df.drop(columns='test')
     test_df = test_df.drop(columns='test')
 
-    print('INIT: Finished creating train dataset')
+    
 
-    df_train_losses = df_losses[df_losses['test']==False]
-    df_train_losses = df_train_losses.drop(columns='test').set_index('i')
-    df_train_losses['score'] = np.nan
+    #df_train_losses = df_losses[df_losses['test']==False]
+    #df_train_losses = df_train_losses.drop(columns='test').set_index('i')
+    #df_train_losses['score'] = np.nan
 
     #reduce the dataset
     if info.dataset_size < 1 and info.dataset_size > 0:
@@ -87,15 +111,23 @@ def init_data(info,bypass=False):
             d = int(info.dataset_size * len(train_df))
             print('amount of data used = ',d)
             train_df = train_df.iloc[:d,:]
-            df_train_losses = df_train_losses.iloc[:d,:]
+            #df_train_losses = df_train_losses.iloc[:d,:]
         else:
             print('frac used = ',info.dataset_size)
             train_df = train_df.sample(frac=info.dataset_size,axis=0)
-            df_train_losses = df_train_losses.loc[train_df.index,:]
+            #df_train_losses = df_train_losses.loc[train_df.index,:]
 
         print(train_df.label.value_counts())
+    
+    #create the loss info dfs
+    df_train_losses = train_df.copy()
+    df_train_losses = df_train_losses.drop('img')
+    df_test_losses = test_df.copy()
+    df_test_losses = df_test_losses.drop('img')
 
-    return df_train_losses,train_df,test_df,info
+    print('INIT: Finished creating train dataset')
+
+    return df_train_losses,df_test_losses,train_df,test_df,info
 
 #convert from a vector image to 3d representation again and build dataset form dataframe
 def img_dim_shift(x,info):
