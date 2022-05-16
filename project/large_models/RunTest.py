@@ -141,7 +141,7 @@ def main(args):
         m_loss = tf.math.reduce_mean(t_loss)
         test_loss(m_loss)
         test_acc_metric(labels, preds)
-        return m_loss
+        return t_loss, m_loss
 
 
     #Setup logs and records
@@ -152,9 +152,8 @@ def main(args):
     wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
-
     # initilise the dataframe to train on and the test dataframe
-    df_train_losses, train_df, test_df, info = sf.init_data(info)
+    df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)
     #df_train_losses is a df of just training set without images, (i|label,score) used to record losses
     #train_df is the df with images in it (i|img,label)
     #test_df is the df with images in it (i|img,label)
@@ -227,14 +226,17 @@ def main(args):
             
             #record the batch by batch logs
             if info.batch_logs == 'True':
+                t_col = pd.DataFrame(columns=['i',str(info.current_epoch)])
                 for X,Y in test_data_gen:
-                    batch_test_loss = test_step(X[1],Y)
+                    batch_test_loss, test_loss = test_step(X[1],Y)
+                    t_col = sf.update_col(batch_test_loss,Y,t_col,X[0],info)
                 wandb.log({
                     'batch_train_loss':mean_loss, 
                     'batch_num':batch_num, 
                     'batch_test_loss':batch_test_loss,
                     'batch_test_acc':test_acc_metric.result().numpy()})
                 batch_num += 1
+
         #add the col to the loss holder
         col = col.set_index('i') #col = (i|current_epoch)
         df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
