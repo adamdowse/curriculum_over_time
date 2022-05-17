@@ -236,9 +236,22 @@ def main(args):
             if info.batch_logs == 'True':
                 #Run the test dataset to assess the training batch update
                 for X,Y in test_data_gen:
-                    preds, batch_test_loss, test_loss = test_step(X[1],Y)
+                    preds, batch_test_loss, t_loss = test_step(X[1],Y)
                     df_test_losses = sf.update_test_df(df_test_losses,batch_test_loss,preds,X[0])
 
+                #log histograms
+                wandb.log({"batch_train_loss": batch_loss},step=batch_num)
+                wandb.log({"batch_test_loss": df_test_losses.loss.to_numpy()},step=batch_num)
+
+                #log basic line graphs
+                wandb.log({
+                    'batch_mean_train_loss':mean_loss, 
+                    'batch_num':batch_num, 
+                    'batch_mean_test_loss':df_test_losses.loss.mean(),
+                    'batch_test_acc':test_acc_metric.result().numpy()}
+                    ,step = batch_num)
+
+                #log class specific line graphs
                 #create class specific analysis
                 keys = [x for x in info.class_names]
                 bcla = {}
@@ -248,17 +261,13 @@ def main(args):
                 for i in range(len(keys)):
                     bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
                     bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
-
-                #log the batch 
+                
                 wandb.log({
-                    'batch_mean_train_loss':mean_loss, 
-                    'batch_train_loss':batch_loss,
-                    'batch_num':batch_num, 
-                    'batch_test_loss':df_test_losses.loss.mean(),
-                    'batch_test_acc':test_acc_metric.result().numpy(),
                     **bcla,
-                    **bcf1})
+                    **bcf1
+                },step=batch_num)
 
+                #increment batch number
                 batch_num += 1
 
                 #reset the test metrics so no clashes

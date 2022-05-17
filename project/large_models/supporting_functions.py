@@ -17,7 +17,8 @@ def split_save_df(df,fpath):
     num_rows = 10000
     i = 0
     while len(df.index) > num_rows:
-        df.iloc[:num_rows,:].to_csv(fpath+str(i))
+        print('Saving chunk ',i)
+        df.iloc[:num_rows,:].to_csv(fpath+str(i)+'.csv')
         df = df.drop(df.iloc[:num_rows,:].index)
         i += 1
     print('Saved DF in '+str(i+1)+' chunks')
@@ -29,8 +30,8 @@ def split_load_df(fpath):
     df = pd.read_csv(fn,index_col='Unnamed: 0')
     for fn in fns[1:]:
         temp_df  =  pd.read_csv(fn,index_col='Unnamed: 0')
-        pd.concat([df,temp_df])
-    print('DF loaded with '+len(fns)+' parts')
+        df = pd.concat([df,temp_df])
+    print('DF loaded ',len(df.index),'rows with ',len(fns),' parts')
     return df
 
 
@@ -121,12 +122,16 @@ def init_data(info,bypass=False):
     
     #create the loss info dfs
     df_train_losses = train_df.copy()
-    df_train_losses = df_train_losses.drop('img')
+    df_train_losses = df_train_losses.drop('img',axis=1)
     df_train_losses['score'] = np.nan
     df_test_losses = test_df.copy()
-    df_test_losses = df_test_losses.drop('img')
+    df_test_losses = df_test_losses.drop('img',axis=1)
     df_test_losses['loss'] = np.nan
     df_test_losses['pred'] = np.nan
+
+    for c in range(info.num_classes):
+        df_test_losses[str(c)] = np.nan
+    
 
     print('INIT: Finished creating train dataset')
 
@@ -492,8 +497,9 @@ def pacing_func(df,info):
     
     return df
 
-def update_col(val,labels, col, indexes,info):
+def update_col(batch_loss,preds,labels, col, indexes,info):
     #This takes the list of losses from the batch, the labels
+
     if info.record_loss == 'sum':
         #take the batch_losses and update column 
         for i in range(len(batch_loss)):
@@ -503,10 +509,10 @@ def update_col(val,labels, col, indexes,info):
         return col
     else:
         #compress the predictions USE AVERAGE ERROR
-        for i in range(len(batch_loss)):
+        for i in range(len(val)):
             #find the new loss vals
             label = labels[i]
-            loss_vals = batch_loss[i].numpy()
+            loss_vals = val[i].numpy()
             loss_vals = [abs(label[j]-loss_vals[j]) for j in range(info.num_classes)]
             
             new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):[loss_vals]},index=[0])
@@ -516,23 +522,23 @@ def update_col(val,labels, col, indexes,info):
 
 def update_test_df(df,batch_loss,preds,indexes):
     #takes the df and 2 arrays of indexes and losses to update the df
+    cols = [str(x) for x in range(10)]
     for i in range(len(batch_loss)):
-        df.loc[indexes[i],'loss'] = batch_loss[i]
-        df.loc[indexes[i],'pred'] = [preds[i]]
-
+        df.loc[indexes.values[i],'loss'] = batch_loss.numpy()[i]
+        df.loc[indexes.values[i],cols] = preds.numpy()[i]
+        
+        #calc pred class
+        df.loc[indexes.values[i],'pred'] = np.argmax(preds.numpy()[i])
     return df
 
 def f1_score(df,target):
     #tp/tp+0.5(fp+fn)
 
-    #calc pred class
-    df['pred'] = [x.index(max(x)) for x in df['pred']]
-
     #count 
-    tp = len(df[(df['label'] == x) & (df['label'] == df['pred'])].index)
-    fp = len(df[(df['label'] != x) & (df['label'] == df['pred'])].index)
-    tn = len(df[(df['label'] == x) & (df['label'] != df['pred'])].index)
-    fn = len(df[(df['label'] != x) & (df['label'] != df['pred'])].index)
+    tp = len(df[(df['label'] == target) & (df['label'] == df['pred'])].index)
+    fp = len(df[(df['label'] != target) & (df['label'] == df['pred'])].index)
+    tn = len(df[(df['label'] == target) & (df['label'] != df['pred'])].index)
+    fn = len(df[(df['label'] != target) & (df['label'] != df['pred'])].index)
 
     return tp/(tp + 0.5*(fp+fn))
     
