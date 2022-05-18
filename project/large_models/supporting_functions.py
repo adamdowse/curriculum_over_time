@@ -44,7 +44,6 @@ def init_data(info,bypass=False):
         #take the tfds dataset and produce a dataset and dataframe
         ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
         df = pd.DataFrame(columns=['img','label','i','test'])
-        #df_losses = pd.DataFrame(columns=['label','i','test']) #for speed reasons
 
         #record ds metadata
         info.num_classes = ds_info.features['label'].num_classes
@@ -59,15 +58,12 @@ def init_data(info,bypass=False):
             else: test = False
             new_row = pd.DataFrame(data={'img':[image.numpy().flatten()], 'label':label.numpy(),'i':i,'test':test},index=[i])
             df = pd.concat([df,new_row],axis=0)
-            #n_row = pd.DataFrame(data={'label':label.numpy(),'i':i,'test':test},index=[i])
-            #df_losses = pd.concat([df_losses,n_row],axis=0)
             i += 1
         
         #make the required directory and save the data
         os.makedirs(info.data_path + info.dataset_name)
         split_save_df(df,info.data_path + info.dataset_name + '/imagedata')
-        #df.to_csv(info.data_path + info.dataset_name + '/imagedata.csv')
-        #df_losses.to_csv(info.data_path  + info.dataset_name + '/lossdata.csv')
+
         with open(info.data_path+info.dataset_name+'/metadata.csv','w',newline='') as f:
             writer = csv.writer(f)
             writer.writerow([info.num_classes])
@@ -75,11 +71,9 @@ def init_data(info,bypass=False):
             writer.writerow([info.img_shape])
 
     print('INIT: Using found',info.dataset_name, 'data')
-    #if the data exists import the csv and change data into a tf dataset
-    # need to take the csvs and fix the image data dimentions and turn into a tfdataset
-    #df = pd.read_csv(info.data_path + info.dataset_name + '/imagedata.csv',index_col='Unnamed: 0')
+
     df = split_load_df(info.data_path+info.dataset_name+'/imagedata')
-    #df_losses = pd.read_csv(info.data_path + info.dataset_name + '/lossdata.csv',index_col='Unnamed: 0')
+
     with open(info.data_path+info.dataset_name+'/metadata.csv',newline='') as f:
         reader = csv.reader(f)
         file_content = []
@@ -92,19 +86,12 @@ def init_data(info,bypass=False):
         info.img_shape = info.img_shape.split(',')
         info.img_shape = [int(x) for x in info.img_shape]
         
-
     df = df.set_index('i')
     train_df = df[df['test']==False]
     test_df = df[df['test']==True]
 
     train_df = train_df.drop(columns='test')
     test_df = test_df.drop(columns='test')
-
-    
-
-    #df_train_losses = df_losses[df_losses['test']==False]
-    #df_train_losses = df_train_losses.drop(columns='test').set_index('i')
-    #df_train_losses['score'] = np.nan
 
     #reduce the dataset
     if info.dataset_size < 1 and info.dataset_size > 0:
@@ -132,7 +119,6 @@ def init_data(info,bypass=False):
     for c in range(info.num_classes):
         df_test_losses[str(c)] = np.nan
     
-
     print('INIT: Finished creating train dataset')
 
     return df_train_losses,df_test_losses,train_df,test_df,info
@@ -497,22 +483,22 @@ def pacing_func(df,info):
     
     return df
 
-def update_col(batch_loss,preds,labels, col, indexes,info):
+def update_col(vals,labels, col, indexes,info):
     #This takes the list of losses from the batch, the labels
 
     if info.record_loss == 'sum':
         #take the batch_losses and update column 
-        for i in range(len(batch_loss)):
+        for i in range(len(vals)):
             #add the index and loss to the column
-            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):val[i].numpy()},index=[0])
+            new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):vals[i].numpy()},index=[0])
             col = pd.concat([col,new_row],axis=0)
         return col
     else:
         #compress the predictions USE AVERAGE ERROR
-        for i in range(len(val)):
+        for i in range(len(vals)):
             #find the new loss vals
             label = labels[i]
-            loss_vals = val[i].numpy()
+            loss_vals = vals[i].numpy()
             loss_vals = [abs(label[j]-loss_vals[j]) for j in range(info.num_classes)]
             
             new_row = pd.DataFrame(data={'i':indexes[i],str(info.current_epoch):[loss_vals]},index=[0])

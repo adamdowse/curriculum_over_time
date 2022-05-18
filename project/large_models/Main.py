@@ -2,13 +2,13 @@ import os
 
 #File used to test running the experiments
 
-epochs = str(30)
+epochs = str(5)
 lr = str(0.01)
 batch_size = str(32)
 #'normal' 'grads' pred_clusters pred_biggest_move pred_best_angle
-scoring_function = 'normal'
+scoring_function = 'pred_biggest_move'
 #'shuffle' 'ordered' 'mixed' 'naive_linear' 'naive_grad'
-pacing_function = 'shuffle'
+pacing_function = 'ordered'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.01)

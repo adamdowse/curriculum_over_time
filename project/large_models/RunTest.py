@@ -223,6 +223,11 @@ def main(args):
             #collect losses and train model
             batch_loss, mean_loss, preds = train_step(X[1],Y)
 
+            #count number of each class in the batch
+            
+            label_corrected = np.array([np.argmax(x) for x in Y])
+            class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)]
+
             #create a dataframe of the single column for train record
             #this is done to avoid acsessing the large df multiple times
             #TODO this may not need to be this complex, copy the df_train_losses cols or update directly
@@ -256,15 +261,18 @@ def main(args):
                 keys = [x for x in info.class_names]
                 bcla = {}
                 bcf1 = {}
+                bcc = {}
                 batch_class_test_f1 = [sf.f1_score(df_test_losses,x) for x in range(train_data_gen.num_classes)]
                 batch_class_loss_avg = [df_test_losses[df_test_losses.label==x].loc[:,'loss'].mean() for x in range(train_data_gen.num_classes)]
                 for i in range(len(keys)):
                     bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
                     bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
+                    bcc['batch_train_class_count_'+keys[i]] = class_counts[i]
                 
                 wandb.log({
                     **bcla,
-                    **bcf1
+                    **bcf1,
+                    **bcc
                 },step=batch_num)
 
                 #increment batch number
