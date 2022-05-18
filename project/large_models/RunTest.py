@@ -11,6 +11,9 @@ import wandb
 import os
 import argparse
 import time
+import sqlite3
+from sqlite3 import Error
+import random
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Arguments from script')
@@ -141,6 +144,23 @@ def main(args):
         test_acc_metric(labels, preds)
         return preds, t_loss, m_loss
 
+    #TODO ADD THE RANDOM GENERATOR CODES HERE
+
+    #setup database (Testing for moment)
+    # create a database connection
+    database =r"/com.docker.devenvironments.code/project/large_models/DBs/mnist.db"
+    conn = sf.DB_create_connection(database)
+
+    #TODO ADD CHECK FOR IF DB ALREADY EXISTS AND SKIP THIS ??
+
+    #create the db if it does not exist
+    sf.DB_create(conn)
+
+    #download the dataset and add it to the db
+    sf.DB_import_dataset(conn,info)
+    
+
+    prnt()
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
@@ -149,6 +169,7 @@ def main(args):
           
     wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
+
 
     # initilise the dataframe to train on and the test dataframe
     df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)

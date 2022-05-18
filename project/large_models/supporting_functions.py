@@ -11,6 +11,135 @@ import os
 import csv
 import random
 import glob
+import sqlite3
+from sqlite3 import Error
+
+def DB_create_connection(db_file):
+    """ create a database connection to the SQLite database
+        specified by db_file
+    :param db_file: database file
+    :return: Connection object or None
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(db_file)
+    except Error as e:
+        print(e)
+
+    return conn
+
+def create_table(conn, create_table_sql):
+    """ create a table from the create_table_sql statement
+    :param conn: Connection object
+    :param create_table_sql: a CREATE TABLE statement
+    :return:
+    """
+    try:
+        c = conn.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
+
+def DB_add_img(conn, img):
+    """
+    Create a new img into the img table
+    :param conn:
+    :param img: (label_name,label_num,data,batch_num)
+    """
+    if conn is not None:
+        sql = ''' INSERT INTO imgs(label_name,label_num,data,batch_num,test)
+                VALUES(?,?,?,?) '''
+        cur = conn.cursor()
+        cur.execute(sql, img)
+        conn.commit()
+    else:
+        print('ERROR connecting to db')
+
+
+def create_task(conn, task):
+    """
+    Create a new task
+    :param conn:
+    :param task:
+    :return:
+    """
+
+    sql = ''' INSERT INTO tasks(name,priority,status_id,project_id,begin_date,end_date)
+              VALUES(?,?,?,?,?,?) '''
+    cur = conn.cursor()
+    cur.execute(sql, task)
+    conn.commit()
+    return cur.lastrowid
+
+def DB_import_dataset(conn,info):
+    '''
+    Take the desired dataset and download it form tf_datasets and put the images into the db
+
+    '''
+    #downlaod the tfdataset
+    print('INIT: Using ',info.dataset_name, ' data, downloading now...')
+    #take the tfds dataset and produce a dataset and dataframe
+    ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=False,as_supervised=True,split='all')
+    
+    #record ds metadata
+    info.num_classes = ds_info.features['label'].num_classes
+    info.class_names = ds_info.features['label'].names
+
+    #Take the dataset and add info to db
+    i = 0
+    for image,label in ds:
+        if i == 0:
+            info.img_shape = image.shape
+        if random.random() > 0.8: test = True 
+        else: test = False
+        #TODO DO ADDITION OF DATA HERE START HEREEEEEEEEEEEEEEEEEEEEEEE_________________________EEEE
+        #are we adding test /train ids to db? YES
+        i += 1
+
+
+def DB_create(conn):
+    '''
+    Create the database if it does not exist for the current data
+    param database: file loc of database to create
+    '''
+
+    sql_create_img_table = """ CREATE TABLE IF NOT EXISTS imgs (
+                                        id integer PRIMARY KEY,
+                                        label_name text NOT NULL,
+                                        label_num integer,
+                                        data text,
+                                        score float,
+                                        batch_num integer
+                                        test bool
+                                    ); """
+
+    sql_create_loss_table = """CREATE TABLE IF NOT EXISTS losses (
+                                    step integer PRIMARY KEY,
+                                    img_id integer NOT NULL,
+                                    loss float,
+                                    FOREIGN KEY (img_id) REFERENCES imgs (id)
+                                );"""
+    
+    #TODO ADD THE PREDS SECTION
+
+
+    # create tables
+    if conn is not None:
+        # create projects table
+        create_table(conn, sql_create_img_table)
+
+        # create tasks table
+        create_table(conn, sql_create_loss_table)
+    else:
+        print("Error! cannot create the database connection.")
+
+    
+
+
+
+
+
+
 
 def split_save_df(df,fpath):
     #save the df as multiple smaller files
