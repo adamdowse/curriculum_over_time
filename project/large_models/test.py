@@ -1,13 +1,15 @@
 import pandas as pd
 import numpy as np
-from sklearn import linear_model
+import supporting_functions as sf
+import sqlite3
+from sqlite3 import Error
 
+database =r"/com.docker.devenvironments.code/project/large_models/DBs/mnist.db"
+conn = sf.DB_create_connection(database)
 
-r = [0,0,0,1,1,1,2,2,2,3,3]
+cur = conn.cursor()
 
-b = 4
-x = [x for x in range(10)]
+sql = '''   UPDATE imgs SET used = 0'''
 
-x.extend([0,0,0,1])
-
-print(x)
+cur.execute(sql)
+conn.commit()

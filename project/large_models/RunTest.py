@@ -145,55 +145,105 @@ def main(args):
         return preds, t_loss, m_loss
 
     #TODO ADD THE RANDOM GENERATOR CODES HERE
+    random.seed(1)
 
     #setup database (Testing for moment)
+    #setup convertion functions for storing in db
+    # Converts np.array to TEXT when inserting
+    sqlite3.register_adapter(np.ndarray, sf.array_to_bin)
+
+    # Converts TEXT to np.array when selecting
+    sqlite3.register_converter("array", sf.bin_to_array)
+
     # create a database connection
     database =r"/com.docker.devenvironments.code/project/large_models/DBs/mnist.db"
     conn = sf.DB_create_connection(database)
 
-    #TODO ADD CHECK FOR IF DB ALREADY EXISTS AND SKIP THIS ??
-
-    #create the db if it does not exist
-    sf.DB_create(conn)
-
-    #download the dataset and add it to the db
-    sf.DB_import_dataset(conn,info)
+    #check table exists
+    curr = conn.cursor()
+    curr.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='imgs' ''')
+    if curr.fetchone()[0]==1 :
+        print('Table exists.')
+    else:
+        print('Table does not exist, building now...')
     
+        #create the db if it does not exist
+        sf.DB_create(conn)
 
-    prnt()
+        #download the dataset and add it to the db
+        sf.DB_import_dataset(conn,info)
+
+    #count amount of data avalible
+    curr = conn.cursor()
+    curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 1''')
+    test_data_amount = curr.fetchone()[0]
+    curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0''')
+    train_data_amount = curr.fetchone()[0]
+    print('Total Stored Test and Train Data: ',test_data_amount,train_data_amount)
+
+    #Perform housekeeping on the db and reset to original state
+    #TODO ensure all else is done and okTHIS 
+    cur = conn.cursor()
+    for i in range(1,train_data_amount+test_data_amount+1):
+        cur.execute('''UPDATE imgs SET used = (?) WHERE id = (?)''',(random.random(),i))
+        
+    cur.execute('''UPDATE imgs SET batch_num = 0''')
+    conn.commit()
+
+    #Limit the data for both train and test
+    train_data_amount = int(train_data_amount*info.dataset_size)
+    test_data_amount = int(test_data_amount)#TODO ADD SMALLER TEST DATA SIZE
+    sf.DB_set_used(conn,True,test_data_amount)
+    sf.DB_set_used(conn,False,train_data_amount)
+
+    curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 1 AND used = 1''')
+    test_data_amount = curr.fetchone()[0]
+    curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
+    train_data_amount = curr.fetchone()[0]
+    print('Test and Train data to be used: ',test_data_amount,train_data_amount)
+    conn.commit()
+
+    #init the batch_num randomly for first epoch
+    #create an array of all batch_nums
+    sf.DB_random_batches(conn,1,test_data_amount,info.batch_size)
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
     #os.environ['WANDB_DISABLED'] = 'true'
-    wandb.login()
+    #wandb.login()
           
-    wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
+    #wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
 
     # initilise the dataframe to train on and the test dataframe
-    df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)
+    #df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)
     #df_train_losses is a df of just training set without images, (i|label,score) used to record losses
     #df_test_losses is a df of just training set without images, (i|label,loss,pred) used to record losses
     #train_df is the df with images in it (i|img,label)
     #test_df is the df with images in it (i|img,label)
 
     #Sort class_name var into list
-    info.class_names = sf.str_to_list(info.class_names[0])
-    info.class_names = [y.replace(',','') for y in info.class_names]
-    info.class_names = [y.replace("'",'') for y in info.class_names]
-    print('class names: ',info.class_names)
+    #info.class_names = sf.str_to_list(info.class_names[0])
+    #info.class_names = [y.replace(',','') for y in info.class_names]
+    #info.class_names = [y.replace("'",'') for y in info.class_names]
+    #print('class names: ',info.class_names)
 
 
     #Init the data generators
-    train_data_gen = datagen.CustomDataGen(
-        df = train_df,
+    train_data_gen = datagen.CustomDBDataGen(
+        conn = conn,
         X_col = 'img',
         Y_col = 'label',
         batch_size = args.batch_size, 
         input_size = (28,28,1),
         test=False
     )
+
+    t = train_data_gen[0]
+
+    prnt()
+
     test_data_gen = datagen.CustomDataGen(
         df = test_df,
         X_col = 'img',

@@ -1,6 +1,8 @@
 import tensorflow as tf
 import pandas as pd
 import numpy as np
+import sqlite3
+from sqlite3 import Error
 class CustomDataGen(tf.keras.utils.Sequence):
     
     def __init__(self, df, X_col, Y_col,
@@ -87,3 +89,47 @@ class CustomDataGen(tf.keras.utils.Sequence):
         print('Number of batches to use: ',l)
         return l
 
+class CustomDBDataGen(tf.keras.utils.Sequence):
+
+    def __init__(self, conn, X_col, Y_col,
+                 batch_size,
+                 input_size=(28, 28, 1),
+                 test=False):
+        #do stuff
+        #init db connection and init vars
+        self.conn = conn
+        self.test = test
+
+    def on_epoch_end(self):
+        a = 0
+
+    def __get_input(self, img, img_shape):
+        a = 1
+
+    def __get_output(self, label, num_classes):
+        a = 1
+
+    def __get_data(self, batches):
+        a =1
+
+    def __getitem__(self, index):
+        #select only the batch where batch = index
+        curr = self.conn.cursor()
+        curr.execute('''SELECT data, label_num FROM imgs WHERE test = (?) AND used = 1 AND batch_num = (?)''',(self.test,index))
+        for img, label in curr:
+            print(type(img))
+            print(type(int.from_bytes(label)))
+
+            prnt()
+            #TODO convert to tensors and batch output
+            
+
+
+
+
+
+    def __len__(self):
+        #calculates the number of batches to use
+        #max of the DB.imgs.batch_num where train==True
+        a = 1
+    

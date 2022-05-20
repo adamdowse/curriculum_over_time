@@ -13,6 +13,7 @@ import random
 import glob
 import sqlite3
 from sqlite3 import Error
+import io
 
 def DB_create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -22,7 +23,7 @@ def DB_create_connection(db_file):
     """
     conn = None
     try:
-        conn = sqlite3.connect(db_file)
+        conn = sqlite3.connect(db_file,detect_types=sqlite3.PARSE_DECLTYPES)
     except Error as e:
         print(e)
 
@@ -40,6 +41,19 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+def array_to_bin(arr):
+    #converts an arry into binary representation
+    out = io.BytesIO()
+    np.save(out, arr)
+    out.seek(0)
+    return sqlite3.Binary(out.read())
+
+def bin_to_array(bin):
+    #converts bin to np array
+    out = io.BytesIO(bin)
+    out.seek(0)
+    return np.load(out)
+
 def DB_add_img(conn, img):
     """
     Create a new img into the img table
@@ -47,29 +61,12 @@ def DB_add_img(conn, img):
     :param img: (label_name,label_num,data,batch_num)
     """
     if conn is not None:
-        sql = ''' INSERT INTO imgs(label_name,label_num,data,batch_num,test)
-                VALUES(?,?,?,?) '''
+        sql = ''' INSERT INTO imgs(label_name,label_num,data,score,batch_num,test)
+                VALUES(?,?,?,?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, img)
-        conn.commit()
     else:
         print('ERROR connecting to db')
-
-
-def create_task(conn, task):
-    """
-    Create a new task
-    :param conn:
-    :param task:
-    :return:
-    """
-
-    sql = ''' INSERT INTO tasks(name,priority,status_id,project_id,begin_date,end_date)
-              VALUES(?,?,?,?,?,?) '''
-    cur = conn.cursor()
-    cur.execute(sql, task)
-    conn.commit()
-    return cur.lastrowid
 
 def DB_import_dataset(conn,info):
     '''
@@ -86,16 +83,23 @@ def DB_import_dataset(conn,info):
     info.class_names = ds_info.features['label'].names
 
     #Take the dataset and add info to db
+    
     i = 0
+
     for image,label in ds:
+        if i % 5000 == 0: print('Images Complete = ',i)
         if i == 0:
             info.img_shape = image.shape
-        if random.random() > 0.8: test = True 
-        else: test = False
-        #TODO DO ADDITION OF DATA HERE START HEREEEEEEEEEEEEEEEEEEEEEEE_________________________EEEE
-        #are we adding test /train ids to db? YES
-        i += 1
+        if random.random() > 0.8: 
+            test = True 
+        else: 
+            test = False
 
+        data_to_add = (str(label.numpy()),label.numpy(),image.numpy(),random.random(),0,test,random.random())
+        DB_add_img(conn, data_to_add)
+        i += 1
+    conn.commit()
+    return test_count,train_count
 
 def DB_create(conn):
     '''
@@ -107,10 +111,11 @@ def DB_create(conn):
                                         id integer PRIMARY KEY,
                                         label_name text NOT NULL,
                                         label_num integer,
-                                        data text,
+                                        data array,
                                         score float,
-                                        batch_num integer
-                                        test bool
+                                        batch_num integer,
+                                        test bool,
+                                        used bool
                                     ); """
 
     sql_create_loss_table = """CREATE TABLE IF NOT EXISTS losses (
@@ -133,7 +138,45 @@ def DB_create(conn):
     else:
         print("Error! cannot create the database connection.")
 
+def DB_set_used(conn,test,n):
+    #randomly set the amount of data to use
+    #test is the bool True or False
+    #n is the number of samples
+    sql = '''   UPDATE imgs
+                SET used = 1 
+                WHERE test = (?) 
+                ORDER BY used 
+                LIMIT (?);'''
+    #set used to be random nums
+    cur = conn.cursor()
+    cur.execute(sql, (test,n))
+    conn.commit()
+
+def DB_random_batches(conn,test,img_num,batch_size):
+    if img_num / batch_size == 0:
+        num_batches = int(img_num/batch_size)
+    else:
+        num_batches = 1 + int(img_num/batch_size)
+
+    arr = []
+    for n in range(num_batches):
+        to_add = [n]*batch_size
+        arr = arr + to_add
     
+    #limit
+    arr = arr[:img_num]
+    #shuffle
+    random.shuffle(arr)
+
+    #add to db
+    curr = conn.cursor()
+    curr.execute(''' SELECT id FROM imgs WHERE( test = (?) AND used = 1)''',(str(test))) 
+    incurr = conn.cursor()
+    for i,ids in enumerate(curr):
+        incurr.execute(''' UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(str(arr[i]),ids[0]))
+    conn.commit()
+
+
 
 
 
