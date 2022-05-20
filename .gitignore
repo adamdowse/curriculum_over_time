@@ -1,2 +1,3 @@
 project/large_models/datasets/*
+project/large_models/DBs/*
 project/large_models/wandb/*
