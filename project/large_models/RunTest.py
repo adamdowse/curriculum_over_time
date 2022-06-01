@@ -205,11 +205,11 @@ def main(args):
 
     #init the batch_num randomly for first epoch
     #create an array of all batch_nums
-    sf.DB_random_batches(conn,1,test_data_amount,info.batch_size)
+    sf.DB_random_batches(conn,test=0,img_num=train_data_amount,batch_size=info.batch_size)
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    #os.environ['WANDB_DISABLED'] = 'true'
+    os.environ['WANDB_DISABLED'] = 'true'
     #wandb.login()
           
     #wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
@@ -236,19 +236,17 @@ def main(args):
         X_col = 'img',
         Y_col = 'label',
         batch_size = args.batch_size, 
+        num_classes = 10,
         input_size = (28,28,1),
         test=False
     )
 
-    t = train_data_gen[0]
-
-    prnt()
-
-    test_data_gen = datagen.CustomDataGen(
-        df = test_df,
+    test_data_gen = datagen.CustomDBDataGen(
+        conn = conn,
         X_col = 'img',
         Y_col = 'label',
-        batch_size = args.batch_size,
+        batch_size = args.batch_size, 
+        num_classes = 10,
         input_size = (28,28,1),
         test=True
     )
@@ -267,8 +265,6 @@ def main(args):
             print(self.t)
 
 
-
-
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
     optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
@@ -284,7 +280,7 @@ def main(args):
     batch_num = 0
     for info.current_epoch in range(info.max_epochs):
         #create the column for losses
-        col = pd.DataFrame(columns=['i',str(info.current_epoch)])
+        #col = pd.DataFrame(columns=['i',str(info.current_epoch)])
 
         #training step
         for i, (X,Y) in enumerate(train_data_gen):

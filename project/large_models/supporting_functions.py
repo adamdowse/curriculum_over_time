@@ -158,6 +158,7 @@ def DB_random_batches(conn,test,img_num,batch_size):
     else:
         num_batches = 1 + int(img_num/batch_size)
 
+    print('There are ',num_batches,' batches')
     arr = []
     for n in range(num_batches):
         to_add = [n]*batch_size
@@ -168,13 +169,21 @@ def DB_random_batches(conn,test,img_num,batch_size):
     #shuffle
     random.shuffle(arr)
 
+ 
     #add to db
     curr = conn.cursor()
-    curr.execute(''' SELECT id FROM imgs WHERE( test = (?) AND used = 1)''',(str(test))) 
+    #curr.execute(''' UPDATE imgs SET batch_num = (?) WHERE( id = (?) AND test = (?) AND used = 1)''',((arr[i],str(test))) 
+    #get all the ids that are going to be updated
+    curr.execute(''' SELECT id FROM imgs WHERE( test = (?) AND used = 1.0)''',(str(test))) 
+    ids = []
+    for id in curr:
+        ids.append(id[0])
+
     incurr = conn.cursor()
-    for i,ids in enumerate(curr):
-        incurr.execute(''' UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(str(arr[i]),ids[0]))
+    for i,id in enumerate(ids):
+        incurr.execute(''' UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(str(arr[i]),str(id),))
     conn.commit()
+
 
 
 

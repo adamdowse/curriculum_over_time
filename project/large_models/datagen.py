@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import sqlite3
 from sqlite3 import Error
+import supporting_functions as sf
 class CustomDataGen(tf.keras.utils.Sequence):
     
     def __init__(self, df, X_col, Y_col,
@@ -93,36 +94,44 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
 
     def __init__(self, conn, X_col, Y_col,
                  batch_size,
+                 num_classes,
                  input_size=(28, 28, 1),
-                 test=False):
+                 test=False,
+                 ):
         #do stuff
         #init db connection and init vars
         self.conn = conn
         self.test = test
+        self.num_classes = num_classes
+
 
     def on_epoch_end(self):
         a = 0
 
-    def __get_input(self, img, img_shape):
-        a = 1
-
-    def __get_output(self, label, num_classes):
-        a = 1
-
-    def __get_data(self, batches):
-        a =1
 
     def __getitem__(self, index):
         #select only the batch where batch = index
         curr = self.conn.cursor()
-        curr.execute('''SELECT data, label_num FROM imgs WHERE test = (?) AND used = 1 AND batch_num = (?)''',(self.test,index))
-        for img, label in curr:
-            print(type(img))
-            print(type(int.from_bytes(label)))
+        curr.execute('''SELECT id,data, label_num FROM imgs WHERE (test = (?) AND used = 1 AND batch_num = (?))''',(self.test,index))
+        ids = []
+        imgs = []
+        labels = []
+        for id,img, label in curr:
+            ids.append(id)
+            imgs.append(img)
+            labels.append(int.from_bytes(label,'little'))
 
-            prnt()
-            #TODO convert to tensors and batch output
-            
+        #convert to tensors
+        ids = np.array(ids)
+        ids = tf.cast(ids, 'int16')
+
+        imgs = np.array(imgs)
+        imgs = tf.cast(imgs,'float32')
+
+        labels = np.array(labels)
+        labels = tf.one_hot(labels,self.num_classes)
+
+        return tuple([ids,imgs]), labels
 
 
 
