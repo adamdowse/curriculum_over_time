@@ -51,55 +51,97 @@ def parse_arguments():
 
 def main(args):
 
-    class Info_class :
-        #TODO remove this and use wadnb config
-        #variables for test
-        max_epochs = args.max_epochs
-        learning_rate = args.learning_rate
-        batch_size = args.batch_size
-        scoring_function = args.scoring_function
-        pacing_function = args.pacing_function
-        fill_function = args.fill_function
-        
-        record_loss = args.record_loss
-        record_loss = tf.convert_to_tensor(record_loss,tf.string)
-        batch_logs = args.batch_logs
+    #class Info_class :
+    #    #TODO remove this and use wadnb config
+    #    #variables for test
+    #    max_epochs = args.max_epochs
+    #    learning_rate = args.learning_rate
+    #    batch_size = args.batch_size
+    #    scoring_function = args.scoring_function
+    #    pacing_function = args.pacing_function
+    #    fill_function = args.fill_function
+    #    
+    #    record_loss = args.record_loss
+    #    record_loss = tf.convert_to_tensor(record_loss,tf.string)
+    #    batch_logs = args.batch_logs
 
         #early stopping
-        early_stopping = args.early_stopping #number
-        early_stopping_counter = 0
-        early_stopping_max = 0
-        current_epoch = 0
+    #    early_stopping = args.early_stopping #number
+    #    early_stopping_counter = 0
+    #    early_stopping_max = 0
+    #    current_epoch = 0
 
         #pacing vars
-        lam_data = 0 #amount of data used
-        lam_zero = args.lam_zero #initial amount of data
-        lam_max = args.lam_max #epoch to use full data at
-        lam_lookback = args.lam_lookback #regression lookback
-        lam_low_first = args.lam_low_first #use the high score values first (True uses low values first)
-        lam_data_multiplier = args.lam_data_multiplier #multiplied by the gradient to add or remove data from the set
-        lam_lower_bound = args.lam_lower_bound
-        lam_upper_bound = args.lam_upper_bound
+    #    lam_data = 0 #amount of data used
+    #    lam_zero = args.lam_zero #initial amount of data
+    #    lam_max = args.lam_max #epoch to use full data at
+    #    lam_lookback = args.lam_lookback #regression lookback
+    #    lam_low_first = args.lam_low_first #use the high score values first (True uses low values first)
+    #    lam_data_multiplier = args.lam_data_multiplier #multiplied by the gradient to add or remove data from the set
+    #    lam_lower_bound = args.lam_lower_bound
+    #    lam_upper_bound = args.lam_upper_bound
 
         #scoring vars
-        score_grav = args.score_grav #gravity to reduce regression predictions by
-        score_lookback = args.score_lookback #lookback for regression
+    #    score_grav = args.score_grav #gravity to reduce regression predictions by
+    #    score_lookback = args.score_lookback #lookback for regression
 
         #if datset name is a path use that path
-        dataset_name = args.dataset
-        dataset_size = args.dataset_size #proportion of dataset to use
-        dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
+    #    dataset_name = args.dataset
+    #    dataset_size = args.dataset_size #proportion of dataset to use
+    #    dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
         
-        data_path = args.data_path
-        save_model_path = args.save_model_path
+    #    data_path = args.data_path
+    #    save_model_path = args.save_model_path
         
-        img_shape = 0
-        dataused = [] 
-        class_names = []
+    #    img_shape = 0
+    #    dataused = [] 
+    #    class_names = []
 
-    info = Info_class()
-    #TODO update config file for new vars
+    #info = Info_class()
+
     config = {
+        'max_epochs':args.max_epochs,               #maximum epochs before termination                          
+        'learning_rate':args.learning_rate,         #learning rate of updater
+        'batch_size':args.batch_size,               #training batch size
+        'scoring_function':args.scoring_function,   #scoring function used to rank data
+        'pacing_function':args.pacing_function,     #pacing fucntion orders the ranked data or selects a certain amount of data
+        'fill_function':args.fill_function,         #fill functions estimate the unseen data that has no current infomation due to not being used
+        
+        'record_loss':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the loss for each image trained on will be recorded in the db
+        'record_softmax_error':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the softmax error [num_classes] for each image trained on will be recorded in the db
+        'batch_logs':args.batch_logs,               # record stats after each training batch
+
+        'early_stopping':args.early_stopping,       #number of epochs of non increasing test accuracy before termination (0 is off)
+
+        #pacing functions
+        'lam_zero':args.lam_zero,                    #initial amount of data to use
+        'lam_max':args.lam_max,                      #epoch to use full data at
+        'lam_lookback':args.lam_lookback,            #how many steps for the regression to lookback
+        'lam_low_first':args.lam_low_first,          #False: use the high score values first /True: uses low values first
+        'lam_data_multiplier':args.lam_data_multiplier, #multiplied by the gradient to add or remove data from the set
+        'lam_lower_bound':args.lam_lower_bound,      #Limits for data useage
+        'lam_upper_bound':args.lam_upper_bound,
+
+        #scoring vars
+    #    score_grav = args.score_grav #gravity to reduce regression predictions by
+    #    score_lookback = args.score_lookback #lookback for regression
+
+        #if datset name is a path use that path
+    #    dataset_name = args.dataset
+    #    dataset_size = args.dataset_size #proportion of dataset to use
+    #    dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
+        
+    #    data_path = args.data_path
+    #    save_model_path = args.save_model_path
+        
+    #    img_shape = 0
+    #    dataused = [] 
+    #    class_names = []
+
+
+
+
+
         'learning_rate':args.learning_rate,
         'batch_size':args.batch_size,
         'scoring_func':args.scoring_function,
@@ -119,6 +161,13 @@ def main(args):
         'score_lookback':args.score_lookback,
 
     }
+
+    #    early_stopping_counter = 0
+    #    early_stopping_max = 0
+    #    current_epoch = 0
+    # 'lam_data' = 0 #amount of data used
+
+
 
 
     @tf.function
@@ -284,6 +333,10 @@ def main(args):
 
         #training step
         for i, (X,Y) in enumerate(train_data_gen):
+            print('i=',i)
+            print('X=',X)
+            print('Y=',Y)
+            pnt()
             #print batch num
             if i % 500 == 0: print("Batch ="+str(i))
             
