@@ -68,22 +68,21 @@ def DB_add_img(conn, img):
     else:
         print('ERROR connecting to db')
 
-def DB_import_dataset(conn,info):
+def DB_import_dataset(conn,config,info):
     '''
     Take the desired dataset and download it form tf_datasets and put the images into the db
 
     '''
     #downlaod the tfdataset
-    print('INIT: Using ',info.dataset_name, ' data, downloading now...')
+    print('INIT: Using ',config['dataset_name'], ' data, downloading now...')
     #take the tfds dataset and produce a dataset and dataframe
-    ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=False,as_supervised=True,split='all')
+    ds, ds_info = tfds.load(config['dataset_name'],with_info=True,shuffle_files=False,as_supervised=True,split='all')
     
     #record ds metadata
     info.num_classes = ds_info.features['label'].num_classes
     info.class_names = ds_info.features['label'].names
 
     #Take the dataset and add info to db
-    
     i = 0
 
     for image,label in ds:
@@ -99,7 +98,7 @@ def DB_import_dataset(conn,info):
         DB_add_img(conn, data_to_add)
         i += 1
     conn.commit()
-    return test_count,train_count
+    return info
 
 def DB_create(conn):
     '''
@@ -122,10 +121,16 @@ def DB_create(conn):
                                     step integer PRIMARY KEY,
                                     img_id integer NOT NULL,
                                     loss float,
+                                    batch_num int,
                                     FOREIGN KEY (img_id) REFERENCES imgs (id)
                                 );"""
     
-    #TODO ADD THE PREDS SECTION
+    sql_create_output_table = """CREATE TABLE IF NOT EXISTS outputs (
+                                    step integer PRIMARY KEY,
+                                    img_id integer NOT NULL,
+                                    output array,
+                                    FOREIGN KEY (img_id) REFERENCES imgs (id)
+                                );"""
 
 
     # create tables
@@ -135,6 +140,9 @@ def DB_create(conn):
 
         # create tasks table
         create_table(conn, sql_create_loss_table)
+
+        # create output table
+        create_table(conn, sql_create_output_table)
     else:
         print("Error! cannot create the database connection.")
 
@@ -185,7 +193,90 @@ def DB_random_batches(conn,test,img_num,batch_size):
     conn.commit()
 
 
+def DB_init_stores(conn):
+    #TODO set the losses and output tables to initial state and prune off columns that are not needed
 
+    a = 1
+
+def DB_update(conn,info,step,X,Y,batch_loss,preds):
+    #update the db from batch infomation
+    curr = conn.cursor()
+    for i, loss in enumerate(batch_loss):
+        curr.execute('''INSERT INTO losses(loss,step,img_id,batch_num) VALUES(?,?,?,?)''',
+            (loss,
+            step,
+            X[i][0],
+            info.batch_num,))
+
+        curr.execute('''INSERT INTO outputs(output,step,img_id) VALUES(?,?,?,?)''',
+            (preds,
+            step,
+            X[i][0],))
+        
+    conn.commit()
+
+
+def log(conn):
+    #do wandb logging with the db info for test data on a single training batch
+    
+    #TODO
+    #log histograms
+    #START HEREEEEEEEEEEEEEEEEEEEEEEEEEEE_______________))0----------
+    wandb.log({"batch_train_loss": batch_loss},step=batch_num)
+    wandb.log({"batch_test_loss": df_test_losses.loss.to_numpy()},step=batch_num)
+
+    #log basic line graphs
+    wandb.log({
+        'batch_mean_train_loss':mean_loss, 
+        'batch_num':batch_num, 
+        'batch_mean_test_loss':df_test_losses.loss.mean(),
+        'batch_test_acc':test_acc_metric.result().numpy()}
+        ,step = batch_num)
+
+    #log class specific line graphs
+    #create class specific analysis
+    keys = [x for x in info.class_names]
+    bcla = {}
+    bcf1 = {}
+    bcc = {}
+    batch_class_test_f1 = [sf.f1_score(df_test_losses,x) for x in range(train_data_gen.num_classes)]
+    batch_class_loss_avg = [df_test_losses[df_test_losses.label==x].loc[:,'loss'].mean() for x in range(train_data_gen.num_classes)]
+    for i in range(len(keys)):
+        bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
+        bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
+        bcc['batch_train_class_count_'+keys[i]] = class_counts[i]
+    
+    wandb.log({
+        **bcla,
+        **bcf1,
+        **bcc
+    },step=batch_num)
+
+def log_epoch_test():
+    #TODO CAN COMBINE WITH ABOVE
+    basic = {
+            'Epoch':info.current_epoch,
+            'Train-Loss':train_loss.result().numpy(),
+            'Test-Loss':test_loss.result().numpy(),
+            'Train-Acc':train_acc_metric.result().numpy(),
+            'Test-Acc':test_acc_metric.result().numpy(),
+            'Data-Used':train_data_gen.dataused}
+        keys = [x for x in info.class_names]
+        cla = {}
+        clv = {}
+        csa = {}
+        csv = {}
+        cra = {}
+        crv = {}
+        for i in range(len(keys)):
+            #cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
+            #clv['Loss-Var-'+keys[i]] = class_loss_var[i]
+            csa['Score-Avg-'+keys[i]] = class_score_avg[i]
+            csv['Score-Var-'+keys[i]] = class_score_var[i]
+            cra['Rank-Avg-'+keys[i]] = class_rank_avg[i]
+            crv['Rank-Var'+keys[i]] = class_rank_var[i]
+
+        wandb.log({**basic,**cla,**clv,**csa,**csv,**cra,**crv})
 
 
 

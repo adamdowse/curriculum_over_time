@@ -96,13 +96,14 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
                  batch_size,
                  num_classes,
                  input_size=(28, 28, 1),
-                 test=False,
+                 test=0,
                  ):
         #do stuff
         #init db connection and init vars
         self.conn = conn
         self.test = test
         self.num_classes = num_classes
+        self.batch_size = batch_size
 
 
     def on_epoch_end(self):
@@ -123,7 +124,7 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
 
         #convert to tensors
         ids = np.array(ids)
-        ids = tf.cast(ids, 'int16')
+        ids = tf.cast(ids, 'int32')
 
         imgs = np.array(imgs)
         imgs = tf.cast(imgs,'float32')
@@ -133,12 +134,15 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
 
         return tuple([ids,imgs]), labels
 
-
-
-
-
     def __len__(self):
         #calculates the number of batches to use
         #max of the DB.imgs.batch_num where train==True
-        a = 1
-    
+        curr = self.conn.cursor()
+        curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = (?) AND used = 1''',(self.test,))
+        data_amount = curr.fetchone()[0]
+        if data_amount / self.batch_size == 0:
+            num_batches = int(data_amount/self.batch_size)
+        else:
+            num_batches = 1 + int(data_amount/self.batch_size)
+        
+        return num_batches

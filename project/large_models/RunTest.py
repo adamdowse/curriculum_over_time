@@ -26,8 +26,9 @@ def parse_arguments():
     parser.add_argument('--fill_function',type=str,default='ffill')
     parser.add_argument('--dataset',type=str,default='mnist')
     parser.add_argument('--dataset_size',type=float,default=1)
-    parser.add_argument('--dataset_similarity',type=str,default='True')
+    parser.add_argument('--dataset_similarity',type=int,default=random.randint(1,10000000))
     parser.add_argument('--data_path',type=str,default='none')
+    parser.add_argument('--db_path',type=str,default='none')
     parser.add_argument('--save_model_path',type=str,default='none')
     parser.add_argument('--early_stopping', type=int,default=0)
 
@@ -50,54 +51,6 @@ def parse_arguments():
     return args
 
 def main(args):
-
-    #class Info_class :
-    #    #TODO remove this and use wadnb config
-    #    #variables for test
-    #    max_epochs = args.max_epochs
-    #    learning_rate = args.learning_rate
-    #    batch_size = args.batch_size
-    #    scoring_function = args.scoring_function
-    #    pacing_function = args.pacing_function
-    #    fill_function = args.fill_function
-    #    
-    #    record_loss = args.record_loss
-    #    record_loss = tf.convert_to_tensor(record_loss,tf.string)
-    #    batch_logs = args.batch_logs
-
-        #early stopping
-    #    early_stopping = args.early_stopping #number
-    #    early_stopping_counter = 0
-    #    early_stopping_max = 0
-    #    current_epoch = 0
-
-        #pacing vars
-    #    lam_data = 0 #amount of data used
-    #    lam_zero = args.lam_zero #initial amount of data
-    #    lam_max = args.lam_max #epoch to use full data at
-    #    lam_lookback = args.lam_lookback #regression lookback
-    #    lam_low_first = args.lam_low_first #use the high score values first (True uses low values first)
-    #    lam_data_multiplier = args.lam_data_multiplier #multiplied by the gradient to add or remove data from the set
-    #    lam_lower_bound = args.lam_lower_bound
-    #    lam_upper_bound = args.lam_upper_bound
-
-        #scoring vars
-    #    score_grav = args.score_grav #gravity to reduce regression predictions by
-    #    score_lookback = args.score_lookback #lookback for regression
-
-        #if datset name is a path use that path
-    #    dataset_name = args.dataset
-    #    dataset_size = args.dataset_size #proportion of dataset to use
-    #    dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
-        
-    #    data_path = args.data_path
-    #    save_model_path = args.save_model_path
-        
-    #    img_shape = 0
-    #    dataused = [] 
-    #    class_names = []
-
-    #info = Info_class()
 
     config = {
         'max_epochs':args.max_epochs,               #maximum epochs before termination                          
@@ -123,51 +76,32 @@ def main(args):
         'lam_upper_bound':args.lam_upper_bound,
 
         #scoring vars
-    #    score_grav = args.score_grav #gravity to reduce regression predictions by
-    #    score_lookback = args.score_lookback #lookback for regression
+        'score_grav':args.score_grav,               #gravity to reduce regression predictions by
+        'score_lookback':args.score_lookback,       #lookback for regression
 
-        #if datset name is a path use that path
-    #    dataset_name = args.dataset
-    #    dataset_size = args.dataset_size #proportion of dataset to use
-    #    dataset_similarity = args.dataset_similarity #true uses the same section of the dataset each time, false randomly shuffles.
-        
-    #    data_path = args.data_path
-    #    save_model_path = args.save_model_path
-        
-    #    img_shape = 0
-    #    dataused = [] 
-    #    class_names = []
+        'dataset_name':args.dataset,                #if datset name is a path use that path
+        'dataset_size':args.dataset_size,           #proportion of the train dataset to use
+        'seed':args.dataset_similarity, #random seed number of experiment unless specified    
+        'data_path':args.data_path,                 #root of where data is to be stored
+        'save_model_path':args.save_model_path,     #root to save trained models
+        'db_path':args.db_path,                     #root to save the db from
 
-
-
-
-
-        'learning_rate':args.learning_rate,
-        'batch_size':args.batch_size,
-        'scoring_func':args.scoring_function,
-        'fill_func':args.fill_function,
-        'pacing_func':args.pacing_function,
-        'dataset':args.dataset,
-        'dataset_size':args.dataset_size,
-        'dataset_similarity':args.dataset_similarity,
-        'early_stopping':args.early_stopping,
-        'lam_zero':args.lam_zero,
-        'lam_max':args.lam_lookback,
-        'lam_low_first':args.lam_low_first,
-        'lam_data_multiplier':args.lam_data_multiplier,
-        'lam_lower_bound':args.lam_lower_bound,
-        'lam_upper_bound':args.lam_upper_bound,
-        'score_grav':args.score_grav,
-        'score_lookback':args.score_lookback,
-
+        'group':args.group,
     }
+    class Info_class:
+        img_shape = 0
+        batch_num = 0
+        step = 0
+        test_step = 0
+        dataused = [] 
+        num_classes = 0
+        class_names = []
+        early_stopping_counter = 0
+        early_stopping_max = 0
+        current_epoch = 0
+        lam_data = 0 #amount of data used
 
-    #    early_stopping_counter = 0
-    #    early_stopping_max = 0
-    #    current_epoch = 0
-    # 'lam_data' = 0 #amount of data used
-
-
+    info = Info_class()
 
 
     @tf.function
@@ -193,18 +127,16 @@ def main(args):
         test_acc_metric(labels, preds)
         return preds, t_loss, m_loss
 
-    #TODO ADD THE RANDOM GENERATOR CODES HERE
-    random.seed(1)
+    random.seed(config['seed'])
 
-    #setup database (Testing for moment)
+    #setup database
+
     #setup convertion functions for storing in db
-    # Converts np.array to TEXT when inserting
-    sqlite3.register_adapter(np.ndarray, sf.array_to_bin)
-
-    # Converts TEXT to np.array when selecting
-    sqlite3.register_converter("array", sf.bin_to_array)
+    sqlite3.register_adapter(np.ndarray, sf.array_to_bin)# Converts np.array to TEXT when inserting
+    sqlite3.register_converter("array", sf.bin_to_array) # Converts TEXT to np.array when selecting
 
     # create a database connection
+    #TODO change this is be based on a given dataset
     database =r"/com.docker.devenvironments.code/project/large_models/DBs/mnist.db"
     conn = sf.DB_create_connection(database)
 
@@ -215,12 +147,8 @@ def main(args):
         print('Table exists.')
     else:
         print('Table does not exist, building now...')
-    
-        #create the db if it does not exist
-        sf.DB_create(conn)
-
-        #download the dataset and add it to the db
-        sf.DB_import_dataset(conn,info)
+        sf.DB_create(conn) #create the db if it does not exist
+        info = sf.DB_import_dataset(conn,conifg,info)#download the dataset and add it to the db
 
     #count amount of data avalible
     curr = conn.cursor()
@@ -240,7 +168,7 @@ def main(args):
     conn.commit()
 
     #Limit the data for both train and test
-    train_data_amount = int(train_data_amount*info.dataset_size)
+    train_data_amount = int(train_data_amount*config['dataset_size'])
     test_data_amount = int(test_data_amount)#TODO ADD SMALLER TEST DATA SIZE
     sf.DB_set_used(conn,True,test_data_amount)
     sf.DB_set_used(conn,False,train_data_amount)
@@ -253,33 +181,18 @@ def main(args):
     conn.commit()
 
     #init the batch_num randomly for first epoch
+    #TODO could add different ways of doing this eg. stats based on data
     #create an array of all batch_nums
-    sf.DB_random_batches(conn,test=0,img_num=train_data_amount,batch_size=info.batch_size)
+    sf.DB_random_batches(conn,test=0,img_num=train_data_amount,batch_size=config['batch_size'])
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
     os.environ['WANDB_DISABLED'] = 'true'
     #wandb.login()
-          
-    #wandb.init(project='curriculum_over_time',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
-
-    # initilise the dataframe to train on and the test dataframe
-    #df_train_losses,df_test_losses, train_df, test_df, info = sf.init_data(info)
-    #df_train_losses is a df of just training set without images, (i|label,score) used to record losses
-    #df_test_losses is a df of just training set without images, (i|label,loss,pred) used to record losses
-    #train_df is the df with images in it (i|img,label)
-    #test_df is the df with images in it (i|img,label)
-
-    #Sort class_name var into list
-    #info.class_names = sf.str_to_list(info.class_names[0])
-    #info.class_names = [y.replace(',','') for y in info.class_names]
-    #info.class_names = [y.replace("'",'') for y in info.class_names]
-    #print('class names: ',info.class_names)
-
-
     #Init the data generators
+    #TODO make these based on the arguments
     train_data_gen = datagen.CustomDBDataGen(
         conn = conn,
         X_col = 'img',
@@ -287,7 +200,7 @@ def main(args):
         batch_size = args.batch_size, 
         num_classes = 10,
         input_size = (28,28,1),
-        test=False
+        test=0
     )
 
     test_data_gen = datagen.CustomDBDataGen(
@@ -297,7 +210,7 @@ def main(args):
         batch_size = args.batch_size, 
         num_classes = 10,
         input_size = (28,28,1),
-        test=True
+        test=1
     )
     
     class timer:
@@ -316,7 +229,7 @@ def main(args):
 
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
-    optimizer = keras.optimizers.SGD(learning_rate=info.learning_rate),
+    optimizer = keras.optimizers.SGD(learning_rate=config['learning_rate']),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
 
     #setup metrics to record: [train loss, test loss, train acc, test acc]
@@ -326,17 +239,13 @@ def main(args):
     test_acc_metric = keras.metrics.CategoricalAccuracy()
 
     print('MAIN: Started Training')
-    batch_num = 0
-    for info.current_epoch in range(info.max_epochs):
-        #create the column for losses
-        #col = pd.DataFrame(columns=['i',str(info.current_epoch)])
-
+    info.step = 0
+    info.test_step = 0
+    for info.current_epoch in range(config['max_epochs']):
         #training step
+        info.batch_num = 0
         for i, (X,Y) in enumerate(train_data_gen):
-            print('i=',i)
-            print('X=',X)
-            print('Y=',Y)
-            pnt()
+
             #print batch num
             if i % 500 == 0: print("Batch ="+str(i))
             
@@ -344,119 +253,51 @@ def main(args):
             batch_loss, mean_loss, preds = train_step(X[1],Y)
 
             #count number of each class in the batch
-            
             label_corrected = np.array([np.argmax(x) for x in Y])
+            #TODO make based on args
             class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)]
 
-            #create a dataframe of the single column for train record
-            #this is done to avoid acsessing the large df multiple times
-            #TODO this may not need to be this complex, copy the df_train_losses cols or update directly
-            if info.record_loss == 'sum':
-                col = sf.update_col(batch_loss,Y,col,X[0],info) # = (i,current_epoch)
-            else:
-                #this function also converts softmax array into softmax error 
-                col = sf.update_col(preds,Y,col,X[0],info) # = (i,current_epoch)
-            
+            #update the db with the retrieved info
+            sf.DB_update(conn,info,info.current_epoch,X,Y,batch_loss,preds)
+
             #record the batch by batch logs
-            if info.batch_logs == 'True':
+            if config['batch_logs'] == 'True':
                 #Run the test dataset to assess the training batch update
                 for X,Y in test_data_gen:
                     preds, batch_test_loss, t_loss = test_step(X[1],Y)
-                    df_test_losses = sf.update_test_df(df_test_losses,batch_test_loss,preds,X[0])
-
-                #log histograms
-                wandb.log({"batch_train_loss": batch_loss},step=batch_num)
-                wandb.log({"batch_test_loss": df_test_losses.loss.to_numpy()},step=batch_num)
-
-                #log basic line graphs
-                wandb.log({
-                    'batch_mean_train_loss':mean_loss, 
-                    'batch_num':batch_num, 
-                    'batch_mean_test_loss':df_test_losses.loss.mean(),
-                    'batch_test_acc':test_acc_metric.result().numpy()}
-                    ,step = batch_num)
-
-                #log class specific line graphs
-                #create class specific analysis
-                keys = [x for x in info.class_names]
-                bcla = {}
-                bcf1 = {}
-                bcc = {}
-                batch_class_test_f1 = [sf.f1_score(df_test_losses,x) for x in range(train_data_gen.num_classes)]
-                batch_class_loss_avg = [df_test_losses[df_test_losses.label==x].loc[:,'loss'].mean() for x in range(train_data_gen.num_classes)]
-                for i in range(len(keys)):
-                    bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
-                    bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
-                    bcc['batch_train_class_count_'+keys[i]] = class_counts[i]
+                    sf.DB_update(conn,info,info.test_step,X,Y,batch_loss,preds)
                 
-                wandb.log({
-                    **bcla,
-                    **bcf1,
-                    **bcc
-                },step=batch_num)
-
-                #increment batch number
-                batch_num += 1
-
+                info.test_step += 1
+                #TODO func needs completing
+                sf.log_batch_test()
+                
                 #reset the test metrics so no clashes
                 test_loss.reset_states()
                 test_acc_metric.reset_states()
 
+            info.batch_num += 1
+            info.step += 1
 
         #END OF EPOCH
-        #add the col to the loss holder
-        col = col.set_index('i') #col = (i|current_epoch)
-        df_train_losses = pd.concat([df_train_losses,col],axis=1) # = (i|label,score,0,1,2,..,current_epoch)(nan where data not used)
-
-        #grab statistics before nans are infilled
-        #class_loss_avg = [df_train_losses[df_train_losses.label==x].iloc[:,-1].mean() for x in range(train_data_gen.num_classes)]
-        #class_loss_var = [df_train_losses[df_train_losses.label==x].iloc[:,-1].var() for x in range(train_data_gen.num_classes)]
+        #log info based on the losses or outputs
+        sf.log_loss_stats()
 
         #calculate the score via a function
-        df_train_losses = sf.scoring_func(df_train_losses,info) # =(i|score,0,1,2...)
 
         #take score stats
-        class_score_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
-        class_score_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
 
         #rank and trim data
-        df_train_losses = sf.pacing_func(df_train_losses,info) # change the score to a rank and nan for not used
 
         #take rank statistics
-        class_rank_avg = [df_train_losses[df_train_losses.label==x].score.mean() for x in range(train_data_gen.num_classes)]
-        class_rank_var = [df_train_losses[df_train_losses.label==x].score.var() for x in range(train_data_gen.num_classes)]
 
         #run end of epoch updating
-        train_data_gen.on_epoch_end(df_train_losses)
 
         #test steps
         for X,Y in test_data_gen:
             test_step(X[1],Y)
 
-        basic = {
-            'Epoch':info.current_epoch,
-            'Train-Loss':train_loss.result().numpy(),
-            'Test-Loss':test_loss.result().numpy(),
-            'Train-Acc':train_acc_metric.result().numpy(),
-            'Test-Acc':test_acc_metric.result().numpy(),
-            'Data-Used':train_data_gen.dataused}
-        keys = [x for x in info.class_names]
-        cla = {}
-        clv = {}
-        csa = {}
-        csv = {}
-        cra = {}
-        crv = {}
-        for i in range(len(keys)):
-            #cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
-            #clv['Loss-Var-'+keys[i]] = class_loss_var[i]
-            csa['Score-Avg-'+keys[i]] = class_score_avg[i]
-            csv['Score-Var-'+keys[i]] = class_score_var[i]
-            cra['Rank-Avg-'+keys[i]] = class_rank_avg[i]
-            crv['Rank-Var'+keys[i]] = class_rank_var[i]
-
-        wandb.log({**basic,**cla,**clv,**csa,**csv,**cra,**crv})
-        
+        #log test epoch
+        sf.log #TODO
         
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
