@@ -112,6 +112,7 @@ def DB_create(conn):
                                         label_num integer,
                                         data array,
                                         score float,
+                                        rank integer,
                                         batch_num integer,
                                         test bool,
                                         used bool
@@ -129,6 +130,7 @@ def DB_create(conn):
                                     step integer PRIMARY KEY,
                                     img_id integer NOT NULL,
                                     output array,
+                                    label_num integer,
                                     FOREIGN KEY (img_id) REFERENCES imgs (id)
                                 );"""
 
@@ -208,7 +210,7 @@ def DB_update(conn,info,step,X,Y,batch_loss,preds):
             X[i][0],
             info.batch_num,))
 
-        curr.execute('''INSERT INTO outputs(output,step,img_id) VALUES(?,?,?,?)''',
+        curr.execute('''INSERT INTO outputs(output,step,img_id) VALUES(?,?,?)''',
             (preds,
             step,
             X[i][0],))
@@ -216,14 +218,82 @@ def DB_update(conn,info,step,X,Y,batch_loss,preds):
     conn.commit()
 
 
-def log(conn):
-    #do wandb logging with the db info for test data on a single training batch
+def log(conn,output_name,table,test,step_low,step_high,name,mean=False):
+    #log an array with wandb that act as a point in the histogram over time
+    curr = conn.cursor()
+    curr.execute('''SELECT (?) 
+                    FROM (?)
+                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step (BETWEEN (?) AND (?))''',
+                    (output_name,table,test,step_low,step_high))
+
+    results = curr.fetchall()
+    if mean:
+        results = np.array(results)
+        results = np.mean(results)
+    wandb.log({name:results},step=step)
+
+
+def log_acc(conn,test,step_low,step_high,name):
+    #log an array with wandb that act as a point in the histogram over time
+    curr = conn.cursor()
+    curr.execute('''SELECT output,label_num 
+                    FROM outputs
+                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step (BETWEEN (?) AND (?))''',
+                    (test,step))
+
+    results = curr.fetchall()
+    cm = np.zeros((10,10)) #TODO change to args
+    for output,label in results:
+        output = np.argmax(output)
+        cm[int.from_bytes(label,'little'),output] += 1
     
-    #TODO
-    #log histograms
-    #START HEREEEEEEEEEEEEEEEEEEEEEEEEEEE_______________))0----------
-    wandb.log({"batch_train_loss": batch_loss},step=batch_num)
-    wandb.log({"batch_test_loss": df_test_losses.loss.to_numpy()},step=batch_num)
+    #total accuracy
+    acc = [cm[i,i] for i in range(10)]
+    #can add class specific stuff here
+    acc = np.sum(acc)/np.sum(np.sum(cm))
+    wandb.log({name:acc},step=step)
+
+    #class accuracy
+    keys = [x for x in range(10)] #TODO change to args
+    class_accs = {}
+    c_accs = [cm[i,i]/np.sum(cm[:,i]) for i in range(10)] #TODO change to args
+    for i in range(len(keys)):
+        class_accs[name+'_acc_'+keys[i]] = c_accs[i]
+    wandb.log(class_accs,step=step)
+    
+    #TP,FN,FP,TNs
+    TPs = [cm[i,i] for i in range(10)] #TODO args
+    FNs = [np.sum(cm[i,:]) - cm[i,i] for i in range(10)] #TODO args
+    FPs = [np.sum(cm[:,i]) - cm[i,i] for i in range(10)] #TODO args
+    TNs = [np.sum(cm) - cm[:,i] - cm[i,:] + cm[i,i] for i in range(10)] #TODO args
+
+    #class F1 score
+    class_f1_scores = {}
+    c_f1_scores = [TPs[i]/(TPs[i]+0.5*(FPs[i]+FNs[i])) for i in range(10)] #TODO args
+    for i in range(len(keys)):
+        class_f1_scores[name+'_f1_'+keys[i]] = c_f1_scores[i]
+    wandb.log(class_f1_scores,step=step)
+
+    #total f1 score
+    total_f1_score = [c_f1_scores[i]*np.sum(cm[i,:]) for i in range(10)] #TODO args
+    total_f1_score = np.sum(total_f1_score)/np.sum([np.sum(cm[i,:]) for i in range(10)]) #TODO args
+    wandb.log({name+'_weighted_f1':total_f1_score},step=step)
+
+
+
+
+
+
+def log_mean_line():
+    #TODO THIS IS THE OG ish
+    #log the averages of the stat at each step
+
+    curr = conn.cursor()
+    curr.execute('''SELECT (?) 
+                    FROM (?)
+                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step = (?))''',
+                    (output_name,table,test,step))
+    
 
     #log basic line graphs
     wandb.log({
@@ -280,120 +350,81 @@ def log_epoch_test():
 
 
 
+def setup_sql_funcs(conn):
+    def scoring_function_random(max):
+        return random.random()
 
 
+    conn.create_function("scoring_function_random", 1, scoring_function_random)
 
 
-def split_save_df(df,fpath):
-    #save the df as multiple smaller files
-    num_rows = 10000
-    i = 0
-    while len(df.index) > num_rows:
-        print('Saving chunk ',i)
-        df.iloc[:num_rows,:].to_csv(fpath+str(i)+'.csv')
-        df = df.drop(df.iloc[:num_rows,:].index)
-        i += 1
-    print('Saved DF in '+str(i+1)+' chunks')
+def scoring_functions(conn,config):
+    #convert the given varable into the scores
+    #random - randomly assign scores
 
-def split_load_df(fpath):
-    fns = glob.glob(fpath+'*.csv')
-    #find first file
-    fn = fns[0]
-    df = pd.read_csv(fn,index_col='Unnamed: 0')
-    for fn in fns[1:]:
-        temp_df  =  pd.read_csv(fn,index_col='Unnamed: 0')
-        df = pd.concat([df,temp_df])
-    print('DF loaded ',len(df.index),'rows with ',len(fns),' parts')
-    return df
+    curr = conn.cursor()
 
+    if config['scoring_function'] == 'random':
+        #randomly assign scores
+        curr.execute(''' UPDATE imgs SET score = scoring_functions_random(?) WHERE used =1''',(1,))
 
-def init_data(info,bypass=False):
-    '''
-    Take a named dataset and if it already exists use the pre svaed data otherwise download it.
-    '''
-    if not os.path.isdir(info.data_path + info.dataset_name) or bypass==True:
-        print('INIT: Cannot find ',info.dataset_name, ' data, downloading now...')
-        #take the tfds dataset and produce a dataset and dataframe
-        ds, ds_info = tfds.load(info.dataset_name,with_info=True,shuffle_files=True,as_supervised=True,split='all')
-        df = pd.DataFrame(columns=['img','label','i','test'])
-
-        #record ds metadata
-        info.num_classes = ds_info.features['label'].num_classes
-        info.class_names = ds_info.features['label'].names
-
-        #Take the dataset and form a csv with the infomation in it
-        i = 0
-        for image,label in ds:
-            if i == 0:
-                info.img_shape = image.shape
-            if random.random() > 0.8: test = True 
-            else: test = False
-            new_row = pd.DataFrame(data={'img':[image.numpy().flatten()], 'label':label.numpy(),'i':i,'test':test},index=[i])
-            df = pd.concat([df,new_row],axis=0)
-            i += 1
-        
-        #make the required directory and save the data
-        os.makedirs(info.data_path + info.dataset_name)
-        split_save_df(df,info.data_path + info.dataset_name + '/imagedata')
-
-        with open(info.data_path+info.dataset_name+'/metadata.csv','w',newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow([info.num_classes])
-            writer.writerow([info.class_names])
-            writer.writerow([info.img_shape])
-
-    print('INIT: Using found',info.dataset_name, 'data')
-
-    df = split_load_df(info.data_path+info.dataset_name+'/imagedata')
-
-    with open(info.data_path+info.dataset_name+'/metadata.csv',newline='') as f:
-        reader = csv.reader(f)
-        file_content = []
-        for row in reader:
-            file_content.append(row)
-        info.num_classes = int(file_content[0][0])
-        info.class_names = file_content[1]
-        info.img_shape = file_content[2][0]
-        info.img_shape = info.img_shape[1:-1]
-        info.img_shape = info.img_shape.split(',')
-        info.img_shape = [int(x) for x in info.img_shape]
-        
-    df = df.set_index('i')
-    train_df = df[df['test']==False]
-    test_df = df[df['test']==True]
-
-    train_df = train_df.drop(columns='test')
-    test_df = test_df.drop(columns='test')
-
-    #reduce the dataset
-    if info.dataset_size < 1 and info.dataset_size > 0:
-        if info.dataset_similarity == 'True':
-            d = int(info.dataset_size * len(train_df))
-            print('amount of data used = ',d)
-            train_df = train_df.iloc[:d,:]
-            #df_train_losses = df_train_losses.iloc[:d,:]
-        else:
-            print('frac used = ',info.dataset_size)
-            train_df = train_df.sample(frac=info.dataset_size,axis=0)
-            #df_train_losses = df_train_losses.loc[train_df.index,:]
-
-        print(train_df.label.value_counts())
     
-    #create the loss info dfs
-    df_train_losses = train_df.copy()
-    df_train_losses = df_train_losses.drop('img',axis=1)
-    df_train_losses['score'] = np.nan
-    df_test_losses = test_df.copy()
-    df_test_losses = df_test_losses.drop('img',axis=1)
-    df_test_losses['loss'] = np.nan
-    df_test_losses['pred'] = np.nan
+    if config['scoring_function'] == 'last_loss':
+        #score is set as the last loss recored for each img
+        curr.execute('''SELECT MAX(step) FROM losses''')
+        step = curr.fetchall()
+        print('Step is'+step)
+        curr.execute('''SELECT img_id, loss FROM losses WHERE step=(?)''',(step,))
+        results = np.array(curr.fetchall())
+        for i,loss in zip(results[:,0],results[:,1]):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(loss,i,))
 
-    for c in range(info.num_classes):
-        df_test_losses[str(c)] = np.nan
+
+    #TODO loss based clustering (should clustering be in pacing?)
+    #TODO pred clustering
+    #TODO pred angle
+    #TODO pred biggest move
+    #TODO distance measure
+    curr.commit()
+
+def pacing_functions(conn,config):
+    #take the score and order in a specific way
+    curr = conn.cursor()
+
+    if config['pacing_function'] == 'hl':
+        #high to low no removing
+        curr.execute('''SELECT img_id FROM imgs ORDER BY score DESC WHERE used=1''')
+        ids = np.array(curr.fetchall())
+        for i,ind in enumerate(ids):
+            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
     
-    print('INIT: Finished creating train dataset')
+    if config['pacing_function'] == 'lh':
+        #low to high no removing
+        curr.execute('''SELECT img_id FROM imgs ORDER BY score ASC WHERE used=1''')
+        ids = np.array(curr.fetchall())
+        for i,ind in enumerate(ids):
+            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
+    
+    if config['pacing_function'] == 'mixed':
+        #high low high low high low ...
+        curr.execute('''SELECT img_id FROM imgs ORDER BY score ASC WHERE used=1''')
+        ids = np.array(curr.fetchall())
+        ids_mixed = [ids.pop(0) if x % 2 == 0 else ids.pop(-1) for x in range(len(ids))]
+        for i,ind in enumerate(ids_mixed):
+            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
+    
+    curr.commit()
 
-    return df_train_losses,df_test_losses,train_df,test_df,info
+
+
+
+
+
+
+
+
+
+
 
 #convert from a vector image to 3d representation again and build dataset form dataframe
 def img_dim_shift(x,info):

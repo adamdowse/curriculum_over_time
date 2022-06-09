@@ -240,7 +240,6 @@ def main(args):
 
     print('MAIN: Started Training')
     info.step = 0
-    info.test_step = 0
     for info.current_epoch in range(config['max_epochs']):
         #training step
         info.batch_num = 0
@@ -265,11 +264,13 @@ def main(args):
                 #Run the test dataset to assess the training batch update
                 for X,Y in test_data_gen:
                     preds, batch_test_loss, t_loss = test_step(X[1],Y)
-                    sf.DB_update(conn,info,info.test_step,X,Y,batch_loss,preds)
+                    sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds)
                 
-                info.test_step += 1
-                #TODO func needs completing
-                sf.log_batch_test()
+                sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='batch_train_loss',mean=False)
+                sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='batch_test_loss',mean=False)
+
+                sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='mean_train_loss',mean=True)
+                sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='mean_test_loss',mean=True)
                 
                 #reset the test metrics so no clashes
                 test_loss.reset_states()
@@ -279,37 +280,40 @@ def main(args):
             info.step += 1
 
         #END OF EPOCH
-        #log info based on the losses or outputs
-        sf.log_loss_stats()
-
-        #calculate the score via a function
-
-        #take score stats
-
-        #rank and trim data
-
-        #take rank statistics
-
-        #run end of epoch updating
-
-        #test steps
-        for X,Y in test_data_gen:
-            test_step(X[1],Y)
+        if config['batch_logs'] !='True':
+            #test steps
+            for X,Y in test_data_gen:
+                test_step(X[1],Y)
+            
+            #TODO do we need logging here
 
         #log test epoch
-        sf.log #TODO
-        
+        #TODO test or train stats
+
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
         
+        #calculate the score via a function
+        sf.scoring_functions(conn,config)
+
+        #rank and trim data
+        sf.pacing_functions(conn,config)
+
+        #run end of epoch updating?
+
+        
+        #DO stats stuff here TODO
+
+        
         #early stopping
-        #TODO this needs checking 
-        if info.early_stopping > 0:
+
+        if config['early_stopping'] > 0:
             #increment if test acc lower
             if test_acc_metric.result().numpy() < info.early_stopping_max:
                 info.early_stopping_counter += 1
             else:
                 info.early_stopping_max = test_acc_metric.result().numpy()
+                info.early_stopping_counter = 0
 
             if info.early_stopping_counter >= info.early_stopping:
                 print('EARLY STOPPING REACHED: MAX TEST ACC = ',info.early_stopping_max)
@@ -323,7 +327,7 @@ def main(args):
 
         #save the model
         if info.current_epoch % 10 == 0:
-            model.save(info.save_model_path)
+            model.save(config['save_model_path'])
             print('Checkpoint saved')
 
     #save the model and data
