@@ -26,6 +26,7 @@ def parse_arguments():
     parser.add_argument('--fill_function',type=str,default='ffill')
     parser.add_argument('--dataset',type=str,default='mnist')
     parser.add_argument('--dataset_size',type=float,default=1)
+    parser.add_argument('--test_dataset_size',type=float,default=1)
     parser.add_argument('--dataset_similarity',type=int,default=random.randint(1,10000000))
     parser.add_argument('--data_path',type=str,default='none')
     parser.add_argument('--db_path',type=str,default='none')
@@ -81,6 +82,7 @@ def main(args):
 
         'dataset_name':args.dataset,                #if datset name is a path use that path
         'dataset_size':args.dataset_size,           #proportion of the train dataset to use
+        'test_dataset_size':args.dataset_size,      #proportion of the test dataset to use
         'seed':args.dataset_similarity, #random seed number of experiment unless specified    
         'data_path':args.data_path,                 #root of where data is to be stored
         'save_model_path':args.save_model_path,     #root to save trained models
@@ -94,6 +96,8 @@ def main(args):
         step = 0
         test_step = 0
         dataused = [] 
+        train_data_amount = 0
+        test_data_amount = 0
         num_classes = 0
         class_names = []
         early_stopping_counter = 0
@@ -136,19 +140,22 @@ def main(args):
     sqlite3.register_converter("array", sf.bin_to_array) # Converts TEXT to np.array when selecting
 
     # create a database connection
-    #TODO change this is be based on a given dataset
-    database =r"/com.docker.devenvironments.code/project/large_models/DBs/mnist.db"
-    conn = sf.DB_create_connection(database)
+    conn = sf.DB_create_connection(config['db_path']+config['dataset_name']+'.db')
+
+    #setup sql functions
+    sf.setup_sql_funcs(conn)
 
     #check table exists
     curr = conn.cursor()
     curr.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='imgs' ''')
     if curr.fetchone()[0]==1 :
-        print('Table exists.')
+        print('Table exists. Initilizing Data.')
+        #initilise and reset data
+        sf.DB_init(conn)
     else:
         print('Table does not exist, building now...')
         sf.DB_create(conn) #create the db if it does not exist
-        info = sf.DB_import_dataset(conn,conifg,info)#download the dataset and add it to the db
+        info = sf.DB_import_dataset(conn,config,info)#download the dataset and add it to the db
 
     #count amount of data avalible
     curr = conn.cursor()
@@ -157,26 +164,18 @@ def main(args):
     curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0''')
     train_data_amount = curr.fetchone()[0]
     print('Total Stored Test and Train Data: ',test_data_amount,train_data_amount)
-
-    #Perform housekeeping on the db and reset to original state
-    #TODO ensure all else is done and okTHIS 
-    cur = conn.cursor()
-    for i in range(1,train_data_amount+test_data_amount+1):
-        cur.execute('''UPDATE imgs SET used = (?) WHERE id = (?)''',(random.random(),i))
-        
-    cur.execute('''UPDATE imgs SET batch_num = 0''')
-    conn.commit()
-
+    
     #Limit the data for both train and test
     train_data_amount = int(train_data_amount*config['dataset_size'])
-    test_data_amount = int(test_data_amount)#TODO ADD SMALLER TEST DATA SIZE
-    sf.DB_set_used(conn,True,test_data_amount)
-    sf.DB_set_used(conn,False,train_data_amount)
+    test_data_amount = int(test_data_amount*config['test_dataset_size'])
+    sf.DB_set_used(conn,test_data_amount,train_data_amount)
 
     curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 1 AND used = 1''')
     test_data_amount = curr.fetchone()[0]
+    info.test_data_amount = test_data_amount
     curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
     train_data_amount = curr.fetchone()[0]
+    info.train_data_amount = train_data_amount
     print('Test and Train data to be used: ',test_data_amount,train_data_amount)
     conn.commit()
 
@@ -184,11 +183,19 @@ def main(args):
     #TODO could add different ways of doing this eg. stats based on data
     #create an array of all batch_nums
     sf.DB_random_batches(conn,test=0,img_num=train_data_amount,batch_size=config['batch_size'])
+    sf.DB_random_batches(conn,test=1,img_num=test_data_amount,batch_size=config['batch_size'])
+    
+    #count classes
+    cur = conn.cursor()
+    cur.execute('''SELECT COUNT(DISTINCT label_name) FROM imgs''')
+    info.num_classes = cur.fetchone()[0]
+    print('Experiment has ',info.num_classes,' classes')
 
     #Setup logs and records
     os.environ['WANDB_API_KEY'] = 'fc2ea89618ca0e1b85a71faee35950a78dd59744'
-    os.environ['WANDB_DISABLED'] = 'true'
-    #wandb.login()
+    #os.environ['WANDB_DISABLED'] = 'true'
+    wandb.login()
+    wandb.init(project='new_COT',entity='adamdowse',config=config,group=args.group)
     tf.keras.backend.clear_session()
 
     #Init the data generators
@@ -198,7 +205,7 @@ def main(args):
         X_col = 'img',
         Y_col = 'label',
         batch_size = args.batch_size, 
-        num_classes = 10,
+        num_classes = info.num_classes,
         input_size = (28,28,1),
         test=0
     )
@@ -208,7 +215,7 @@ def main(args):
         X_col = 'img',
         Y_col = 'label',
         batch_size = args.batch_size, 
-        num_classes = 10,
+        num_classes = info.num_classes,
         input_size = (28,28,1),
         test=1
     )
@@ -246,32 +253,37 @@ def main(args):
         for i, (X,Y) in enumerate(train_data_gen):
 
             #print batch num
-            if i % 500 == 0: print("Batch ="+str(i))
+            if i % 1 == 0: print("Batch "+str(i))
             
             #collect losses and train model
             batch_loss, mean_loss, preds = train_step(X[1],Y)
 
-            #count number of each class in the batch
-            label_corrected = np.array([np.argmax(x) for x in Y])
-            #TODO make based on args
-            class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)]
 
+            #count number of each class in the batch
+            label_corrected = np.array([np.argmax(y) for y in Y])
+            class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)] #TODO make based on args
+            print(class_counts)
             #update the db with the retrieved info
-            sf.DB_update(conn,info,info.current_epoch,X,Y,batch_loss,preds)
+            sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds)
+            pnt()
 
             #record the batch by batch logs
             if config['batch_logs'] == 'True':
                 #Run the test dataset to assess the training batch update
-                for X,Y in test_data_gen:
+                for i,(X,Y) in enumerate(test_data_gen):
+
                     preds, batch_test_loss, t_loss = test_step(X[1],Y)
-                    sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds)
+                    sf.DB_update(conn,info,info.step,X,Y,batch_test_loss,preds)
                 
                 sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='batch_train_loss',mean=False)
                 sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='batch_test_loss',mean=False)
 
                 sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='mean_train_loss',mean=True)
                 sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='mean_test_loss',mean=True)
-                
+
+                sf.log_acc(conn,test=0,step=info.step,name='train')
+                sf.log_acc(conn,test=1,step=info.step,name='test')
+
                 #reset the test metrics so no clashes
                 test_loss.reset_states()
                 test_acc_metric.reset_states()
@@ -280,33 +292,28 @@ def main(args):
             info.step += 1
 
         #END OF EPOCH
-        if config['batch_logs'] !='True':
-            #test steps
-            for X,Y in test_data_gen:
-                test_step(X[1],Y)
-            
-            #TODO do we need logging here
+        #test steps
+        for X,Y in test_data_gen:
+            test_step(X[1],Y)
+        
+        wandb.log({'epoch_test_acc':test_acc_metric.result().numpy(),
+                    'epoch_train_acc':train_acc_metric.result().numpy(),
+                    'epoch_test_loss':test_loss.result().numpy(),
+                    'epoch_train_loss':train_loss.result().numpy()},step=info.current_epoch)
 
-        #log test epoch
-        #TODO test or train stats
 
         #Printing to screen
         print('Epoch ',info.current_epoch+1,', Loss: ',train_loss.result().numpy(),', Accuracy: ',train_acc_metric.result().numpy(),', Test Loss: ',test_loss.result().numpy(),', Test Accuracy: ',test_acc_metric.result().numpy())
         
         #calculate the score via a function
-        sf.scoring_functions(conn,config)
+        sf.scoring_functions(conn,config,info)
 
-        #rank and trim data
+        #batch based on the score and trim data if required
         sf.pacing_functions(conn,config)
 
-        #run end of epoch updating?
+        #TODO change the rank to batch numbers!!!
 
-        
-        #DO stats stuff here TODO
-
-        
         #early stopping
-
         if config['early_stopping'] > 0:
             #increment if test acc lower
             if test_acc_metric.result().numpy() < info.early_stopping_max:
@@ -315,7 +322,7 @@ def main(args):
                 info.early_stopping_max = test_acc_metric.result().numpy()
                 info.early_stopping_counter = 0
 
-            if info.early_stopping_counter >= info.early_stopping:
+            if info.early_stopping_counter >= config['early_stopping']:
                 print('EARLY STOPPING REACHED: MAX TEST ACC = ',info.early_stopping_max)
                 break
 
@@ -326,15 +333,12 @@ def main(args):
         test_acc_metric.reset_states()
 
         #save the model
-        if info.current_epoch % 10 == 0:
+        if info.current_epoch % 20 == 0:
             model.save(config['save_model_path'])
             print('Checkpoint saved')
 
-    #save the model and data
-    model.save(info.save_model_path)
-    df_train_losses.to_csv(info.data_path + info.dataset_name + '/normal_loss_info.csv')
-
-
+    #save the model
+    model.save(config['save_model_path'])
 
 if __name__ =='__main__':
     args = parse_arguments()

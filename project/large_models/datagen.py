@@ -98,7 +98,7 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
                  input_size=(28, 28, 1),
                  test=0,
                  ):
-        #do stuff
+
         #init db connection and init vars
         self.conn = conn
         self.test = test
@@ -113,14 +113,16 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
     def __getitem__(self, index):
         #select only the batch where batch = index
         curr = self.conn.cursor()
-        curr.execute('''SELECT id,data, label_num FROM imgs WHERE (test = (?) AND used = 1 AND batch_num = (?))''',(self.test,index))
+        curr.execute('''SELECT id,data, label_num,used FROM imgs WHERE test = (?) AND used = 1 AND batch_num = (?)''',(int(self.test),int(index),))
         ids = []
         imgs = []
         labels = []
-        for id,img, label in curr:
+        for id,img, label,used in curr:
             ids.append(id)
             imgs.append(img)
-            labels.append(int.from_bytes(label,'little'))
+            labels.append(label)
+
+        #print('b_size = ',len(ids))
 
         #convert to tensors
         ids = np.array(ids)
@@ -138,11 +140,5 @@ class CustomDBDataGen(tf.keras.utils.Sequence):
         #calculates the number of batches to use
         #max of the DB.imgs.batch_num where train==True
         curr = self.conn.cursor()
-        curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = (?) AND used = 1''',(self.test,))
-        data_amount = curr.fetchone()[0]
-        if data_amount / self.batch_size == 0:
-            num_batches = int(data_amount/self.batch_size)
-        else:
-            num_batches = 1 + int(data_amount/self.batch_size)
-        
-        return num_batches
+        curr.execute('''SELECT MAX(batch_num) FROM imgs WHERE test = (?) AND used = 1 ''',(self.test,))
+        return curr.fetchone()[0] + 1

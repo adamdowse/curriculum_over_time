@@ -14,6 +14,8 @@ import glob
 import sqlite3
 from sqlite3 import Error
 import io
+import wandb
+from dppy.finite_dpps import FiniteDPP
 
 def DB_create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -61,7 +63,7 @@ def DB_add_img(conn, img):
     :param img: (label_name,label_num,data,batch_num)
     """
     if conn is not None:
-        sql = ''' INSERT INTO imgs(label_name,label_num,data,score,batch_num,test)
+        sql = ''' INSERT INTO imgs(label_name,label_num,data,score,rank,test,used)
                 VALUES(?,?,?,?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, img)
@@ -90,11 +92,11 @@ def DB_import_dataset(conn,config,info):
         if i == 0:
             info.img_shape = image.shape
         if random.random() > 0.8: 
-            test = True 
+            test = 1 
         else: 
-            test = False
-
-        data_to_add = (str(label.numpy()),label.numpy(),image.numpy(),random.random(),0,test,random.random())
+            test = 0
+        #label_name, label_num, data,score,rank,test,used
+        data_to_add = (str(label.numpy()),int(label.numpy()),image.numpy(),0,0,int(test),0,)
         DB_add_img(conn, data_to_add)
         i += 1
     conn.commit()
@@ -107,32 +109,27 @@ def DB_create(conn):
     '''
 
     sql_create_img_table = """ CREATE TABLE IF NOT EXISTS imgs (
-                                        id integer PRIMARY KEY,
+                                        id INTEGER PRIMARY KEY,
                                         label_name text NOT NULL,
-                                        label_num integer,
+                                        label_num INTEGER,
                                         data array,
-                                        score float,
-                                        rank integer,
-                                        batch_num integer,
-                                        test bool,
-                                        used bool
+                                        score REAL,
+                                        rank INTEGER,
+                                        batch_num INTEGER,
+                                        test INTEGER,
+                                        used INTEGER
                                     ); """
 
     sql_create_loss_table = """CREATE TABLE IF NOT EXISTS losses (
-                                    step integer PRIMARY KEY,
-                                    img_id integer NOT NULL,
-                                    loss float,
-                                    batch_num int,
+                                    result_id INTEGER PRIMARY KEY,
+                                    step INTEGER,
+                                    img_id INTEGER NOT NULL,
+                                    loss REAL,
+                                    output array,
+                                    batch_num INTEGER,
                                     FOREIGN KEY (img_id) REFERENCES imgs (id)
                                 );"""
     
-    sql_create_output_table = """CREATE TABLE IF NOT EXISTS outputs (
-                                    step integer PRIMARY KEY,
-                                    img_id integer NOT NULL,
-                                    output array,
-                                    label_num integer,
-                                    FOREIGN KEY (img_id) REFERENCES imgs (id)
-                                );"""
 
 
     # create tables
@@ -143,24 +140,26 @@ def DB_create(conn):
         # create tasks table
         create_table(conn, sql_create_loss_table)
 
-        # create output table
-        create_table(conn, sql_create_output_table)
     else:
         print("Error! cannot create the database connection.")
 
-def DB_set_used(conn,test,n):
+
+def rand(a):
+    return random.random()
+
+def DB_set_used(conn,test_n,train_n):
     #randomly set the amount of data to use
     #test is the bool True or False
     #n is the number of samples
-    sql = '''   UPDATE imgs
-                SET used = 1 
-                WHERE test = (?) 
-                ORDER BY used 
-                LIMIT (?);'''
-    #set used to be random nums
+    #TODO convert to be able to set a seed in random (probably a for loop)
+
     cur = conn.cursor()
-    cur.execute(sql, (test,n))
+    cur.execute('''UPDATE imgs SET used = 0 WHERE test = 1''')
+    cur.execute('''UPDATE imgs SET used = 1 WHERE test = 1 ORDER BY RANDOM() LIMIT (?) ''',(test_n,))
+    cur.execute('''UPDATE imgs SET used = 0 WHERE test = 0''')
+    cur.execute('''UPDATE imgs SET used = 1 WHERE test = 0 ORDER BY RANDOM() LIMIT (?) ''',(train_n,))
     conn.commit()
+
 
 def DB_random_batches(conn,test,img_num,batch_size):
     if img_num / batch_size == 0:
@@ -179,86 +178,106 @@ def DB_random_batches(conn,test,img_num,batch_size):
     #shuffle
     random.shuffle(arr)
 
- 
     #add to db
     curr = conn.cursor()
     #curr.execute(''' UPDATE imgs SET batch_num = (?) WHERE( id = (?) AND test = (?) AND used = 1)''',((arr[i],str(test))) 
     #get all the ids that are going to be updated
-    curr.execute(''' SELECT id FROM imgs WHERE( test = (?) AND used = 1.0)''',(str(test))) 
+    curr.execute(''' SELECT id FROM imgs WHERE( test = (?) AND used = 1.0)''',(int(test),)) 
     ids = []
     for id in curr:
         ids.append(id[0])
 
     incurr = conn.cursor()
     for i,id in enumerate(ids):
-        incurr.execute(''' UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(str(arr[i]),str(id),))
+        incurr.execute(''' UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(arr[i]),int(id),))
     conn.commit()
 
 
-def DB_init_stores(conn):
-    #TODO set the losses and output tables to initial state and prune off columns that are not needed
+def DB_init(conn):
+    #set the losses and output tables to initial state and prune off columns that are not needed
+    #imgs init
+    curr = conn.cursor()
+    curr.execute(''' UPDATE imgs SET score = (?) ''',(random.random(),))
+    curr.execute(''' UPDATE imgs SET rank = (?) ''',('nan',))
+    curr.execute(''' UPDATE imgs SET batch_num = (?) ''',('nan',))
+    curr.execute(''' UPDATE imgs SET test = 1''')
+    curr.execute(''' SELECT COUNT(DISTINCT id) FROM imgs ''')
+    count = int(curr.fetchone()[0] * 0.8)
+    curr.execute(''' UPDATE imgs SET test = 0 ORDER BY RANDOM() LIMIT (?)''',(count,)) #TODO this needs a seed
+    curr.execute(''' UPDATE imgs SET used = (?) ''',(0,))
 
-    a = 1
+    #losses init
+    curr.execute(''' DELETE FROM losses ''')
+
+    conn.commit()
+    
 
 def DB_update(conn,info,step,X,Y,batch_loss,preds):
     #update the db from batch infomation
     curr = conn.cursor()
-    for i, loss in enumerate(batch_loss):
-        curr.execute('''INSERT INTO losses(loss,step,img_id,batch_num) VALUES(?,?,?,?)''',
-            (loss,
-            step,
-            X[i][0],
-            info.batch_num,))
+    for i, x in enumerate(X[0].numpy()): 
+        #print(float(batch_loss.numpy()[i]),int(step),int(x),int(info.batch_num)) 
+        curr.execute('''INSERT INTO losses(loss,step,output,img_id,batch_num) VALUES(?,?,?,?,?)''',
+            (float(batch_loss[i]),
+            int(step),
+            np.array(preds[i]),
+            int(x),
+            int(info.batch_num),))
 
-        curr.execute('''INSERT INTO outputs(output,step,img_id) VALUES(?,?,?)''',
-            (preds,
-            step,
-            X[i][0],))
-        
     conn.commit()
 
 
-def log(conn,output_name,table,test,step_low,step_high,name,mean=False):
+def log(conn,output_name,table,test,step,name,mean=False):
     #log an array with wandb that act as a point in the histogram over time
     curr = conn.cursor()
-    curr.execute('''SELECT (?) 
-                    FROM (?)
-                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step (BETWEEN (?) AND (?))''',
-                    (output_name,table,test,step_low,step_high))
+    #sql = ''' SELECT loss FROM losses WHERE img_id = SELECT id FROM imgs WHERE used = 1 AND test = (?)''' #step = (?) AND #(
+    sql = '''   SELECT l.loss 
+                FROM losses l
+                inner join imgs i on l.img_id=i.id
+                WHERE l.step=(?) AND i.used = 1 AND i.test = (?)''' 
+    curr.execute(sql,(int(step),int(test),))
 
     results = curr.fetchall()
+    results = np.array(results)
+    results = np.squeeze(results)
     if mean:
-        results = np.array(results)
         results = np.mean(results)
     wandb.log({name:results},step=step)
 
 
-def log_acc(conn,test,step_low,step_high,name):
+
+def log_acc(conn,test,step,name):
     #log an array with wandb that act as a point in the histogram over time
     curr = conn.cursor()
-    curr.execute('''SELECT output,label_num 
-                    FROM outputs
-                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step (BETWEEN (?) AND (?))''',
-                    (test,step))
+    sql = '''   SELECT l.output, i.label_num 
+                FROM losses l
+                inner join imgs i on l.img_id=i.id
+                WHERE l.step=(?) AND i.used = 1 AND i.test = (?)'''
+    curr.execute(sql,(step,test,))
 
     results = curr.fetchall()
+    #print('result len ',len(results))
     cm = np.zeros((10,10)) #TODO change to args
     for output,label in results:
         output = np.argmax(output)
-        cm[int.from_bytes(label,'little'),output] += 1
+        cm[label,output] += 1
     
     #total accuracy
     acc = [cm[i,i] for i in range(10)]
     #can add class specific stuff here
-    acc = np.sum(acc)/np.sum(np.sum(cm))
-    wandb.log({name:acc},step=step)
+    if np.sum(np.sum(cm)) == 0:
+        print('zero acc..')
+        acc = 0
+    else:
+        acc = np.sum(acc)/np.sum(np.sum(cm))
+    wandb.log({name+'_acc':acc},step=step)
 
     #class accuracy
     keys = [x for x in range(10)] #TODO change to args
     class_accs = {}
-    c_accs = [cm[i,i]/np.sum(cm[:,i]) for i in range(10)] #TODO change to args
+    c_accs = [cm[i,i]/np.sum(cm[:,i]) if np.sum(cm[:,i]) != 0 else 0 for i in range(10)] #TODO change to args
     for i in range(len(keys)):
-        class_accs[name+'_acc_'+keys[i]] = c_accs[i]
+        class_accs[name+'_acc_'+str(keys[i])] = c_accs[i]
     wandb.log(class_accs,step=step)
     
     #TP,FN,FP,TNs
@@ -269,9 +288,9 @@ def log_acc(conn,test,step_low,step_high,name):
 
     #class F1 score
     class_f1_scores = {}
-    c_f1_scores = [TPs[i]/(TPs[i]+0.5*(FPs[i]+FNs[i])) for i in range(10)] #TODO args
+    c_f1_scores = [TPs[i]/(TPs[i]+0.5*(FPs[i]+FNs[i])) if TPs[i]+0.5*(FPs[i]+FNs[i]) != 0 else 0 for i in range(10)] #TODO args
     for i in range(len(keys)):
-        class_f1_scores[name+'_f1_'+keys[i]] = c_f1_scores[i]
+        class_f1_scores[name+'_f1_'+str(keys[i])] = c_f1_scores[i]
     wandb.log(class_f1_scores,step=step)
 
     #total f1 score
@@ -283,73 +302,6 @@ def log_acc(conn,test,step_low,step_high,name):
 
 
 
-
-def log_mean_line():
-    #TODO THIS IS THE OG ish
-    #log the averages of the stat at each step
-
-    curr = conn.cursor()
-    curr.execute('''SELECT (?) 
-                    FROM (?)
-                    WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = (?)) AND step = (?))''',
-                    (output_name,table,test,step))
-    
-
-    #log basic line graphs
-    wandb.log({
-        'batch_mean_train_loss':mean_loss, 
-        'batch_num':batch_num, 
-        'batch_mean_test_loss':df_test_losses.loss.mean(),
-        'batch_test_acc':test_acc_metric.result().numpy()}
-        ,step = batch_num)
-
-    #log class specific line graphs
-    #create class specific analysis
-    keys = [x for x in info.class_names]
-    bcla = {}
-    bcf1 = {}
-    bcc = {}
-    batch_class_test_f1 = [sf.f1_score(df_test_losses,x) for x in range(train_data_gen.num_classes)]
-    batch_class_loss_avg = [df_test_losses[df_test_losses.label==x].loc[:,'loss'].mean() for x in range(train_data_gen.num_classes)]
-    for i in range(len(keys)):
-        bcf1['batch_test_f1_'+keys[i]] = batch_class_test_f1[i]
-        bcla['batch_test_loss_avg_'+keys[i]] = batch_class_loss_avg[i]
-        bcc['batch_train_class_count_'+keys[i]] = class_counts[i]
-    
-    wandb.log({
-        **bcla,
-        **bcf1,
-        **bcc
-    },step=batch_num)
-
-def log_epoch_test():
-    #TODO CAN COMBINE WITH ABOVE
-    basic = {
-            'Epoch':info.current_epoch,
-            'Train-Loss':train_loss.result().numpy(),
-            'Test-Loss':test_loss.result().numpy(),
-            'Train-Acc':train_acc_metric.result().numpy(),
-            'Test-Acc':test_acc_metric.result().numpy(),
-            'Data-Used':train_data_gen.dataused}
-        keys = [x for x in info.class_names]
-        cla = {}
-        clv = {}
-        csa = {}
-        csv = {}
-        cra = {}
-        crv = {}
-        for i in range(len(keys)):
-            #cla['Loss-Avg-'+keys[i]] = class_loss_avg[i]
-            #clv['Loss-Var-'+keys[i]] = class_loss_var[i]
-            csa['Score-Avg-'+keys[i]] = class_score_avg[i]
-            csv['Score-Var-'+keys[i]] = class_score_var[i]
-            cra['Rank-Avg-'+keys[i]] = class_rank_avg[i]
-            crv['Rank-Var'+keys[i]] = class_rank_var[i]
-
-        wandb.log({**basic,**cla,**clv,**csa,**csv,**cra,**crv})
-
-
-
 def setup_sql_funcs(conn):
     def scoring_function_random(max):
         return random.random()
@@ -358,7 +310,7 @@ def setup_sql_funcs(conn):
     conn.create_function("scoring_function_random", 1, scoring_function_random)
 
 
-def scoring_functions(conn,config):
+def scoring_functions(conn,config,info):
     #convert the given varable into the scores
     #random - randomly assign scores
 
@@ -366,54 +318,267 @@ def scoring_functions(conn,config):
 
     if config['scoring_function'] == 'random':
         #randomly assign scores
-        curr.execute(''' UPDATE imgs SET score = scoring_functions_random(?) WHERE used =1''',(1,))
+        curr.execute(''' UPDATE imgs SET score = scoring_function_random(?) WHERE used =1''',(1,))
 
     
     if config['scoring_function'] == 'last_loss':
         #score is set as the last loss recored for each img
+        #TODO this can be one sql call using join i believe
         curr.execute('''SELECT MAX(step) FROM losses''')
         step = curr.fetchall()
         print('Step is'+step)
-        curr.execute('''SELECT img_id, loss FROM losses WHERE step=(?)''',(step,))
+        ''''''
+        curr.execute('''SELECT img_id, loss FROM losses WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = 0) AND step = (?))''',(int(step),))
         results = np.array(curr.fetchall())
         for i,loss in zip(results[:,0],results[:,1]):
-            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(loss,i,))
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(loss),int(i),))
+
+    if config['scoring_function'] == 'loss_cluster':
+        #cluster based on the loss 
+        curr.execute('''SELECT MAX(step) FROM losses''')
+        step = curr.fetchall()
+        curr.execute('''SELECT img_id, loss FROM losses WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = 0) AND step = (?))''',(int(step),))
+        results = np.array(curr.fetchall())
+
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=config['batch_size'])
+        km = km.fit(results[1].reshape((-1,1)))
+        cluster_data = km.predict(results[1].reshape((-1,1)))
+
+        results = np.concatenate((results, cluster_data), axis=0) # [id,loss,(0,31 cluster)]
+        output = results[0,2] #[id,(0,31 cluster)]
+
+        #pick to create batches
+        #create the sub arrays
+        for i in range(max(output[1]+1)): #0,1,2,...31
+            ind = np.argwhere(output[1]==i)
+            if i == 0:
+                cluster_split = np.expand_dims(np.squeeze(output[0,ind]), axis=0)
+            else:
+                cluster_split = np.append( cluster_split, np.expand_dims(np.squeeze(output[0,ind]), axis=0),axis=0)
+
+        #cluster_split = [[ids where c = 0],[ids where c = 1]... ,[c=31]]
+        
+        i = 0
+        mask = np.ones_like(cluster_split)
+        out_ids = np.array([])
+        while np.sum(np.sum(mask)) != 0:
+            p = [x/sum(mask[i]) if x != 0 else 0 for x in mask[i] ]
+            ch = np.random.choice(len(cluster_split[i]), 1, p = p)[0]
+            out_ids = np.append(out_ids,cluster_split[i,ch])
+            mask[i,ch] = 0
+            if i == cluster_split.shape[0]-1:
+                i = 0
+            else:
+                i += 1
+
+        #out_ids = [img_id,img_id,...]
+
+        for i in range(out_ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(out_ids[i]),))
+
+    if config['scoring_function'] == 'loss_cluster_batches':
+        #cluster so the batches used are clusters 
+        #cluster based on the loss 
+        curr.execute('''SELECT MAX(step) FROM losses''')
+        step = curr.fetchall()
+        curr.execute('''SELECT img_id, loss FROM losses WHERE ( img_id = (SELECT id FROM imgs WHERE (used = 1 AND test = 0) AND step = (?))''',(int(step),))
+        results = np.array(curr.fetchall())
+
+        #cluster number
+        curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
+        data_amount = curr.fetchone()[0]
+        if data_amount / config['batch_size'] == 0:
+            num_batches = int(data_amount/config['batch_size'])
+        else:
+            num_batches = 1 + int(data_amount/config['batch_size'])
+
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=num_batches)
+        km = km.fit(results[1].reshape((-1,1)))
+        cluster_data = km.predict(results[1].reshape((-1,1)))
+
+        results = np.concatenate((results, cluster_data), axis=0) # [id,loss,(0,...,num batches)]
+        output = results[0,2] #[id,(0,...,num batches)]
+
+        out_ids = output [ :, output[1].argsort()] #ids sorted based on batch_num
+
+        for i in range(out_ids[0]):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(out_ids[i]),))
+    
+
+    if config['scoring_function'] == 'pred_cluster':
+        #cluster so the batches used are clusters 
+        #cluster based on the softmax outputs
+        curr.execute('''SELECT MAX(step) FROM preds''')
+        step = curr.fetchall()
+        sql = '''SELECT l.img_id, l.output, i.label_num
+                FROM losses AS l
+                INNER JOIN imgs AS i ON l.img_id=i.id
+                WHERE l.step=(?) AND i.used = 1 AND i.test = 0'''
+        curr.execute(sql,(int(step),))
+        results = np.array(curr.fetchall())
+
+        #seperate the output and ids 
+        outputs = results[:,1]
+        ids = results[:,0]
+        labels = results[:,2]
+
+        #turn the softmax output into softmax error
+        for i,output in enumerate(outputs):
+            output[labels[i]] = 1 - output[labels[i]]
+            outputs[i] = output
+
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=config['batch_size'])
+        km = km.fit(outputs)
+        cluster_data = km.predict(outputs)
+
+        output = np.concatenate([ids,cluster_data],axis = 0) #reuslts = [[ids],[cluster num]]
+
+        #pick to create batches
+        #create the sub arrays
+        for i in range(max(output[1]+1)): #0,1,2,...31
+            ind = np.argwhere(output[1]==i)
+            if i == 0:
+                cluster_split = np.expand_dims(np.squeeze(output[0,ind]), axis=0)
+            else:
+                cluster_split = np.append( cluster_split, np.expand_dims(np.squeeze(output[0,ind]), axis=0),axis=0)
+
+        #cluster_split = [[ids where c = 0],[ids where c = 1]... ,[c=31]]
+        
+        #randomly pick from each cluster
+        i = 0
+        mask = np.ones_like(cluster_split)
+        out_ids = np.array([])
+        while np.sum(np.sum(mask)) != 0:
+            p = [x/sum(mask[i]) if x != 0 else 0 for x in mask[i] ]
+            ch = np.random.choice(len(cluster_split[i]), 1, p = p)[0]
+            out_ids = np.append(out_ids,cluster_split[i,ch])
+            mask[i,ch] = 0
+            if i == cluster_split.shape[0]-1:
+                i = 0
+            else:
+                i += 1
+
+        #out_ids = [img_id,img_id,...]
+
+        for i in range(out_ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(out_ids[i]),))
 
 
-    #TODO loss based clustering (should clustering be in pacing?)
-    #TODO pred clustering
-    #TODO pred angle
+    if config['scoring_function'] == 'pred_euq_distance':
+        #score as the euclidiean distance from origin in sortmax error space
+        curr.execute('''SELECT MAX(step) FROM preds''')
+        step = curr.fetchall()
+        sql = '''SELECT l.img_id, l.output, i.label_num
+                FROM ouputs AS l
+                INNER JOIN imgs AS i ON l.img_id=i.id
+                WHERE l.step=(?) AND i.used = 1 AND i.test = 0'''
+        curr.execute(sql,(int(step),))
+        results = np.array(curr.fetchall())
+
+        #seperate the output and ids 
+        outputs = results[:,1]
+        ids = results[:,0]
+        labels = results[:,2]
+
+        dist = []
+        #turn the softmax output into softmax error
+        for i,output in enumerate(outputs):
+            output[labels[i]] = 1 - output[labels[i]]
+            output = np.sqrt(np.sum(np.square(output)))
+            dist.append(output)
+
+        for i in range(ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(dist[i]),int(ids[i]),))
+        
+
+    if config['scoring_function'] == 'SE_kdpp_sampling':
+        #kdpp k-determantal point process with features based on softmax space
+        #THIS IS A SAMPLING BASED METHOD TO COMPARE TO THUS IT UPDATES THE BATCH NUMBERS to 0 or -1
+        #this produces 
+        #TODO add method that smaples multiple batches (need to adapt batch_num variable to do this)
+
+        curr.execute('''SELECT MAX(step) FROM preds''')
+        step = curr.fetchall()
+        sql = '''SELECT l.img_id, l.output, i.label_num
+                FROM losses AS l
+                INNER JOIN imgs AS i ON l.img_id=i.id
+                WHERE l.step=(?) AND i.used = 1 AND i.test = 0'''
+        curr.execute(sql,(int(step),))
+        results = np.array(curr.fetchall())
+
+        #seperate the output and ids 
+        outputs = results[:,1]
+        ids = results[:,0]
+        labels = results[:,2]
+
+        #convert to softmax space
+        for i,output in enumerate(outputs):
+            output[labels[i]] = 1 - output[labels[i]]
+            outputs[i] = output
+
+        # TODO work out if this is the right input
+        L = features.T.dot(features)
+        DPP = FiniteDPP('likelihood', **{'L': L})
+
+        DPP.sample_exact_k_dpp(size=batch_size)
+        batch = DPP.list_of_samples  #TODO find out what it outputs
+
+        curr.execute('''UPDATE imgs SET batch_num = -1 ''')
+        for i in batch:
+            curr.execute('''UPDATE imgs SET batch_num = 0 WHERE id = (?)''',(int(ids[i]),))
+
+    #add data used to each of the above functions
+    #TODO other distance measures
     #TODO pred biggest move
-    #TODO distance measure
-    curr.commit()
+    #TODO compressed space representations f1 layers ect
+    conn.commit()
+
+
+
+
 
 def pacing_functions(conn,config):
-    #take the score and order in a specific way
+    #take the score and order in a specific way updating the batch numbers, if batch_num is -1 its not used
+    #ensure that if the socoring function does this already its not done twice!!
     curr = conn.cursor()
 
     if config['pacing_function'] == 'hl':
         #high to low no removing
-        curr.execute('''SELECT img_id FROM imgs ORDER BY score DESC WHERE used=1''')
+        curr.execute('''SELECT id FROM imgs WHERE used = 1 AND test = 0 ORDER BY score DESC ''')
         ids = np.array(curr.fetchall())
+        b = 0
         for i,ind in enumerate(ids):
-            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
+            if i % config['batch_size'] == 0 and i != 0:
+                b+=1
+            curr.execute('''UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(b),int(ind),))
     
     if config['pacing_function'] == 'lh':
         #low to high no removing
-        curr.execute('''SELECT img_id FROM imgs ORDER BY score ASC WHERE used=1''')
+        curr.execute('''SELECT id FROM imgs WHERE used = 1 AND test = 0 ORDER BY score ASC ''')
         ids = np.array(curr.fetchall())
+        b = 0
         for i,ind in enumerate(ids):
-            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
+            if i % config['batch_size'] == 0 and i != 0:
+                b+=1
+            curr.execute('''UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(b),int(ind),))
     
     if config['pacing_function'] == 'mixed':
         #high low high low high low ...
-        curr.execute('''SELECT img_id FROM imgs ORDER BY score ASC WHERE used=1''')
+        curr.execute('''SELECT id FROM imgs WHERE used=1 AND test=0 ORDER BY score ASC ''')
         ids = np.array(curr.fetchall())
         ids_mixed = [ids.pop(0) if x % 2 == 0 else ids.pop(-1) for x in range(len(ids))]
-        for i,ind in enumerate(ids_mixed):
-            curr.execute('''UPDATE imgs SET rank = (?) WHERE id = (?)''',(i,ind,))
-    
-    curr.commit()
+        b = 0
+        for i,ind in enumerate(ids):
+            if i % config['batch_size'] == 0 and i != 0:
+                b+=1
+            curr.execute('''UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(b),int(ind),))
+
+    if config['pacing_function'] != 'none':
+        print('max batches to use next = ',b)
+    conn.commit()
 
 
 
