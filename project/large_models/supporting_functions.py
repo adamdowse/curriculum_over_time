@@ -240,10 +240,16 @@ def log(conn,output_name,table,test,step,name,mean=False):
     results = curr.fetchall()
     results = np.array(results)
     results = np.squeeze(results)
+
     if mean:
         results = np.mean(results)
-    wandb.log({name:results},step=step)
-
+        wandb.log({name:results},step=step)
+    else:
+        #bin_edges = [x for x in np.linspace(0, 10, num=40)]
+        #hist = np.histogram(results,bins=bin_edges)
+        results = np.delete(results, results > 3) #THIS IS USED TO keep hist bins from being to big
+        print(results)
+        wandb.log({name:wandb.Histogram(results)},step=step)
 
 
 def log_acc(conn,test,step,name):

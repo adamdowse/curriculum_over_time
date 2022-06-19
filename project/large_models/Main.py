@@ -3,7 +3,7 @@ import os
 #File used to test running the experiments
 
 epochs = str(10)
-lr = str(0.01)
+lr = str(0.001)
 batch_size = str(32)
 #'random' 'grads' pred_clusters pred_biggest_move pred_best_angle
 scoring_function = 'random'
@@ -12,6 +12,7 @@ pacing_function = 'hl'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.01)
+tdata_amount = str(0.01)
 dataset_similarity = str(0) 
 l_0 = str(0.1)
 l_max = str(0.9)
@@ -37,6 +38,7 @@ command = [
     ' --fill_function '+fill_function,
     ' --dataset '+data,
     ' --dataset_size '+data_amount,
+    ' --test_dataset_size '+tdata_amount,
     ' --dataset_similarity '+dataset_similarity,
     ' --data_path '+data_path,
     ' --db_path '+db_path,

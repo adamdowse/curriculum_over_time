@@ -82,7 +82,7 @@ def main(args):
 
         'dataset_name':args.dataset,                #if datset name is a path use that path
         'dataset_size':args.dataset_size,           #proportion of the train dataset to use
-        'test_dataset_size':args.dataset_size,      #proportion of the test dataset to use
+        'test_dataset_size':args.test_dataset_size,      #proportion of the test dataset to use
         'seed':args.dataset_similarity, #random seed number of experiment unless specified    
         'data_path':args.data_path,                 #root of where data is to be stored
         'save_model_path':args.save_model_path,     #root to save trained models
@@ -265,7 +265,7 @@ def main(args):
             print(class_counts)
             #update the db with the retrieved info
             sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds)
-            pnt()
+
 
             #record the batch by batch logs
             if config['batch_logs'] == 'True':
