@@ -10,3 +10,4 @@ sklearn
 opencv-python
 wandb
 dppy
+scipy
