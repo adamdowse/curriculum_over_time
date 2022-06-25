@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
+from keras import backend as K
 import tensorboard as tb
 import supporting_functions as sf
 import supporting_models as sm
@@ -118,6 +119,7 @@ def main(args):
         optimizer[0].apply_gradients(zip(grads,model.trainable_variables))
         train_loss(loss)
         train_acc_metric(labels,preds)
+        
         return batch_loss, loss, preds
 
     
@@ -236,8 +238,14 @@ def main(args):
 
     #build and load model, optimizer and loss functions
     model = sm.Simple_CNN(info.num_classes)
+    model.build((32,28,28,1))
+    model.summary()
     optimizer = keras.optimizers.SGD(learning_rate=config['learning_rate']),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
+
+    #function to pull layer activations given an input
+    n = 3 #this is the layer to pull from TODO need this to be based on model 
+    get_last_layer_activations = K.function([model.layers[0].input],[model.layers[n].output])
 
     #setup metrics to record: [train loss, test loss, train acc, test acc]
     train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -258,14 +266,20 @@ def main(args):
             #collect losses and train model
             batch_loss, mean_loss, preds = train_step(X[1],Y)
 
+            #calculate the entropy
+            H = sf.calc_entropy(preds)
 
+            #calculate the activations 
+            activations = np.array(get_last_layer_activations(X[1])).squeeze()
+            print(activations.shape)
+            print(H)
             #count number of each class in the batch
             label_corrected = np.array([np.argmax(y) for y in Y])
             class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)] #TODO make based on args
-            print(class_counts)
-            #update the db with the retrieved info
-            sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds)
+            print(class_counts) #TODO log this
 
+            #update the db with the retrieved info
+            sf.DB_update(conn,info,info.step,X,Y,batch_loss,preds,activations,H,t=0)
 
             #record the batch by batch logs
             if config['batch_logs'] == 'True':
@@ -273,7 +287,7 @@ def main(args):
                 for i,(X,Y) in enumerate(test_data_gen):
 
                     preds, batch_test_loss, t_loss = test_step(X[1],Y)
-                    sf.DB_update(conn,info,info.step,X,Y,batch_test_loss,preds)
+                    sf.DB_update(conn,info,info.step,X,Y,batch_test_loss,preds,t=1)
                 
                 sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='batch_train_loss',mean=False)
                 sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='batch_test_loss',mean=False)
@@ -281,7 +295,7 @@ def main(args):
                 sf.log(conn,output_name='loss',table='losses',test=0,step=info.step,name='mean_train_loss',mean=True)
                 sf.log(conn,output_name='loss',table='losses',test=1,step=info.step,name='mean_test_loss',mean=True)
 
-                sf.log_acc(conn,test=0,step=info.step,name='train')
+                sf.log_acc(conn,test=0,step=info.step,batch_num=info.batch_num,name='train')
                 sf.log_acc(conn,test=1,step=info.step,name='test')
 
                 #reset the test metrics so no clashes

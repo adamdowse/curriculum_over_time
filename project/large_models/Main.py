@@ -5,13 +5,14 @@ import os
 epochs = str(10)
 lr = str(0.001)
 batch_size = str(32)
-#'random' 'grads' pred_clusters pred_biggest_move pred_best_angle
-scoring_function = 'random'
+#'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
+#'SE_kdpp_sampling'
+scoring_function = 'submodular_sampling'
 #'shuffle' 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad'
 pacing_function = 'hl'
 fill_function = 'ffill'
 data = 'mnist'
-data_amount = str(0.01)
+data_amount = str(0.005)
 tdata_amount = str(0.01)
 dataset_similarity = str(0) 
 l_0 = str(0.1)
