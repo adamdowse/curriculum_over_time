@@ -4,7 +4,7 @@ universe = docker
 docker_image = registry.eps.surrey.ac.uk/adamsdocker:36939
 
 executable = /usr/bin/python3
-arguments = $ENV(PWD)/RunTest.py --group $(group) --data_path $(data_path) --save_model_path $(save_model_path) --dataset_similarity $(dataset_similarity) --record_loss $(record_loss) --max_epochs $(max_epochs) --fill_function $(fill_func) --learning_rate $(lr_rate) --batch_size $(batch_size) --scoring_function $(scoring_function) --pacing_function $(pacing_function) --dataset $(dataset) --lam_zero $(lam_zero) --lam_max $(lam_max) --lam_lookback $(lam_lookback) --lam_low_first $(lam_low_first) --lam_data_multiplier $(lam_data_multiplier) --score_grav $(score_grav) --score_lookback $(score_lookback) --early_stopping $(early_stopping) --lam_lower_bound $(lam_lower_bound) --lam_upper_bound $(lam_upper_bound) --dataset_size $(dataset_size)  
+arguments = $ENV(PWD)/RunTest.py --max_epochs $(max_epochs) --learning_rate $(learning_rate) --batch_size $(batch_size) --scoring_function $(scoring_function) --pacing_function $(pacing_function) --fill_function $(fill_function) --dataset $(dataset) --dataset_size $(dataset_size) --test_dataset_size $(test_dataset_size) --dataset_similarity $(dataset_similarity) --data_path $(data_path) --db_path $(db_path) --save_model_path $(save_model_path) --early_stopping $(early_stopping) --group $(group) --record_loss $(record_loss) --batch_logs $(batch_logs) --lam_zero $(lam_zero) --lam_max $(lam_max) --lam_lower_bound $(lam_lower_bound) --lam_upper_bound $(lam_upper_bound)
 
 should_transfer_files = YES
 #environment = "mount=$ENV(PWD)"
@@ -31,56 +31,49 @@ request_memory = 4000
 
 #-------------------------------------------
 
-#set the vars and runs here
-data_path = /user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/
-save_model_path = /user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/
-record_loss = sum
 max_epochs = 50
-lr_rate = 0.01
+learning_rate = 0.001
 batch_size = 32
-#normal, grads, class_corr, last_loss
-scoring_function = normal
-#none, ordered, naive_linear, naive_grad, stat_grad
-pacing_function = ordered
-#ffill, reg_fill, reg_fill_grav
-fill_func = ffill
-dataset = mnist
-dataset_size = 0.01
-dataset_similarity = True
-group = $(scoring_function) _ $(pacing_function)
-
-lam_zero = 0.1
-lam_max = 0.9
-lam_lookback = 3
-lam_low_first = True
-lam_data_multiplier = 10000
-lam_lower_bound = $(lim)
-lam_upper_bound = $(lim)
-early_stopping = 20
-score_grav = 0.1
-score_lookback = 3
-lim = 0.1
-
-queue 1
-
+#'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
+#'SE_kdpp_sampling' 'submodular_sampling'
+scoring_function = random
+#'shuffle' 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
+pacing_function = shuffle
+fill_function = ffill
+dataset = 'mnist'
+dataset_size = 1
+test_dataset_size = 1
+dataset_similarity = 0
+data_path = /user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/datasets/
+db_path = /user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/DBs/
+save_model_path = /user/HS223/ad00878/PhD/curriculum_over_time/project/large_models/saved_models/
+early_stopping = 0
+group = last_loss
 record_loss = do
-scoring_function = pred_clusters
+batch_logs = True
+lam_zero = 0
+lam_max = 0
+lam_lower_bound = 0
+lam_upper_bound = 0
 
-queue 1
+queue 3
 
-scoring_function = pred_biggest_move
+scoring_function = last_loss
+pacing_function = hl
 
-queue 1
+queue 3
 
-scoring_function = pred_best_angle
+scoring_function = last_loss
+pacing_function = lh
 
-queue 1
+queue 3
 
+scoring_function = last_loss
 pacing_function = mixed
-scoring_function = pred_biggest_move
 
-queue 1
+queue 3
 
-scoring_function = pred_best_angle
+scoring_function = submodular_sampling
+pacing_function = none
 
-queue 1
+queue 3
