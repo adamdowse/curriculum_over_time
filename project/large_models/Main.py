@@ -8,8 +8,8 @@ batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
 #'SE_kdpp_sampling'
 scoring_function = 'submodular_sampling'
-#'shuffle' 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad'
-pacing_function = 'hl'
+#'shuffle' 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
+pacing_function = 'none'
 fill_function = 'ffill'
 data = 'mnist'
 data_amount = str(0.005)

@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from keras import backend as K
+from keras.models import Model
 import tensorboard as tb
 import supporting_functions as sf
 import supporting_models as sm
@@ -15,6 +16,7 @@ import time
 import sqlite3
 from sqlite3 import Error
 import random
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Arguments from script')
@@ -244,8 +246,8 @@ def main(args):
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)
 
     #function to pull layer activations given an input
-    n = 3 #this is the layer to pull from TODO need this to be based on model 
-    get_last_layer_activations = K.function([model.layers[0].input],[model.layers[n].output])
+    #n = 3 #this is the layer to pull from TODO need this to be based on model 
+    #get_last_layer_activations = K.function([model.layers[0].input,K.set_learning_phase()],[model.layers[n].output])
 
     #setup metrics to record: [train loss, test loss, train acc, test acc]
     train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -270,7 +272,10 @@ def main(args):
             H = sf.calc_entropy(preds)
 
             #calculate the activations 
-            activations = np.array(get_last_layer_activations(X[1])).squeeze()
+            #activations = np.array(get_last_layer_activations(X[1])).squeeze()
+            intermediate_layer_model = Model(inputs=model.input,
+                                outputs=model.layers[3].output)
+            activations = intermediate_layer_model.predict(X[1])
             print(activations.shape)
             print(H)
             #count number of each class in the batch

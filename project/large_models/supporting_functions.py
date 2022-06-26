@@ -10,6 +10,8 @@ from sklearn import cluster
 from sklearn import decomposition
 import os
 import csv
+import scipy
+from scipy.spatial.distance import cdist
 import random
 import glob
 import sqlite3
@@ -385,7 +387,6 @@ def scoring_functions(conn,config,info):
         #randomly assign scores
         curr.execute(''' UPDATE imgs SET score = scoring_function_random(?) WHERE used =1''',(1,))
 
-    
     if config['scoring_function'] == 'last_loss':
         #score is set as the last loss recored for each img
         curr.execute('''SELECT MAX(epoch) FROM losses''')
@@ -456,7 +457,6 @@ def scoring_functions(conn,config,info):
         for i,index in enumerate(out_ids):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
         conn.commit()
-
 
     if config['scoring_function'] == 'loss_cluster_batches':
         #cluster so the batches used are clusters 
@@ -588,9 +588,6 @@ def scoring_functions(conn,config,info):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
         conn.commit()
 
-
-
-
     if config['scoring_function'] == 'pred_euq_distance':
         #score as the euclidiean distance from origin in sortmax error space
         curr.execute('''SELECT MAX(epoch) FROM losses''')
@@ -616,7 +613,6 @@ def scoring_functions(conn,config,info):
         for i,id in enumerate(ids):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(dist[i]),int(id),))
         
-
     if config['scoring_function'] == 'SE_kdpp_sampling':
         #kdpp k-determantal point process with features based on softmax space
         #THIS IS A SAMPLING BASED METHOD TO COMPARE TO THUS IT UPDATES THE BATCH NUMBERS to 0 or -1
@@ -697,9 +693,9 @@ def scoring_functions(conn,config,info):
                 subset_p_acts = penultimate_activations[np.array(subset_indices)] #values in the current subset
                 if(distance_metric=='gaussian'):
                     #distance measure
-                    #pdist = cdist(index_p_acts, subset_p_acts, metric='sqeuclidean')
+                    pdist = cdist(index_p_acts, subset_p_acts, metric='sqeuclidean')
                     #r_score = scipy.exp(-pdist / (0.5) ** 2)
-                    #r_score = alpha * np.min(r_score, axis=1)
+                    r_score = alpha * np.min(pdist, axis=1)
                     return r_score
                 #can add other metrics here
                 else:
@@ -717,10 +713,10 @@ def scoring_functions(conn,config,info):
 
             if(distance_metric=='gaussian'):
                 #distance measure
-                #pen_act = penultimate_activations[np.array(index_set)]
-                #md_score = alpha * cdist(pen_act, np.array([np.array(class_mean)]), metric='sqeuclidean')
+                pen_act = penultimate_activations[np.array(index_set)]
+                md_score = alpha * cdist(pen_act, np.array([np.array(class_mean)]), metric='sqeuclidean')
                 #md_score = scipy.exp(-md_score / (0.5) ** 2)
-                return md_score
+                return md_score.squeeze()
             else:
                 print('NO defined metric ERROR')
             
@@ -732,16 +728,15 @@ def scoring_functions(conn,config,info):
             :return: g(mu(S))
             """
             if(len(subset_indices)==0):
-                #penultimate_activations_index_set = normalised_penultimate_activations[index_set]
-                #score_feature_wise = np.sqrt(penultimate_activations_index_set)
-                #scores = np.sum(score_feature_wise, axis=1)
+                score_feature_wise = np.sqrt(normalised_penultimate_activations[index_set])
+                scores = np.sum(score_feature_wise, axis=1)
                 return alpha*scores
             else:
-                #penultimate_activations_index_set =  normalised_penultimate_activations[index_set]
-                #subset_indices_scores = np.sum(normalised_penultimate_activations[subset_indices],axis=0)
-                #sum_subset_index_set = subset_indices_scores + penultimate_activations_index_set
-                #score_feature_wise = np.sqrt(sum_subset_index_set)
-                #scores = np.sum(score_feature_wise,axis=1)
+                penultimate_activations_index_set =  normalised_penultimate_activations[index_set]
+                subset_indices_scores = np.sum(normalised_penultimate_activations[subset_indices],axis=0)
+                sum_subset_index_set = subset_indices_scores + penultimate_activations_index_set
+                score_feature_wise = np.sqrt(sum_subset_index_set)
+                scores = np.sum(score_feature_wise,axis=1)
                 return alpha*scores
 
         def normalise(A):
@@ -749,11 +744,12 @@ def scoring_functions(conn,config,info):
 
         def get_subset_indices(index_set_input, penultimate_activations, normalised_penultimate_activations, entropy,  subset_size, alpha_1, alpha_2, alpha_3, alpha_4):
 
-  
+            #print('reached subset selection')
             index_set = index_set_input
             subset_indices = []     # Subset of indices. Keeping track to improve computational performance.
 
             class_mean = np.mean(penultimate_activations, axis=0)
+            #print(class_mean)
 
             subset_size = min(subset_size, len(index_set)) # this deals with the last selections of data
             for i in range(0, subset_size):
@@ -762,9 +758,14 @@ def scoring_functions(conn,config,info):
                 r_scores = compute_r_score(penultimate_activations, list(subset_indices), list(index_set), alpha=alpha_2)
                 md_scores = compute_md_score(penultimate_activations, list(index_set), class_mean, alpha=alpha_3)
                 coverage_scores = compute_coverage_score(normalised_penultimate_activations, subset_indices, index_set, alpha=alpha_4)
+                #if i > 0:
+                #    print(u_scores.shape)
+                #    print(r_scores.shape)
+                #    print(md_scores.shape)
+                #    print(coverage_scores.shape)
 
                 scores = normalise(np.array(u_scores)) + normalise(np.array(r_scores)) + normalise(np.array(md_scores)) + normalise(np.array(coverage_scores))
-
+                #print(scores.shape)
                 best_item_index = np.argmax(scores)
                 subset_indices.append(index_set[best_item_index])
                 index_set = np.delete(index_set, best_item_index, axis=0)
@@ -801,6 +802,7 @@ def scoring_functions(conn,config,info):
         relu_outputs = np.array([x[3] for x in f_all]) #relu
         H = np.array([x[4] for x in f_all]) #entropy
         indices = [x for x in range(len(ids))]
+
 
         batch_num = 0
         while len(indices) > 0:
