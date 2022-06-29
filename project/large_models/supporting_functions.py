@@ -288,6 +288,7 @@ def log(conn,output_name,table,test,step,name,mean=False):
     else:
         #bin_edges = [x for x in np.linspace(0, 10, num=40)]
         #hist = np.histogram(results,bins=bin_edges)
+        print(results)
         if len(results) > 1:
             results = np.delete(results, results > 3) #THIS IS USED TO keep hist bins from being to big
             wandb.log({name:wandb.Histogram(results)},step=step)
