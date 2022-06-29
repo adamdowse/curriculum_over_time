@@ -135,7 +135,7 @@ def main(args):
         test_acc_metric(labels, preds)
         return preds, t_loss, m_loss
 
-    random.seed(config['seed'])
+   
 
     #setup database
 
@@ -144,8 +144,8 @@ def main(args):
     sqlite3.register_converter("array", sf.bin_to_array) # Converts TEXT to np.array when selecting
 
     # create a database connection
-    conn = sf.DB_create_connection(config['db_path']+config['dataset_name']+'.db')
-
+    conn = sf.DB_create_connection(config['db_path']+config['dataset_name']+str(random.randint(0,10000000))+'.db')
+    random.seed(config['seed'])
     #setup sql functions
     sf.setup_sql_funcs(conn)
 
@@ -276,8 +276,8 @@ def main(args):
             intermediate_layer_model = Model(inputs=model.input,
                                 outputs=model.layers[3].output)
             activations = intermediate_layer_model.predict(X[1])
-            print(activations.shape)
-            print(H)
+            #print(activations.shape)
+            #print(H)
             #count number of each class in the batch
             label_corrected = np.array([np.argmax(y) for y in Y])
             class_counts = [np.count_nonzero(label_corrected == x) for x in range(10)] #TODO make based on args

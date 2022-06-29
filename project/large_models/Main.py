@@ -7,13 +7,13 @@ lr = str(0.001)
 batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
 #'SE_kdpp_sampling'
-scoring_function = 'submodular_sampling'
-#'shuffle' 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
-pacing_function = 'none'
+scoring_function = 'pred_cluster'
+# 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
+pacing_function = 'hl'
 fill_function = 'ffill'
 data = 'mnist'
-data_amount = str(0.005)
-tdata_amount = str(0.01)
+data_amount = str(0.1)
+tdata_amount = str(0.11)
 dataset_similarity = str(0) 
 l_0 = str(0.1)
 l_max = str(0.9)
@@ -21,7 +21,7 @@ es = str(5)
 lower_bound = str(0)
 upper_bound = str(0)
 #group = scoring_function+'_'+pacing_function+'_'+data_amount
-group = 'testing'
+group = '0.1_mnist'
 record_loss = 'do'
 batch_logs = 'True'
 data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'

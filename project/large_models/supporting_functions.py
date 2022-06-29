@@ -70,6 +70,7 @@ def DB_add_img(conn, img):
                 VALUES(?,?,?,?,?,?,?) '''
         cur = conn.cursor()
         cur.execute(sql, img)
+
     else:
         print('ERROR connecting to db')
 
@@ -161,9 +162,22 @@ def DB_set_used(conn,test_n,train_n):
 
     cur = conn.cursor()
     cur.execute('''UPDATE imgs SET used = 0 WHERE test = 1''')
-    cur.execute('''UPDATE imgs SET used = 1 WHERE test = 1 ORDER BY RANDOM() LIMIT (?) ''',(test_n,))
     cur.execute('''UPDATE imgs SET used = 0 WHERE test = 0''')
-    cur.execute('''UPDATE imgs SET used = 1 WHERE test = 0 ORDER BY RANDOM() LIMIT (?) ''',(train_n,))
+    cur.execute('''SELECT id FROM imgs WHERE test = 1''')
+    test_ids = np.array(cur.fetchall())
+    random.shuffle(test_ids)
+    test_input = test_ids[test_n:]
+    test_input = [(int(x[0]),) for x in test_input]
+    print(test_input)
+    cur.executemany('''UPDATE imgs SET used = 1 WHERE id = (?)''',test_input)
+
+    cur.execute('''SELECT id FROM imgs WHERE test = 0''')
+    train_ids = np.array(cur.fetchall())
+    random.shuffle(train_ids)
+    train_input = train_ids[train_n:]
+    train_input = [(int(x[0]),) for x in train_input]
+    cur.executemany('''UPDATE imgs SET used = 1 WHERE id = (?)''',train_input)
+ 
     conn.commit()
 
 
@@ -274,8 +288,9 @@ def log(conn,output_name,table,test,step,name,mean=False):
     else:
         #bin_edges = [x for x in np.linspace(0, 10, num=40)]
         #hist = np.histogram(results,bins=bin_edges)
-        results = np.delete(results, results > 3) #THIS IS USED TO keep hist bins from being to big
-        wandb.log({name:wandb.Histogram(results)},step=step)
+        if len(results) > 1:
+            results = np.delete(results, results > 3) #THIS IS USED TO keep hist bins from being to big
+            wandb.log({name:wandb.Histogram(results)},step=step)
 
 
 def log_acc(conn,test,step,batch_num=0,name='none'):
