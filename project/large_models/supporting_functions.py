@@ -420,7 +420,7 @@ def scoring_functions(conn,config,info):
         curr.execute('''SELECT MAX(epoch) FROM losses''')
         epoch = curr.fetchone()[0]
         curr.execute('''SELECT img_id, loss FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
-        results = np.array(curr.fetchall())
+        results = np.array(curr.fetchall(),dtype=object)
         
         #km cluster
         km = cluster.MiniBatchKMeans(n_clusters=config['batch_size'])
@@ -481,7 +481,7 @@ def scoring_functions(conn,config,info):
         curr.execute('''SELECT MAX(epoch) FROM losses''')
         epoch = curr.fetchone()[0]
         curr.execute('''SELECT img_id, loss FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
-        results = np.array(curr.fetchall())
+        results = np.array(curr.fetchall(),dtype=object)
 
         #cluster number
         curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
@@ -551,7 +551,7 @@ def scoring_functions(conn,config,info):
         curr.execute('''SELECT MAX(epoch) FROM losses''')
         epoch = curr.fetchone()[0]
         curr.execute('''SELECT img_id, output FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
-        results = np.array(curr.fetchall()) #TODO aparently this is bad maybe update?
+        results = np.array(curr.fetchall(),dtype=object) #updated?
         results_1 = [x[1] for x in results]
         
         #km cluster
@@ -899,8 +899,6 @@ def pacing_functions(conn,config):
                 b+=1
             curr.execute('''UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(b),int(ind),))
 
-    if config['pacing_function'] != 'none':
-        print('max batches to use next = ',b)
     conn.commit()
 
 
