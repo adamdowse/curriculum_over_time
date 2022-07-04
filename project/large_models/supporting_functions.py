@@ -158,15 +158,14 @@ def DB_set_used(conn,test_n,train_n):
     #randomly set the amount of data to use
     #test is the bool True or False
     #n is the number of samples
-    #TODO convert to be able to set a seed in random (probably a for loop)
-
+ 
     cur = conn.cursor()
     cur.execute('''UPDATE imgs SET used = 0 WHERE test = 1''')
     cur.execute('''UPDATE imgs SET used = 0 WHERE test = 0''')
     cur.execute('''SELECT id FROM imgs WHERE test = 1''')
     test_ids = np.array(cur.fetchall())
     random.shuffle(test_ids)
-    test_input = test_ids[test_n:]
+    test_input = test_ids[:test_n]
     test_input = [(int(x[0]),) for x in test_input]
     print(test_input)
     cur.executemany('''UPDATE imgs SET used = 1 WHERE id = (?)''',test_input)
@@ -174,7 +173,7 @@ def DB_set_used(conn,test_n,train_n):
     cur.execute('''SELECT id FROM imgs WHERE test = 0''')
     train_ids = np.array(cur.fetchall())
     random.shuffle(train_ids)
-    train_input = train_ids[train_n:]
+    train_input = train_ids[:train_n]
     train_input = [(int(x[0]),) for x in train_input]
     cur.executemany('''UPDATE imgs SET used = 1 WHERE id = (?)''',train_input)
  
