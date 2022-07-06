@@ -604,6 +604,204 @@ def scoring_functions(conn,config,info):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
         conn.commit()
 
+    if config['scoring_function'] == 'pred_cluster_alt':
+        #cluster so the batches used are clusters 
+        #cluster based on the softmax outputs
+        #cluster based on the loss 
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, output FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object) #updated?
+        results_1 = [x[1] for x in results]
+
+        #cluster number
+        curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
+        data_amount = curr.fetchone()[0]
+        if data_amount / config['batch_size'] == 0:
+            num_batches = int(data_amount/config['batch_size'])
+        else:
+            num_batches = 1 + int(data_amount/config['batch_size'])
+
+        
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=num_batches)
+        km = km.fit(results_1)
+        cluster_data = km.predict(results_1)
+        output = np.array([[results[i,0],cluster_data[i]] for i in range(len(cluster_data))]) #[[id,(0,31 cluster)],[id, clsuter]...]
+
+        #pick to create batches
+        #create the sub arrays
+        for i in range(int(max(output[:,1])+1)): #0,1,2,...31
+            ind = np.squeeze(np.argwhere(output[:,1]==i))
+            if i == 0:
+                cluster_split = {i:np.array(output[ind,0])}
+            else:
+                cluster_split[i] = np.atleast_1d(np.array(output[ind,0]))
+
+        #cluster_split = {i:[ids]}
+
+        #shuffle into batches. If one cluster runs out take from highest amount class
+        count = np.sum([len(cluster_split[i])  for i in range(len(cluster_split))])
+        out_ids = []
+        cluster_count = 0
+        while count >0:
+            #length of all dictionary values
+            cluster_lens = [len(cluster_split[i]) for i in range(len(cluster_split))]
+            if cluster_lens[cluster_count] != 0:
+                #choose random value in the clsuter
+                inds = cluster_split[cluster_count]
+                r = random.randint(0,cluster_lens[cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[cluster_count] = np.delete(inds,r)
+            else:
+                #select highest cluster clount
+                temp_cluster_count = np.argmax(cluster_lens)
+                inds = cluster_split[temp_cluster_count]
+                r = random.randint(0,cluster_lens[temp_cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[temp_cluster_count] = np.delete(inds,r)
+            count -= 1
+            cluster_count += 1
+            if cluster_count > num_batches-1:
+                cluster_count = 0
+
+        #out_ids = [id, id ,id]  in batch order
+
+        for i,index in enumerate(out_ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
+        conn.commit()
+
+    if config['scoring_function'] == 'relu_cluster':
+        #cluster so the batches used are clusters 
+        #cluster based on the lastlayer activations
+        #cluster based on the loss 
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, relu FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object) #updated?
+        results_1 = [x[1] for x in results]
+        
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=config['batch_size'])
+        km = km.fit(results_1)
+        cluster_data = km.predict(results_1)
+        output = np.array([[results[i,0],cluster_data[i]] for i in range(len(cluster_data))]) #[[id,(0,31 cluster)],[id, clsuter]...]
+
+        #pick to create batches
+        #create the sub arrays
+        for i in range(int(max(output[:,1])+1)): #0,1,2,...31
+            ind = np.squeeze(np.argwhere(output[:,1]==i))
+            if i == 0:
+                cluster_split = {i:np.array(output[ind,0])}
+            else:
+                cluster_split[i] = np.atleast_1d(np.array(output[ind,0]))
+
+        #cluster_split = {i:[ids]}
+
+        #shuffle into batches. If one cluster runs out take from highest amount class
+        count = np.sum([len(cluster_split[i])  for i in range(len(cluster_split))])
+        out_ids = []
+        cluster_count = 0
+        while count >0:
+            #length of all dictionary values
+            cluster_lens = [len(cluster_split[i]) for i in range(len(cluster_split))]
+            if cluster_lens[cluster_count] != 0:
+                #choose random value in the clsuter
+                inds = cluster_split[cluster_count]
+                r = random.randint(0,cluster_lens[cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[cluster_count] = np.delete(inds,r)
+            else:
+                #select highest cluster clount
+                temp_cluster_count = np.argmax(cluster_lens)
+                inds = cluster_split[temp_cluster_count]
+                r = random.randint(0,cluster_lens[temp_cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[temp_cluster_count] = np.delete(inds,r)
+            count -= 1
+            cluster_count += 1
+            if cluster_count > config['batch_size']-1:
+                cluster_count = 0
+
+        #out_ids = [id, id ,id]  in batch order
+
+        for i,index in enumerate(out_ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
+        conn.commit()
+
+    if config['scoring_function'] == 'pred_cluster_alt':
+        #cluster so the batches used are clusters 
+        #cluster based on the softmax outputs
+        #cluster based on the loss 
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, relu FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object) #updated?
+        results_1 = [x[1] for x in results]
+
+        #cluster number
+        curr.execute('''SELECT COUNT(DISTINCT id) FROM imgs WHERE test = 0 AND used = 1''')
+        data_amount = curr.fetchone()[0]
+        if data_amount / config['batch_size'] == 0:
+            num_batches = int(data_amount/config['batch_size'])
+        else:
+            num_batches = 1 + int(data_amount/config['batch_size'])
+
+        #km cluster
+        km = cluster.MiniBatchKMeans(n_clusters=num_batches)
+        km = km.fit(results_1)
+        cluster_data = km.predict(results_1)
+        output = np.array([[results[i,0],cluster_data[i]] for i in range(len(cluster_data))]) #[[id,(0,31 cluster)],[id, clsuter]...]
+
+        #pick to create batches
+        #create the sub arrays
+        for i in range(int(max(output[:,1])+1)): #0,1,2,...31
+            ind = np.squeeze(np.argwhere(output[:,1]==i))
+            if i == 0:
+                cluster_split = {i:np.array(output[ind,0])}
+            else:
+                cluster_split[i] = np.atleast_1d(np.array(output[ind,0]))
+
+        #cluster_split = {i:[ids]}
+
+        #shuffle into batches. If one cluster runs out take from highest amount class
+        count = np.sum([len(cluster_split[i])  for i in range(len(cluster_split))])
+        out_ids = []
+        cluster_count = 0
+        while count >0:
+            #length of all dictionary values
+            cluster_lens = [len(cluster_split[i]) for i in range(len(cluster_split))]
+            if cluster_lens[cluster_count] != 0:
+                #choose random value in the clsuter
+                inds = cluster_split[cluster_count]
+                r = random.randint(0,cluster_lens[cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[cluster_count] = np.delete(inds,r)
+            else:
+                #select highest cluster clount
+                temp_cluster_count = np.argmax(cluster_lens)
+                inds = cluster_split[temp_cluster_count]
+                r = random.randint(0,cluster_lens[temp_cluster_count]-1)
+                #add index to output and update dictionary values
+                out_ids.append(inds[r])
+                cluster_split[temp_cluster_count] = np.delete(inds,r)
+            count -= 1
+            cluster_count += 1
+            if cluster_count > num_batches-1:
+                cluster_count = 0
+
+        #out_ids = [id, id ,id]  in batch order
+
+        for i,index in enumerate(out_ids):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
+        conn.commit()
+
+
     if config['scoring_function'] == 'pred_euq_distance':
         #score as the euclidiean distance from origin in sortmax error space
         curr.execute('''SELECT MAX(epoch) FROM losses''')
