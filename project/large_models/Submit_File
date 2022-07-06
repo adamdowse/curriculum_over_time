@@ -58,7 +58,6 @@ lam_upper_bound = 0
 
 queue 1
 
-<<<<<<< HEAD
 scoring_function = 'pred_cluster_alt'
 
 queue 3
@@ -71,7 +70,8 @@ scoring_function = 'relu_cluster_alt'
 
 queue 3
 
-=======
+scoring_function = 'pred_euq_distance'
 
->>>>>>> 090cee035ac62ab03f567fe9c0f95d875dd84a23
+queue 3
+
 
