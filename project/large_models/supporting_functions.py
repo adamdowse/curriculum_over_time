@@ -733,7 +733,7 @@ def scoring_functions(conn,config,info):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
         conn.commit()
 
-    if config['scoring_function'] == 'pred_cluster_alt':
+    if config['scoring_function'] == 'relu_cluster_alt':
         #cluster so the batches used are clusters 
         #cluster based on the softmax outputs
         #cluster based on the loss 

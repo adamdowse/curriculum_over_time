@@ -7,7 +7,7 @@ lr = str(0.001)
 batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
 #'SE_kdpp_sampling'
-scoring_function = 'last_loss'
+scoring_function = 'loss_cluster'
 # 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
 pacing_function = 'hl'
 fill_function = 'ffill'
