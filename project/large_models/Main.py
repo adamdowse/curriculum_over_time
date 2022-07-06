@@ -7,7 +7,7 @@ lr = str(0.001)
 batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
 #'SE_kdpp_sampling'
-scoring_function = 'pred_cluster'
+scoring_function = 'last_loss'
 # 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
 pacing_function = 'hl'
 fill_function = 'ffill'
@@ -17,7 +17,7 @@ tdata_amount = str(0.11)
 dataset_similarity = str(0) 
 l_0 = str(0.1)
 l_max = str(0.9)
-es = str(5)
+es = str(0)
 lower_bound = str(0)
 upper_bound = str(0)
 #group = scoring_function+'_'+pacing_function+'_'+data_amount

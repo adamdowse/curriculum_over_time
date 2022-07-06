@@ -12,7 +12,7 @@ wandb.init(job_type="analysis")
 api = wandb.Api()
 
 #collect the run names
-run_df = pd.read_csv("0.1_mnist.csv")
+run_df = pd.read_csv("0.01_mnist.csv")
 print(run_df.head())
 
 path = 'adamdowse/new_COT/'
@@ -22,7 +22,12 @@ print(names)
 
 #collect multiple runs
 batches_per_epoch = 88
-t_epochs = 7 #should be 10
+t_epochs = 10 #should be 10
+
+#for 0.01 
+#bpe = 9
+#te = 50
+#for a total of 450 steps
 
 dic = {}
 for run_name in names:
@@ -34,6 +39,7 @@ for run_name in names:
     #print(MI)
     dic[run_name] = MI
 
+pnt()
 df = pd.DataFrame(dic)
 df.columns = run_df['ID']
 print(df.head())

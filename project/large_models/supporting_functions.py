@@ -167,7 +167,7 @@ def DB_set_used(conn,test_n,train_n):
     random.shuffle(test_ids)
     test_input = test_ids[:test_n]
     test_input = [(int(x[0]),) for x in test_input]
-    print(test_input)
+    #print(test_input)
     cur.executemany('''UPDATE imgs SET used = 1 WHERE id = (?)''',test_input)
 
     cur.execute('''SELECT id FROM imgs WHERE test = 0''')
@@ -287,7 +287,7 @@ def log(conn,output_name,table,test,step,name,mean=False):
     else:
         #bin_edges = [x for x in np.linspace(0, 10, num=40)]
         #hist = np.histogram(results,bins=bin_edges)
-        print('logging results =',results)
+        #print('logging results =',results)
         if len(results) > 1:
             results = np.delete(results, results > 3) #THIS IS USED TO keep hist bins from being to big
             wandb.log({name:wandb.Histogram(results)},step=step)
@@ -406,7 +406,8 @@ def scoring_functions(conn,config,info):
         #score is set as the last loss recored for each img
         curr.execute('''SELECT MAX(epoch) FROM losses''')
         epoch = curr.fetchone()[0]
-        print('Epoch is',epoch)
+        #print('Epoch is',epoch)
+        #TODO CHANGE THIS AS IT GETS REALLY SLOW
         sql = '''   UPDATE imgs
                 SET score = (SELECT loss FROM losses WHERE img_id = imgs.id AND epoch=(?))
                 WHERE used = 1 AND test = 0 AND EXISTS (SELECT loss FROM losses WHERE img_id = imgs.id AND epoch=(?))
@@ -440,7 +441,7 @@ def scoring_functions(conn,config,info):
         #cluster_split = {i:[ids]}
 
         #shuffle into batches. If one cluster runs out take from highest amount class
-        print(cluster_split)
+        #print(cluster_split)
         count = np.sum([len(cluster_split[i])  for i in range(len(cluster_split))])
         out_ids = []
         cluster_count = 0
@@ -516,7 +517,7 @@ def scoring_functions(conn,config,info):
         while count >0:
             #length of all dictionary values
             cluster_lens = [len(cluster_split[i]) for i in range(len(cluster_split))]
-            print(cluster_lens,cluster_count)
+            #print(cluster_lens,cluster_count)
             if cluster_lens[cluster_count] != 0:
                 #choose random value in the clsuter
                 inds = cluster_split[cluster_count]
