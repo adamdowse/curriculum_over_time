@@ -147,7 +147,8 @@ def main(args):
     sqlite3.register_converter("array", sf.bin_to_array) # Converts TEXT to np.array when selecting
 
     # create a database connection
-    conn = sf.DB_create_connection(config['db_path']+config['dataset_name']+str(random.randint(0,10000000))+'.db')
+    conn_path = config['db_path']+config['dataset_name']+str(random.randint(0,10000000))+'.db'
+    conn = sf.DB_create_connection(conn_path)
     random.seed(config['seed'])
     #setup sql functions
     sf.setup_sql_funcs(conn)
@@ -390,6 +391,12 @@ def main(args):
 
     #save the model
     model.save(config['save_model_path'])
+
+    #remove the database
+    if os.path.exists(conn_path):
+        os.remove(conn_path)
+    else:
+        print("error deleting temp database")
 
 if __name__ =='__main__':
     args = parse_arguments()
