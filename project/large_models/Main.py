@@ -7,7 +7,7 @@ lr = str(0.001)
 batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
 #'SE_kdpp_sampling'
-scoring_function = 'loss_cluster'
+scoring_function = 'random'
 # 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
 pacing_function = 'hl'
 fill_function = 'ffill'
@@ -21,9 +21,10 @@ es = str(0)
 lower_bound = str(0)
 upper_bound = str(0)
 #group = scoring_function+'_'+pacing_function+'_'+data_amount
-group = '0.1_mnist'
+group = '0.1_mnist_conv'
 record_loss = 'do'
 batch_logs = 'True'
+conv_logs = 'True'
 data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
 db_path = "/com.docker.devenvironments.code/project/large_models/DBs/"
 save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
@@ -49,6 +50,7 @@ command = [
     ' --group '+group,
     ' --record_loss '+record_loss,
     ' --batch_logs '+batch_logs,
+    ' --conv_logs '+conv_logs,
 
     ' --lam_zero '+l_0,
     ' --lam_max '+l_max,

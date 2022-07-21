@@ -16,6 +16,7 @@ import time
 import sqlite3
 from sqlite3 import Error
 import random
+import scipy
 
 
 def parse_arguments():
@@ -39,6 +40,7 @@ def parse_arguments():
     parser.add_argument('--group', type=str,default=None)
     parser.add_argument('--record_loss',type=str,default='sum')
     parser.add_argument('--batch_logs',type=str,default='False')
+    parser.add_argument('--conv_logs',type=str,default='False')
 
     parser.add_argument('--lam_zero',type=float,default=0.1)
     parser.add_argument('--lam_max',type=float,default=0.9)
@@ -67,6 +69,7 @@ def main(args):
         'record_loss':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the loss for each image trained on will be recorded in the db
         'record_softmax_error':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the softmax error [num_classes] for each image trained on will be recorded in the db
         'batch_logs':args.batch_logs,               # record stats after each training batch
+        'conv_logs':args.batch_logs,                # record conv layer stats after each training batch
 
         'early_stopping':args.early_stopping,       #number of epochs of non increasing test accuracy before termination (0 is off)
 
@@ -276,6 +279,35 @@ def main(args):
             intermediate_layer_model = Model(inputs=model.input,
                                 outputs=model.layers[3].output)
             activations = intermediate_layer_model.predict(X[1])
+
+            if config['conv_logs'] == 'True':
+                conv_intermediate_layer_model = Model(inputs=model.input,
+                                    outputs=model.layers[0].output)
+                conv_activations = np.array(conv_intermediate_layer_model.predict(X[1]))
+                conv_filters , _ = np.array(conv_intermediate_layer_model.layers[1].get_weights())
+               
+                conv_activations    = conv_activations.sum(axis=1).sum(axis=1) # imgs and filter sum activations
+                conv_filters        = conv_filters.sum(axis=0).sum(axis=0).sum(axis=0) # sum filters weights
+
+                print(conv_activations.shape)
+                print(conv_filters.shape)
+
+                conv_vec = np.zeros((conv_activations.shape[0],len(conv_filters)))
+                for i in range(conv_activations.shape[0]): # loop images
+                    for j in range(len(conv_filters)): #loop filters
+                        conv_vec[i,j] =  conv_activations[i,j]/conv_filters[j] # images with normalized filter space
+                
+                #calc distances 
+                ecu = 0
+                cos = 0
+                for i in range(conv_activations.shape[0]): # loop images
+                    for j in range(i+1,conv_activations.shape[0]): # i imgs to j images
+                        ecu += scipy.spatial.distance.euclidean(conv_vec[i,:],conv_vec[j,:])
+                        cos += scipy.spatial.distance.cosine(conv_vec[i,:],conv_vec[j,:])
+                
+                #log info
+                wandb.log({'conv1_euc':ecu,'conv1_cos':cos},step=info.step)
+
             #print(activations.shape)
             #print(H)
             #count number of each class in the batch
