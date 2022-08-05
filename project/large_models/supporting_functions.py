@@ -604,6 +604,37 @@ def scoring_functions(conn,config,info):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
         conn.commit()
 
+    if config['scoring_function'] == 'pred_cluster_similar':
+        #cluster so the batches used are clusters 
+        #cluster based on the lastlayer activations
+        #this method does not pick from batches it creates similar images in each batch
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, output FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object)
+        results_1 = [x[1] for x in results]
+        results_0 = [x[0] for x in results]
+        
+        def get_even_clusters(X, cluster_size):
+            #finds the clusters for a set size
+            n_clusters = int(np.ceil(len(X)/cluster_size))
+            kmeans = cluster.MiniBatchKMeans(n_clusters)
+            kmeans.fit(X)
+            centers = kmeans.cluster_centers_
+            #multiply each cluster index by batch size so an image is assigned each one
+            centers = centers.reshape(-1, 1, X.shape[-1]).repeat(cluster_size, 1).reshape(-1, X.shape[-1])
+            distance_matrix = cdist(X, centers)
+            clusters = scipy.optimize.linear_sum_assignment(distance_matrix)[1]//cluster_size
+            
+            return clusters
+
+        #compute closest cluster center
+        clusters = get_even_clusters(np.array(results_1),config["batch_size"])
+        
+        for i,c in enumerate(clusters):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(c),int(results_0[i]),))
+        conn.commit()
+
     if config['scoring_function'] == 'pred_cluster_alt':
         #cluster so the batches used are clusters 
         #cluster based on the softmax outputs
@@ -731,6 +762,37 @@ def scoring_functions(conn,config,info):
 
         for i,index in enumerate(out_ids):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(i),int(index),))
+        conn.commit()
+    
+    if config['scoring_function'] == 'relu_cluster_similar':
+        #cluster so the batches used are clusters 
+        #cluster based on the lastlayer activations
+        #this method does not pick from batches it creates similar images in each batch
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, relu FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object) #updated?
+        results_0 = [x[0] for x in results]
+        results_1 = [x[1] for x in results]
+        
+        def get_even_clusters(X, cluster_size):
+            #finds the clusters for a set size
+            n_clusters = int(np.ceil(len(X)/cluster_size))
+            kmeans = cluster.MiniBatchKMeans(n_clusters)
+            kmeans.fit(X)
+            centers = kmeans.cluster_centers_
+            #multiply each cluster index by batch size so an image is assigned each one
+            centers = centers.reshape(-1, 1, X.shape[-1]).repeat(cluster_size, 1).reshape(-1, X.shape[-1])
+            distance_matrix = cdist(X, centers)
+            clusters = scipy.optimize.linear_sum_assignment(distance_matrix)[1]//cluster_size
+            
+            return clusters
+
+        #compute closest cluster center
+        clusters = get_even_clusters(np.array(results_1),config["batch_size"])
+
+        for i,c in enumerate(clusters):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(c),int(results_0[i]),))
         conn.commit()
 
     if config['scoring_function'] == 'relu_cluster_alt':
@@ -1035,7 +1097,155 @@ def scoring_functions(conn,config,info):
         #if detailed_logging:
         #    log('The selected {0} indices (second level): {1}'.format(len(subset_indices), subset_indices))
         
+    if config['scoring_function'] == 'submodular_sampling_custom':
+        #based on a combination of criteria greedly add to a batch to maximize the submodular score
+        #based on https://github.com/VamshiTeja/SMDL/blob/master/lib/samplers/submodular.py
+        
+        def compute_u_score(entropy,indexes,alpha=1):
+            #Compute the Uncertainity Score: The point that makes the model most confused, should be preferred
+            if len(indexes) == 0:
+                return 0
+            else:
+                u_score = alpha*entropy[indexes]
+                return u_score
+        
+        def compute_r_score(penultimate_activations, subset_indices, index_set, alpha=0.2, distance_metric='gaussian'):
+            #redundancy score: The smaller the value of max distance between points in a batch is better
+            if len(subset_indices) == 0:
+                return 0
+            else:
+                index_p_acts = penultimate_activations[np.array(index_set)] #vlaues out of the subset
+                subset_p_acts = penultimate_activations[np.array(subset_indices)] #values in the current subset
+                if(distance_metric=='gaussian'):
+                    #distance measure
+                    pdist = cdist(index_p_acts, subset_p_acts, metric='sqeuclidean')
+                    #r_score = scipy.exp(-pdist / (0.5) ** 2)
+                    r_score = alpha * 1/np.max(pdist, axis=1)
+                    return r_score
+                #can add other metrics here
+                else:
+                    print('NO defined metric ERROR')
+        
+        def compute_md_score(penultimate_activations, index_set, class_mean, alpha=0.2, distance_metric='gaussian'):
+            """
+            Computes Mean Divergence score: The new datapoint should be close to the mean
+            :param penultimate_activations:
+            :param index_set:
+            :param class_mean:
+            :param alpha:
+            :return: list of scores for each index item
+            """
 
+            if(distance_metric=='gaussian'):
+                #distance measure
+                pen_act = penultimate_activations[np.array(index_set)]
+                md_score = alpha * cdist(pen_act, np.array([np.array(class_mean)]), metric='sqeuclidean')
+                #md_score = scipy.exp(-md_score / (0.5) ** 2)
+                return md_score.squeeze()
+            else:
+                print('NO defined metric ERROR')
+            
+        def compute_coverage_score(normalised_penultimate_activations, subset_indices, index_set, alpha=0.5):
+            """
+            :param penultimate_activations:
+            :param subset_indices:
+            :param index_set:
+            :return: g(mu(S))
+            """
+            if(len(subset_indices)==0):
+                score_feature_wise = np.sqrt(normalised_penultimate_activations[index_set])
+                scores = np.sum(score_feature_wise, axis=1)
+                return alpha*scores
+            else:
+                penultimate_activations_index_set =  normalised_penultimate_activations[index_set]
+                subset_indices_scores = np.sum(normalised_penultimate_activations[subset_indices],axis=0)
+                sum_subset_index_set = subset_indices_scores + penultimate_activations_index_set
+                score_feature_wise = np.sqrt(sum_subset_index_set)
+                scores = np.sum(score_feature_wise,axis=1)
+                return alpha*scores
+
+        def normalise(A):
+            return A/np.sum(A)
+
+        def get_subset_indices(index_set_input, penultimate_activations, normalised_penultimate_activations, entropy,  subset_size, alpha_1, alpha_2, alpha_3, alpha_4):
+
+            #print('reached subset selection')
+            index_set = index_set_input
+            subset_indices = []     # Subset of indices. Keeping track to improve computational performance.
+
+            class_mean = np.mean(penultimate_activations, axis=0)
+            #print(class_mean)
+
+            subset_size = min(subset_size, len(index_set)) # this deals with the last selections of data
+            for i in range(0, subset_size):
+
+                u_scores = compute_u_score(entropy, list(index_set), alpha=alpha_1)
+                r_scores = compute_r_score(penultimate_activations, list(subset_indices), list(index_set), alpha=alpha_2)
+                md_scores = compute_md_score(penultimate_activations, list(index_set), class_mean, alpha=alpha_3)
+                coverage_scores = compute_coverage_score(normalised_penultimate_activations, subset_indices, index_set, alpha=alpha_4)
+                #if i > 0:
+                #    print(u_scores.shape)
+                #    print(r_scores.shape)
+                #    print(md_scores.shape)
+                #    print(coverage_scores.shape)
+
+                scores = normalise(np.array(u_scores)) + normalise(np.array(r_scores)) + normalise(np.array(md_scores)) + normalise(np.array(coverage_scores))
+                #print(scores.shape)
+                best_item_index = np.argmax(scores)
+                subset_indices.append(index_set[best_item_index])
+                index_set = np.delete(index_set, best_item_index, axis=0)
+
+                # log('Processed: {0}/{1} exemplars. Time taken is {2} sec.'.format(i, subset_size, time.time()-now))
+
+            return subset_indices
+            
+        
+        #local hyperparams
+
+        a_1 = 0.2
+        a_2 = 0.1
+        a_3 = 0.5
+        a_4 = 0.2
+
+        #get the size of the avalible indexes
+        #set_size = len(self.index_set)
+        sql =   '''
+            SELECT l.img_id, l.output, i.label_num, l.relu, l.H
+            FROM losses AS l
+            INNER JOIN imgs AS i ON l.img_id=i.id
+            WHERE i.used = 1 AND i.test = 0
+            GROUP BY l.img_id
+            HAVING l.step = max(l.step) 
+            '''
+        curr.execute(sql)
+        f_all = curr.fetchall()
+
+        #seperate the output and ids 
+        ids = np.array([x[0] for x in f_all])
+        outputs = np.array([x[1] for x in f_all]) #softmax
+        labels = np.array([x[2] for x in f_all])
+        relu_outputs = np.array([x[3] for x in f_all]) #relu
+        H = np.array([x[4] for x in f_all]) #entropy
+        indices = [x for x in range(len(ids))]
+
+
+        batch_num = 0
+        while len(indices) > 0:
+            subset_indices = get_subset_indices(indices, relu_outputs, outputs, H, config['batch_size'],a_1,a_2,a_3,a_4)
+
+            #add the batch num
+            for i in subset_indices:
+                curr.execute('''UPDATE imgs SET batch_num = (?) WHERE id = (?)''',(int(batch_num),int(ids[i])))
+
+            #Subset selection without replacement.
+            for item in subset_indices:    
+                indices.remove(item)
+            
+            batch_num += 1
+
+        #if detailed_logging:
+        #    log('The selected {0} indices (second level): {1}'.format(len(subset_indices), subset_indices))
+        
 
 
 

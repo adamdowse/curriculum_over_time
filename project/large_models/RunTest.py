@@ -69,7 +69,7 @@ def main(args):
         'record_loss':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the loss for each image trained on will be recorded in the db
         'record_softmax_error':tf.convert_to_tensor(args.record_loss,tf.string), # if 'True' the softmax error [num_classes] for each image trained on will be recorded in the db
         'batch_logs':args.batch_logs,               # record stats after each training batch
-        'conv_logs':args.batch_logs,                # record conv layer stats after each training batch
+        'conv_logs':args.conv_logs,                # record conv layer stats after each training batch
 
         'early_stopping':args.early_stopping,       #number of epochs of non increasing test accuracy before termination (0 is off)
 
@@ -208,13 +208,14 @@ def main(args):
 
     #Init the data generators
     #TODO make these based on the arguments
+
     train_data_gen = datagen.CustomDBDataGen(
         conn = conn,
         X_col = 'img',
         Y_col = 'label',
         batch_size = args.batch_size, 
         num_classes = info.num_classes,
-        input_size = (28,28,1),
+        input_size = info.img_shape,
         test=0
     )
 
@@ -224,7 +225,7 @@ def main(args):
         Y_col = 'label',
         batch_size = args.batch_size, 
         num_classes = info.num_classes,
-        input_size = (28,28,1),
+        input_size = info.img_shape,
         test=1
     )
     
@@ -243,8 +244,8 @@ def main(args):
 
 
     #build and load model, optimizer and loss functions
-    model = sm.Simple_CNN(info.num_classes)
-    model.build((32,28,28,1))
+    model = sm.AlexNet(info.num_classes,info.img_shape)
+    model.build(info.img_shape+1)
     model.summary()
     optimizer = keras.optimizers.SGD(learning_rate=config['learning_rate']),
     loss_func = keras.losses.CategoricalCrossentropy(from_logits=False,reduction=tf.keras.losses.Reduction.NONE)

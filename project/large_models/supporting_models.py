@@ -4,9 +4,9 @@ from tensorflow import keras
 from keras import layers
 
 
-def Simple_CNN(num_classes):
+def Simple_CNN(num_classes,in_shape):
     model = tf.keras.Sequential([
-        layers.Conv2D(32,(3,3), activation='relu'),
+        layers.Conv2D(32,(3,3), activation='relu',input_shape=in_shape),
         layers.MaxPool2D((2,2)),
         layers.Flatten(),
         layers.Dense(100,activation='relu'),
@@ -14,9 +14,9 @@ def Simple_CNN(num_classes):
     ])
     return model
 
-def AlexNet (num_classes):
+def AlexNet (num_classes,in_shape):
     model = tf.keras.Sequential([
-        layers.Conv2D(96, 11, strides=4, activation='relu'),
+        layers.Conv2D(96, 11, strides=4, activation='relu',input_shape=in_shape),
         layers.BatchNormalization(),
 
         layers.MaxPool2D(2, strides=2),

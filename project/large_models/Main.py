@@ -2,18 +2,18 @@ import os
 
 #File used to test running the experiments
 
-epochs = str(10)
+epochs = str(100)
 lr = str(0.001)
 batch_size = str(32)
-#'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 
-#'SE_kdpp_sampling'
+#'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 'pred_cluster_similar'
+#'SE_kdpp_sampling' 'relu_cluster_similar'
 scoring_function = 'random'
 # 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
-pacing_function = 'hl'
+pacing_function = 'none'
 fill_function = 'ffill'
-data = 'mnist'
+data = 'cifar10'
 data_amount = str(0.1)
-tdata_amount = str(0.11)
+tdata_amount = str(0.1)
 dataset_similarity = str(0) 
 l_0 = str(0.1)
 l_max = str(0.9)
@@ -21,10 +21,10 @@ es = str(0)
 lower_bound = str(0)
 upper_bound = str(0)
 #group = scoring_function+'_'+pacing_function+'_'+data_amount
-group = '0.1_mnist_conv'
+group = '0.1_cifar10'
 record_loss = 'do'
 batch_logs = 'True'
-conv_logs = 'True'
+conv_logs = 'False'
 data_path = '/com.docker.devenvironments.code/project/large_models/datasets/'
 db_path = "/com.docker.devenvironments.code/project/large_models/DBs/"
 save_model_path = '/com.docker.devenvironments.code/project/large_models/saved_models/'
