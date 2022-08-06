@@ -2,14 +2,14 @@ import os
 
 #File used to test running the experiments
 
-epochs = str(100)
+epochs = str(30)
 lr = str(0.001)
 batch_size = str(32)
 #'random' 'last_loss' 'loss_cluster' 'loss_cluster_batches' 'pred_cluster' 'pred_euq_distance' 'pred_cluster_similar'
 #'SE_kdpp_sampling' 'relu_cluster_similar'
-scoring_function = 'random'
+scoring_function = 'pred_cluster_similar'
 # 'hl' 'lh' 'mixed' 'naive_linear' 'naive_grad' 'none'
-pacing_function = 'none'
+pacing_function = 'hl'
 fill_function = 'ffill'
 data = 'cifar10'
 data_amount = str(0.1)
