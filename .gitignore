@@ -4,3 +4,4 @@ project/large_models/wandb/*
 project/large_models/graphing/wandb/*
 project/large_models/~/*
 project/large_models/saved_models/*
+project/large_models/MI/*

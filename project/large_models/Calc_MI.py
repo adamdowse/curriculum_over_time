@@ -121,15 +121,10 @@ if __name__ == '__main__':
    #         print('i = ',i)
 
 
-    
-    
-
-
-            
-
 
     #save the MI matrix to a csv to avoid recompute
-
+  
+    #TODO change this to a full address and put it in /MI/ so its git ignored
     np.savetxt("MNIST_MI.csv", MI_matrix, delimiter=",")
 
     #BMI formula np.sum(np.sum(MI_matrix))/(len(MI_matrix)*(len(MI_matrix)-1)/2)
