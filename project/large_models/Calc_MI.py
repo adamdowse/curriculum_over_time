@@ -15,7 +15,6 @@ def mutual_information(func_in):
     #unpack vars
     img1,img2,i,j = func_in
     
-
     #convert the images into histograms
     hgram, x_edges, y_edges = np.histogram2d(img1,img2,bins=40)
 
@@ -33,16 +32,13 @@ if __name__ == '__main__':
     ds, ds_info = tfds.load('mnist',with_info=True,shuffle_files=False,as_supervised=True,split='train')
 
     #take the first n images to use as a proxi and test
-    n_imgs = 6000
+    n_imgs = 3000
     img_list = []
-    c = 0
-    for img,label in ds:
+    for img,label in ds.take(n_imgs):
         img_list.append(img.numpy().ravel().tolist())
-        c+=1
-        if c == n_imgs:
-            break
-    #img_list = [[unraveled image],[...],...]
+        #img_list = [[unraveled image],[...],...]
     
+    print('img_list',img_list.__sizeof__()/10**9,'Gb')
 
     #multiprocessing version__
     #create the list fof inputs
@@ -52,20 +48,19 @@ if __name__ == '__main__':
             if i<j:
                 process_input.append((img_list[i],img_list[j],i,j))
     #process_input = [([img_0],[img_1],i,j)]
+    print('process_input',process_input.__sizeof__()/10**9,'Gb')
 
     #pool multiprocessing__
     t = time.time()
-    with Pool(3) as p:
+    with Pool(processes=2,maxtasksperchild=1000) as p:
         map_out = p.map(mutual_information,process_input)
     MI_mat = np.zeros((n_imgs,n_imgs))
     for mi,i,j in map_out:
         MI_mat[j,i] = mi
     print(time.time()-t)
 
-
+    #TODO add a cut and split save method here so git can save
     #save the MI matrix to a csv to avoid recompute
-  
-    #TODO change this to a full address and put it in /MI/ so its git ignored
-    np.savetxt("MI/MNIST_6000.csv", MI_mat, delimiter=",")
+    np.savetxt("MI/MNIST_3000.csv", MI_mat, delimiter=",")
 
     #BMI formula np.sum(np.sum(MI_matrix))/(len(MI_matrix)*(len(MI_matrix)-1)/2)
