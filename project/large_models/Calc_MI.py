@@ -32,7 +32,7 @@ if __name__ == '__main__':
     ds, ds_info = tfds.load('mnist',with_info=True,shuffle_files=False,as_supervised=True,split='train')
 
     #take the first n images to use as a proxi and test
-    n_imgs = 3000
+    n_imgs = 6000
     img_list = []
     for img,label in ds.take(n_imgs):
         img_list.append(img.numpy().ravel().tolist())
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     #pool multiprocessing__
     t = time.time()
-    with Pool(processes=2,maxtasksperchild=1000) as p:
+    with Pool(processes=6,maxtasksperchild=1000) as p:
         map_out = p.map(mutual_information,process_input)
     MI_mat = np.zeros((n_imgs,n_imgs))
     for mi,i,j in map_out:
@@ -61,6 +61,6 @@ if __name__ == '__main__':
 
     #TODO add a cut and split save method here so git can save
     #save the MI matrix to a csv to avoid recompute
-    np.savetxt("MI/MNIST_3000.csv", MI_mat, delimiter=",")
+    np.savetxt("MI/MNIST_6000.csv", MI_mat, delimiter=",")
 
     #BMI formula np.sum(np.sum(MI_matrix))/(len(MI_matrix)*(len(MI_matrix)-1)/2)
