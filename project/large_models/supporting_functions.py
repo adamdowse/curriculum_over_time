@@ -19,6 +19,7 @@ from sqlite3 import Error
 import io
 import wandb
 from dppy.finite_dpps import FiniteDPP
+import math
 
 def DB_create_connection(db_file):
     """ create a database connection to the SQLite database
@@ -790,6 +791,47 @@ def scoring_functions(conn,config,info):
 
         #compute closest cluster center
         clusters = get_even_clusters(np.array(results_1),config["batch_size"])
+
+        for i,c in enumerate(clusters):
+            curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(c),int(results_0[i]),))
+        conn.commit()
+
+    if config['scoring_function'] == 'relu_cluster_rand_0.1':
+        #cluster so the batches used are clusters 
+        #cluster based on the lastlayer activations
+        #this method does not pick from batches it creates similar images in each batch
+        #this uses the even batching and then adds randomness by swapping values
+        curr.execute('''SELECT MAX(epoch) FROM losses''')
+        epoch = curr.fetchone()[0]
+        curr.execute('''SELECT img_id, relu FROM losses WHERE img_id IN (SELECT id FROM imgs WHERE used = 1 AND test = 0) AND epoch = (?)''',(int(epoch),))
+        results = np.array(curr.fetchall(),dtype=object) #updated?
+        results_0 = [x[0] for x in results]
+        results_1 = [x[1] for x in results]
+        
+        def get_even_clusters(X, cluster_size):
+            #finds the clusters for a set size
+            n_clusters = int(np.ceil(len(X)/cluster_size))
+            kmeans = cluster.MiniBatchKMeans(n_clusters)
+            kmeans.fit(X)
+            centers = kmeans.cluster_centers_
+            #multiply each cluster index by batch size so an image is assigned each one
+            centers = centers.reshape(-1, 1, X.shape[-1]).repeat(cluster_size, 1).reshape(-1, X.shape[-1])
+            distance_matrix = cdist(X, centers)
+            clusters = scipy.optimize.linear_sum_assignment(distance_matrix)[1]//cluster_size
+            
+            return clusters
+
+        #compute closest cluster center
+        clusters = get_even_clusters(np.array(results_1),config["batch_size"])
+
+        #perform some random alterations to the batches
+        for i in range(math.floor(0.1*len(results_0))):
+            #pick 2 random index and flip them
+            r_ind_1 = random.randint(0,len(results_0)-1)
+            r_ind_2 = random.randint(0,len(results_0)-1)
+            temp = clusters[r_ind_1]
+            clusters[r_ind_1] = clusters[r_ind_2]
+            clusters[r_ind_2] = temp
 
         for i,c in enumerate(clusters):
             curr.execute('''UPDATE imgs SET score = (?) WHERE id = (?)''',(float(c),int(results_0[i]),))

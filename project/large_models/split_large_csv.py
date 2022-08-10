@@ -23,4 +23,5 @@ while c < tot_rows:
     else:
         large_df.iloc[c:c+split_size].to_csv(destination_name+'_'+str(i)+'.csv',sep=',',index=False,header=False)
     i+=1
-    c+=split_size+1
+    c+=split_size
+    print(c)

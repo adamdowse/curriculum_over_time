@@ -244,7 +244,7 @@ def main(args):
 
 
     #build and load model, optimizer and loss functions
-    model = sm.AlexNet(info.num_classes,info.img_shape)
+    model = sm.Simple_CNN(info.num_classes,info.img_shape)
     model.build(info.img_shape+1)
     model.summary()
     optimizer = keras.optimizers.SGD(learning_rate=config['learning_rate']),
